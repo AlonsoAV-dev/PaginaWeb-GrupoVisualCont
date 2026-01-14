@@ -4,7 +4,7 @@ import HeroCardCarousel from "../../shared/heroCardCarousel";
 import Demo from "../../shared/demo";
 import Info from "@/components/aboutUs/info";
 import About from "@/components/aboutUs/about";
-import WhatsAppFab from "@/shared/whatsappFab";
+import IconsGroup from "@/shared/iconsGroup";
 import Certificates from "@/shared/certificates";
 import TimeLine from "@/components/aboutUs/timeLine";
 import Script from "next/script";
@@ -34,7 +34,7 @@ export const metadata = {
       "Somos un equipo apasionado por la tecnología que impulsa la eficiencia de las pymes.",
     images: [
       {
-        url: "https://www.softwarecontableerp.com/images/logos/LogVBlancoRelleno.svg",
+        url: "/images/banner/visualBanner.jpg",
         alt: "Visual ERP",
       },
     ],
@@ -47,7 +47,7 @@ export const metadata = {
     description:
       "Conoce quiénes somos y cómo ayudamos a pymes a crecer con tecnología.",
     images: [
-      "https://www.softwarecontableerp.com/images/logos/LogVBlancoRelleno.svg",
+      "/images/banner/visualBanner.jpg",
     ],
   },
   robots: {
@@ -122,8 +122,8 @@ export default function Nosotros() {
       </div>
       <Footer />
 
-      {/* Whatsapp Icono Flotante */}
-      <WhatsAppFab href="https://wa.me/51956703375?text=Hola%2C%20%C2%BFMe%20puede%20explicar%20como%20el%20sistema%20me%20puede%20dar%20mejores%20resultados%3F%20%C2%BFMe%20podr%C3%ADa%20agendar%20una%20demo%3F%20Much%C3%ADsimas%20gracias" />
+      {/* Grupo de Iconos*/}
+      <IconsGroup />
 
       {/* JSON-LD: Organización */}
       <Script
@@ -134,8 +134,8 @@ export default function Nosotros() {
             "@context": "https://schema.org",
             "@type": "Organization",
             name: "Visual ERP",
-            url: "https://www.softwarecontableerp.com/",
-            logo: "https://www.softwarecontableerp.com/images/logos/LogVBlancoRelleno.svg",
+            url: "https://grupovisualcont.com/",
+            logo: "https://grupovisualcont.com/images/logos/LogVBlancoRelleno.svg",
             sameAs: [
               "https://www.linkedin.com/company/visual-cont/",
               "https://www.facebook.com/grupovisualpe/",
@@ -157,8 +157,8 @@ export default function Nosotros() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "AboutPage",
-            "@id": "https://www.softwarecontableerp.com/nosotros#about",
-            url: "https://www.softwarecontableerp.com/nosotros",
+            "@id": "https://grupovisualcont.com/nosotros#about",
+            url: "https://grupovisualcont.com/nosotros",
             name: "Nosotros | Visual ERP",
             description:
               "Nuestra historia, misión, valores y equipo que impulsa la productividad de las pymes.",
@@ -166,43 +166,43 @@ export default function Nosotros() {
             isPartOf: {
               "@type": "WebSite",
               name: "Visual ERP",
-              url: "https://www.softwarecontableerp.com/",
+              url: "https://grupovisualcont.com/",
             },
             hasPart: [
               {
                 "@type": "WebPageElement",
                 name: "Hero",
-                url: "https://www.softwarecontableerp.com/nosotros#hero",
+                url: "https://grupovisualcont.com/nosotros#hero",
                 description: "Presentación y propuesta de valor del equipo.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Info",
-                url: "https://www.softwarecontableerp.com/nosotros#info",
+                url: "https://grupovisualcont.com/nosotros#info",
                 description: "Misión, visión y valores.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Sobre nosotros",
-                url: "https://www.softwarecontableerp.com/nosotros#about",
+                url: "https://grupovisualcont.com/nosotros#about",
                 description: "Quiénes somos y cómo trabajamos.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Línea de tiempo",
-                url: "https://www.softwarecontableerp.com/nosotros#timeline",
+                url: "https://grupovisualcont.com/nosotros#timeline",
                 description: "Hitos principales de la empresa.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Certificaciones",
-                url: "https://www.softwarecontableerp.com/nosotros#certificates",
+                url: "https://grupovisualcont.com/nosotros#certificates",
                 description: "Integraciones y acreditaciones.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Demo",
-                url: "https://www.softwarecontableerp.com/nosotros#demo",
+                url: "https://grupovisualcont.com/nosotros#demo",
                 description: "Contacto para solicitar una demo.",
               },
             ],
@@ -223,13 +223,13 @@ export default function Nosotros() {
                 "@type": "ListItem",
                 position: 1,
                 name: "Inicio",
-                item: "https://www.softwarecontableerp.com/",
+                item: "https://grupovisualcont.com/",
               },
               {
                 "@type": "ListItem",
                 position: 2,
                 name: "Nosotros",
-                item: "https://www.softwarecontableerp.com/nosotros",
+                item: "https://grupovisualcont.com/nosotros",
               },
             ],
           }),

@@ -8,29 +8,35 @@ import Clients from "@/shared/clients";
 import Demo from "@/shared/demo";
 import Testimonials from "@/components/home/testimonials";
 import Footer from "@/shared/footer";
-import WhatsAppFab from "@/shared/whatsappFab";
 import Script from "next/script";
+import IconsGroup from "@/shared/iconsGroup";
 
 export const metadata = {
   title: "Software Contable Visual | Eficiencia y Seguridad",
   description:
-    "Administra contabilidad, informes SUNAT, tesorería y más. Todo automatizado y adaptable a tu empresa.",
+    "Software Contable VisualERP: administra contabilidad, informes SUNAT, tesorería, inventarios y  de forma automatica, segura y adaptable a tu empresa.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: "VisualERP en el Perú: contabilidad, facturación, sistema de planillas, y ERP integrado.",
+    type: "website",
+    title: "Software Contable Visual | Eficiencia y Seguridad",
     url: "/",
     images: [
       {
-        url: "https://www.softwarecontableerp.com/images/logos/LogVBlancoRelleno.svg",
+        url: "/images/banner/visualBanner.jpg",
+        alt: "VisualCONT",
       },
     ],
+    description:
+      "Software Contable VisualERP: administra contabilidad, informes SUNAT, tesorería, inventarios y  de forma automatica, segura y adaptable a tu empresa.",
+    siteName: "Software Contable Visual | Eficiencia y Seguridad",
   },
   twitter: {
+    url: "https://grupovisualcont.com/",
     title: "Software Contable Visual | Eficiencia y Seguridad",
-    images: [
-      "https://www.softwarecontableerp.com/images/logos/LogVBlancoRelleno.svg",
-    ],
-    card: "summary_large_image"
+    description:
+      "Software Contable VisualERP: administra contabilidad, informes SUNAT, tesorería, inventarios y  de forma automatica, segura y adaptable a tu empresa.",
+    images: ["/images/banner/visualBanner.jpg"],
+    card: "summary_large_image",
   },
 };
 
@@ -60,8 +66,8 @@ export default function Home() {
       </div>
       <Footer />
 
-      {/* WhatsApp: ícono flotante */}
-      <WhatsAppFab href="https://wa.me/51956703375?text=Hola%2C%20%C2%BFme%20puede%20explicar%20c%C3%B3mo%20el%20sistema%20me%20puede%20dar%20mejores%20resultados%3F%20%C2%BFMe%20podr%C3%ADa%20agendar%20una%20demo%3F%20Much%C3%ADsimas%20gracias" />
+      {/* Grupo de Iconos*/}
+      <IconsGroup />
 
       {/* JSON-LD: describe la página y sus secciones (no cambia tus h1/h2/p) */}
       <Script
@@ -71,9 +77,9 @@ export default function Home() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebPage",
-            "@id": "https://www.softwarecontableerp.com/",
-            url: "https://www.softwarecontableerp.com/",
-            logo: "https://www.softwarecontableerp.com/images/logos/LogVBlancoRelleno.svg",
+            "@id": "https://grupovisualcont.com/",
+            url: "https://grupovisualcont.com/",
+            logo: "https://grupovisualcont.com/images/logos/LogVBlancoRelleno.svg",
             name: "Visual - Sistema ERP",
             description:
               "ERP con contabilidad, facturación electrónica, planillas y tesorería. Cumplimiento SUNAT y automatización.",
@@ -81,53 +87,53 @@ export default function Home() {
             isPartOf: {
               "@type": "WebSite",
               name: "Visual ERP",
-              url: "https://www.softwarecontableerp.com/",
+              url: "https://grupovisualcont.com/",
             },
             hasPart: [
               {
                 "@type": "WebPageElement",
                 name: "Hero",
-                url: "https://www.softwarecontableerp.com/#hero",
+                url: "https://grupovisualcont.com/#hero",
                 description:
                   "Propuesta de valor y llamada a la acción para agendar demo.",
               },
               {
                 "@type": "WebPageElement",
                 name: "CTA",
-                url: "https://www.softwarecontableerp.com/#cta",
+                url: "https://grupovisualcont.com/#cta",
                 description:
                   "Sección de beneficios rápidos y botón de contacto.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Productos",
-                url: "https://www.softwarecontableerp.com/#products",
+                url: "https://grupovisualcont.com/#products",
                 description:
                   "Módulos: contabilidad, facturación, sistema de planillas y ERP integrado.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Certificaciones",
-                url: "https://www.softwarecontableerp.com/#certificates",
+                url: "https://grupovisualcont.com/#certificates",
                 description: "Acreditaciones e integraciones (incluida SUNAT).",
               },
               {
                 "@type": "WebPageElement",
                 name: "Clientes",
-                url: "https://www.softwarecontableerp.com/#clients",
+                url: "https://grupovisualcont.com/#clients",
                 description: "Logos de empresas y sectores atendidos.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Demo",
-                url: "https://www.softwarecontableerp.com/#demo",
+                url: "https://grupovisualcont.com/#demo",
                 description:
                   "Formulario/WhatsApp para solicitar demo de 15 días.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Testimonios",
-                url: "https://www.softwarecontableerp.com/#testimonials",
+                url: "https://grupovisualcont.com/#testimonials",
                 description: "Opiniones de clientes y casos de éxito.",
               },
             ],
@@ -144,7 +150,7 @@ export default function Home() {
             "@context": "https://schema.org",
             "@type": "OfferCatalog",
             name: "Visual ERP - Módulos",
-            url: "https://https://www.softwarecontableerp.com/#products",
+            url: "https://https://grupovisualcont.com/#products",
             itemListElement: [
               {
                 "@type": "Offer",

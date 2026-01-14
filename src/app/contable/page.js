@@ -5,7 +5,7 @@ import Features from "@/components/services/features";
 import Capabilities from "@/components/services/capabilities";
 import Pricing from "@/components/services/pricing";
 import Demo from "@/shared/demo";
-import WhatsAppFab from "@/shared/whatsappFab";
+import IconsGroup from "@/shared/iconsGroup";
 import {
   FolderInput,
   HandCoins,
@@ -41,7 +41,7 @@ export const metadata = {
       "Con visualCONT registra tus asientos contables de forma rápida y práctica, presenta tu contabilidad al día, genera libros electrónicos ple y sire sunat conforme a las normas tributarias.",
     images: [
       {
-        url: "https://www.softwarecontableerp.com/images/logos/LogVBlancoRelleno.svg",
+        url: "/images/banner/visualBanner.jpg",
         alt: "VisualCONT",
       },
     ],
@@ -53,9 +53,7 @@ export const metadata = {
     title: "Software de Contabilidad | VisualCONT",
     description:
       "Con visualCONT registra tus asientos contables de forma rápida y práctica, presenta tu contabilidad al día, genera libros electrónicos ple y sire sunat conforme a las normas tributarias.",
-    images: [
-      "https://www.softwarecontableerp.com/images/logos/LogVBlancoRelleno.svg",
-    ],
+    images: ["/images/banner/visualBanner.jpg"],
   },
   robots: {
     index: true,
@@ -82,8 +80,9 @@ const services = [
   },
   {
     id: 3,
-    title: "Software multiempresas",
-    description: "Gestiona múltiple cantidad de empresas desde una sola plataforma.",
+    title: "Conciliación bancaria",
+    description:
+      "Integra las cuentas bancarias con la contabilidad para agilizar el proceso de conciliación.",
     icon: Building2,
     color: "bg-[#257CD0]",
   },
@@ -105,25 +104,25 @@ const services = [
   },
   {
     id: 6,
-    title: "Licencia ilimitada",
+    title: "Cuentas por cobrar y pagar",
     description:
-      "Sin restricciones de tiempo o usuarios en nuestros planes empresariales.",
+      "Gestiona transacciones y saldos pendientes para mantener un flujo de efectivo saludable.",
     icon: Infinity,
     color: "bg-[#257CD0]",
   },
   {
     id: 7,
-    title: "Exportación DAOT/PDT",
+    title: "Control de activos fijos",
     description:
-      "Genera y exporta fácilmente tus declaraciones para presentar ante SUNAT.",
+      "Administra tus activos fijos y genera automáticamente los asientos de depreciación.",
     icon: FolderOutput,
     color: "bg-[#257CD0]",
   },
   {
     id: 8,
-    title: "Consulta RUC y DNI",
+    title: "Análisis comparativos mensuales",
     description:
-      "Verifica la información de tus clientes y proveedores directamente desde el sistema.",
+      "Obtén reportes comparativos, consolidados y combinados de los estados financieros.",
     icon: Search,
     color: "bg-[#257CD0]",
   },
@@ -134,11 +133,11 @@ const capabilitiesData = [
     title: "Accede, integra y protege tu contabilidad con confianza",
     content: [
       "Maneja tu contabilidad en línea desde cualquier lugar y dispositivo, sin instalaciones ni complicaciones técnicas",
-      "Conecta tu gestión directamente con SUNAT y automatiza procesos contables clave",
+      "Conecta tu gestión directamente con SUNAT y automatiza procesos clave en tu gestión contable",
       "Genera y presenta de forma ágil el PLE, PLAME y Estados Financieros cumpliendo la normativa tributaria",
     ],
     description:
-      "Una solución diseñada para simplificar tu trabajo contable: accesible, automatizada y segura en todo momento.",
+      "Una solución diseñada para optimizar tu trabajo contable: accesible, automatizada y segura en todo momento.",
     buttonText: "Pruébalo gratis",
     image: "/images/contable/contable-capacidad.webp",
     reverse: false,
@@ -148,19 +147,35 @@ const capabilitiesData = [
 const plans = [
   {
     name: "Básico",
-    monthly: 39,
-    annual: 390,
+    monthly: 3,
+    annual: 190,
+    monthlyOld: 19,
+    annualOld: 190,
     highlighted: false,
     cta: "Elegir Básico",
     features: [
-      "Ingreso de compras, ventas y diario",
-      "Estado de Situación Financiera",
-      "Estado de Resultados",
-      "Conciliación bancaria",
-      "DAOT – envío directo al PDT",
-      "Libros electrónicos SIRE SUNAT",
+      "Contabilidad hasta 5 empresas",
+      "1 Usuario",
+      "256 MB de almacenamiento",
+      "Activación de sistema contable",
+      "Conexión con registros electrónicos SIRE SUNAT",
+      "Sistema contable en la nube",
+      "Última versión del Plan Contable",
+      "Régimen Especial, MYPE Tributario o General",
+      "Importación y exportación Microsoft Excel",
+      "Registro de compras",
+      "Registro de ventas e ingresos",
+      "Libro Diario de formato simplificado,Libro Diario y Libro Mayor",
+      "Detracciones, retenciones y percepciones",
+      "Balance de comprobación (general y analítico)",
+      "Estado de situación financiera y estado de resultados",
+      "Validación de comprobantes automático con SUNAT",
+      "Plan contable para cada empresa",
+      "Asientos automáticos y voucher contable",
+      "Centro de costos y proyectos de inversión",
       "4 horas de capacitación",
     ],
+
     ctaAnnualUrl:
       "https://api.whatsapp.com/send/?phone=51956703375&text=Hola%2C+me+interesa+contratar+el+PLAN+B%C3%81SICO+ANUAL+del+Software+de+Contabilidad+web.%0A%C2%BFPodr%C3%ADan+explicarme+los+beneficios+y+ventajas+de+esta+modalidad%3F&type=phone_number&app_absent=0",
     ctaMonthlyUrl:
@@ -169,18 +184,34 @@ const plans = [
   },
   {
     name: "Intermedio",
-    monthly: 68,
-    annual: 680,
+    monthly: 5,
+    annual: 490,
+    monthlyOld: 49,
+    annualOld: 490,
     highlighted: true, // favorito
     cta: "Elegir Intermedio",
     features: [
-      "Ingreso de compras, ventas y diario",
-      "Reportes en moneda extranjera",
-      "Análisis de cuentas corrientes",
-      "Cierre anual y asiento de apertura automático",
-      "Módulo de activos fijos (depreciación automática)",
-      "Informes gerenciales",
-      "4 horas de capacitación",
+      "Contabilidad hasta 50 empresas",
+      "5 Usuarios",
+      "512 MB de almacenamiento",
+      "Activación de sistema contable",
+      "Conexión con registros electrónicos SIRE SUNAT",
+      "Sistema contable en la nube",
+      "Última versión del Plan Contable",
+      "Régimen Especial, MYPE Tributario o General",
+      "Importación y exportación Microsoft Excel",
+      "Registro de compras",
+      "Registro de ventas e ingresos",
+      "Libro Diario de formato simplificado,Libro Diario y Libro Mayor",
+      "Detracciones, retenciones y percepciones",
+      "Balance de comprobación (general y analítico)",
+      "Estado de situación financiera y estado de resultados",
+      "Validación de comprobantes automático con SUNAT",
+      "Plan contable para cada empresa",
+      "Asientos automáticos y voucher contable",
+      "Centro de costos y proyectos de inversión",
+      "NUEVO: Descarga facturas electrónicas con el detalle de sus ítems (PDF, CDR, XML y Excel)",
+      "8 horas de capacitación",
     ],
     ctaAnnualUrl:
       "https://api.whatsapp.com/send/?phone=51956703375&text=Hola%2C+me+interesa+contratar+el+PLAN+INTERMEDIO+ANUAL+del+Software+de+Contabilidad+web.%0A%C2%BFPodr%C3%ADan+explicarme+los+beneficios+y+ventajas+de+esta+modalidad%3F&type=phone_number&app_absent=0",
@@ -190,19 +221,35 @@ const plans = [
   },
   {
     name: "Avanzado",
-    monthly: 99,
+    monthly: 10,
     annual: 990,
+    monthlyOld: 99,
+    annualOld: 990,
     highlighted: false,
     cta: "Elegir Avanzado",
     features: [
-      "Ingreso de compras, ventas y diario",
-      "Reportes en moneda extranjera",
-      "Análisis de cuentas corrientes",
-      "Créditos y cobranzas",
-      "Analizadores de datos",
-      "Reporte de centro de costos",
-      "Administrador de usuarios",
-      "6 horas de capacitación",
+      "Contabilidad ilimitada multiempresas",
+      "Usuarios ilimitados",
+      "1512 MB de almacenamiento",
+      "Activación de sistema contable",
+      "Conexión con registros electrónicos SIRE SUNAT",
+      "Sistema contable en la nube",
+      "Última versión del Plan Contable",
+      "Régimen Especial, MYPE Tributario o General",
+      "Importación y exportación Microsoft Excel",
+      "Registro de compras",
+      "Registro de ventas e ingresos",
+      "Libro Diario de formato simplificado,Libro Diario y Libro Mayor",
+      "Detracciones, retenciones y percepciones",
+      "Balance de comprobación (general y analítico)",
+      "Estado de situación financiera y estado de resultados",
+      "Validación de comprobantes automático con SUNAT",
+      "Plan contable para cada empresa",
+      "Asientos automáticos y voucher contable",
+      "Centro de costos y proyectos de inversión",
+      "NUEVO: Descarga facturas electrónicas con el detalle de sus ítems (PDF, CDR, XML y Excel)",
+      "Libros Electrónicos PLE SUNAT (incluye LIB)",
+      "20 horas de capacitación",
     ],
     ctaAnnualUrl:
       "https://api.whatsapp.com/send/?phone=51956703375&text=Hola%2C+me+interesa+contratar+el+PLAN+AVANZADO+ANUAL+del+Software+de+Contabilidad+web.%0A%C2%BFPodr%C3%ADan+explicarme+los+beneficios+y+ventajas+de+esta+modalidad%3F&type=phone_number&app_absent=0",
@@ -234,7 +281,7 @@ export default function SistemaContable() {
           serviceName="Sistema Contable"
           title="Optimiza tu gestión financiera con nuestro"
           titleColored="Sistema Contable"
-          content="Nuestro Sistema Contable está diseñado para simplificar y automatizar la gestión financiera de tu empresa. Ahorra tiempo y reduce errores con nuestro sistema confiable y eficiente."
+          content="Un software pensado para contadores, diseñado para facilitar la gestión contable, ayudándote a concentrarte en lo realmente importa: brindar un servicio de excelencia."
           button="Contáctanos"
         />
         <Features
@@ -245,16 +292,16 @@ export default function SistemaContable() {
         />
         <Capabilities
           service="VisualCONT"
-          coloredTitle="Repotencia tu contabilidad"
+          coloredTitle="Repotencia tu gestion Contable"
           capabilities={capabilitiesData}
         />
-        <Pricing plans={plans} />
+        <Pricing plans={plans} hasMonthly={true} hasAnnual={false} />
         <Demo data={demoData} />
       </div>
       <Footer />
 
-      {/* Whatsapp Icono Flotante */}
-      <WhatsAppFab href="https://wa.me/51956703375?text=Hola%2C%20%C2%BFMe%20puede%20explicar%20c%C3%B3mo%20el%20sistema%20me%20puede%20dar%20mejores%20resultados%3F%20%C2%BFMe%20podr%C3%ADa%20agendar%20una%20demo%3F%20Much%C3%ADsimas%20gracias" />
+      {/* Grupo de Iconos*/}
+      <IconsGroup />
 
       {/* JSON-LD: Software + planes (OfferCatalog) */}
       <Script
@@ -269,19 +316,19 @@ export default function SistemaContable() {
             operatingSystem: "Web",
             description:
               "Software contable para empresas: libros electrónicos, reportes, /PDT, integración con SUNAT y consultas RUC/DNI.",
-            url: "https://www.softwarecontableerp.com/contable",
-            logo: "https://www.softwarecontableerp.com/images/logos/LogVBlancoRelleno.svg",
+            url: "https://grupovisualcont.com/contable",
+            logo: "https://grupovisualcont.com/images/logos/LogVBlancoRelleno.svg",
             inLanguage: "es-PE",
             areaServed: "PE",
             provider: {
               "@type": "Organization",
               name: "Visual ERP",
-              url: "https://www.softwarecontableerp.com/",
+              url: "https://grupovisualcont.com/",
             },
             publisher: {
               "@type": "Organization",
               name: "Visual ERP",
-              url: "https://www.softwarecontableerp.com/",
+              url: "https://grupovisualcont.com/",
             },
             brand: { "@type": "Brand", name: "VisualCONT" },
             featureList: [
@@ -295,7 +342,7 @@ export default function SistemaContable() {
             offers: {
               "@type": "OfferCatalog",
               name: "Planes de VisualCONT",
-              url: "https://www.softwarecontableerp.com/contable#pricing",
+              url: "https://grupovisualcont.com/contable#pricing",
               itemListElement: [
                 {
                   "@type": "Offer",
@@ -361,7 +408,7 @@ export default function SistemaContable() {
             },
             mainEntityOfPage: {
               "@type": "WebPage",
-              url: "https://www.softwarecontableerp.com/contable",
+              url: "https://grupovisualcont.com/contable",
             },
           }),
         }}
@@ -375,8 +422,8 @@ export default function SistemaContable() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebPage",
-            "@id": "https://www.softwarecontableerp.com/contable#webpage",
-            url: "https://www.softwarecontableerp.com/contable",
+            "@id": "https://grupovisualcont.com/contable#webpage",
+            url: "https://grupovisualcont.com/contable",
             name: "Software de Contabilidad | VisualCONT",
             description:
               "Automatiza contabilidad, libros electrónicos, reportes y PDT con integración SUNAT. Demo gratis 15 días.",
@@ -384,41 +431,41 @@ export default function SistemaContable() {
             isPartOf: {
               "@type": "WebSite",
               name: "Visual ERP",
-              url: "https://www.softwarecontableerp.com/",
+              url: "https://grupovisualcont.com/",
             },
             hasPart: [
               {
                 "@type": "WebPageElement",
                 name: "Hero",
-                url: "https://www.softwarecontableerp.com/contable#hero",
+                url: "https://grupovisualcont.com/contable#hero",
                 description:
                   "Propuesta de valor y llamada a la acción para contactar al equipo.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Características",
-                url: "https://www.softwarecontableerp.com/contable#features",
+                url: "https://grupovisualcont.com/contable#features",
                 description:
                   "Importación de compras, integración con planillas, multiempresa, reportes, validación de comprobantes.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Capacidades",
-                url: "https://www.softwarecontableerp.com/contable#capabilities",
+                url: "https://grupovisualcont.com/contable#capabilities",
                 description:
                   "Acceso web, integración SUNAT, seguridad y cifrado, automatizaciones contables.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Precios",
-                url: "https://www.softwarecontableerp.com/contable#pricing",
+                url: "https://grupovisualcont.com/contable#pricing",
                 description:
                   "Planes Básico, Intermedio y Avanzado en modalidad mensual y anual.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Demo",
-                url: "https://www.softwarecontableerp.com/contable#demo",
+                url: "https://grupovisualcont.com/contable#demo",
                 description:
                   "WhatsApp para solicitar una demo gratuita de 15 días.",
               },
@@ -440,13 +487,13 @@ export default function SistemaContable() {
                 "@type": "ListItem",
                 position: 1,
                 name: "Inicio",
-                item: "https://www.softwarecontableerp.com/",
+                item: "https://grupovisualcont.com/",
               },
               {
                 "@type": "ListItem",
                 position: 2,
                 name: "Contabilidad",
-                item: "https://www.softwarecontableerp.com/contable",
+                item: "https://grupovisualcont.com/contable",
               },
             ],
           }),

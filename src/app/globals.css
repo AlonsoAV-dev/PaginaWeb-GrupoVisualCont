@@ -122,15 +122,14 @@
   }
 
   .btn-primary {
-    @apply px-7 py-2.5 rounded-md ease-in-out transition duration-300 text-base font-medium shadow-sm ;
+    @apply px-7 py-2.5 rounded-md ease-in-out transition duration-300 text-base font-medium shadow-sm;
     background-color: #1f4c8f;
     color: #ffffff;
   }
 
   .btn-primary:hover {
-    background-color: #00AEEF;
+    background-color: #00aeef;
   }
-
 
   /* Mobile menu styles */
   .mobile-menu-overlay {
@@ -202,14 +201,13 @@
   }
 
   .prose a {
-    @apply text-[#7A7FEE] hover:underline;
+    @apply text-[#0070F2] hover:underline;
   }
 
   .prose strong {
     @apply font-semibold text-gray-900 dark:text-white;
   }
 }
-
 
 /* === CTA Crossfade === */
 .cta-fade {
@@ -223,20 +221,36 @@
   position: absolute;
   inset: 0;
   opacity: 0;
-  animation: cta-xfade var(--cta-dur) infinite ease-in-out; 
+  animation: cta-xfade var(--cta-dur) infinite ease-in-out;
 }
 
-.cta-fade__slide:nth-child(1) { animation-delay: 0s; }
-.cta-fade__slide:nth-child(2) { animation-delay: calc(var(--cta-dur) / 3); }
-.cta-fade__slide:nth-child(3) { animation-delay: calc(2 * var(--cta-dur) / 3); }
+.cta-fade__slide:nth-child(1) {
+  animation-delay: 0s;
+}
+.cta-fade__slide:nth-child(2) {
+  animation-delay: calc(var(--cta-dur) / 3);
+}
+.cta-fade__slide:nth-child(3) {
+  animation-delay: calc(2 * var(--cta-dur) / 3);
+}
 
 /* “desaparece → aparece” suave */
 @keyframes cta-xfade {
-  0%   { opacity: 0; }
-  10%  { opacity: 1; }
-  30%  { opacity: 1; }
-  40%  { opacity: 0; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  30% {
+    opacity: 1;
+  }
+  40% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 .underlineText {
@@ -245,7 +259,7 @@
 }
 
 .underlineText::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -4px; /* equivalente a underline-offset-4 */
   left: 0;
@@ -257,5 +271,104 @@
 
 .underlineText:hover::after {
   width: 100%;
+}
+
+.image-sidebar {
+  width: 100%;
+  transform: scale(1.05);
+  transition: transform 300ms ease-in-out;
+}
+
+.image-sidebar:hover {
+  transform: scale(1.0);
+}
+
+/* solution fade */
+.solutions-fade {
+  position: relative;
+  --solutions-dur: 20s;
+}
+
+.solutions-fade__slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none; /* Deshabilita clicks cuando no es visible */
+  z-index: 1;
+  animation: solutions-xfade var(--solutions-dur) infinite ease-in-out;
+}
+
+.solutions-fade__slide:first-child {
+  position: static;
+  opacity: 0;
+}
+
+.solutions-fade__slide:nth-child(1) {
+  animation-delay: 0s;
+}
+.solutions-fade__slide:nth-child(2) {
+  animation-delay: 5s;
+}
+.solutions-fade__slide:nth-child(3) {
+  animation-delay: 10s;
+}
+.solutions-fade__slide:nth-child(4) {
+  animation-delay: 15s;
+}
+
+@keyframes solutions-xfade {
+  0% {
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+  5% {
+    opacity: 1;
+    pointer-events: auto; /* Habilita clicks cuando es visible */
+    z-index: 10; /* Pone encima cuando es visible */
+  }
+  20% {
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 10;
+  }
+  25% {
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+  100% {
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+.socialMediaIcons {
+  font-size: 1.25rem;
+  line-height: 1.5rem;
+}
+
+.socialMediaIcons:hover {
+  transform: scale(1.2);
+  transition: transform 300ms ease-in-out;
+}
+
+df-messenger {
+  --df-messenger-button-titlebar-color: #1F4C8F;
+  --df-messenger-chat-background-color: #ffffff;
+  --df-messenger-font-color: #111827;
+  --df-messenger-send-icon: var(--brand);
+  --df-messenger-user-message: #e7f0ff;
+  --df-messenger-bot-message: #f5f8fc;
+  position: fixed;
+  right: 20px;
+  bottom: 82px;
+  z-index: 1001;
+  margin: 0;
+  padding: 0;
 }
 

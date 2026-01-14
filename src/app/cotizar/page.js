@@ -2,7 +2,7 @@ import Navbar from "@/shared/navbar";
 import Footer from "@/shared/footer";
 import Form from "@/components/quote/form";
 import Faq from "@/shared/faq";
-import WhatsAppFab from "@/shared/whatsappFab";
+import IconsGroup from "@/shared/iconsGroup";
 import Script from "next/script";
 
 export const metadata = {
@@ -18,7 +18,7 @@ export const metadata = {
       "Completa el formulario para recibir una propuesta a medida: contabilidad, facturación, planillas y ERP integrado.",
     images: [
       {
-        url: "https://www.softwarecontableerp.com/images/logos/LogVBlancoRelleno.svg",
+        url: "/images/banner/visualBanner.jpg",
         alt: "Visual ERP",
       },
     ],
@@ -30,9 +30,7 @@ export const metadata = {
     title: "Cotizar | Visual ERP",
     description:
       "Pide tu cotización personalizada de Visual ERP para tu empresa.",
-    images: [
-      "https://www.softwarecontableerp.com/images/logos/LogVBlancoRelleno.svg",
-    ],
+    images: ["/images/banner/visualBanner.jpg"],
   },
   robots: {
     index: true,
@@ -52,8 +50,8 @@ function Cotizar() {
       </div>
       <Footer />
 
-      {/* Whatsapp Icono Flotante */}
-      <WhatsAppFab href="https://wa.me/51956703375?text=Hola%2C%20%C2%BFMe%20puede%20explicar%20como%20el%20sistema%20me%20puede%20dar%20mejores%20resultados%3F%20%C2%BFMe%20podr%C3%ADa%20agendar%20una%20demo%3F%20Much%C3%ADsimas%20gracias" />
+      {/* Grupo de Iconos*/}
+      <IconsGroup />
 
       {/* JSON-LD: Contact/Quote Page + secciones */}
       <Script
@@ -63,8 +61,8 @@ function Cotizar() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "ContactPage",
-            "@id": "https://www.softwarecontableerp.com/cotizar#contact",
-            url: "https://www.softwarecontableerp.com/cotizar",
+            "@id": "https://grupovisualcont.com/cotizar#contact",
+            url: "https://grupovisualcont.com/cotizar",
             name: "Cotizar | Visual ERP",
             description:
               "Página de cotización para solicitar una propuesta personalizada de Visual ERP.",
@@ -72,21 +70,94 @@ function Cotizar() {
             isPartOf: {
               "@type": "WebSite",
               name: "Visual ERP",
-              url: "https://www.softwarecontableerp.com/",
+              url: "https://grupovisualcont.com/",
             },
             hasPart: [
               {
                 "@type": "WebPageElement",
                 name: "Formulario de cotización",
-                url: "https://www.softwarecontableerp.com/cotizar#quote-form",
+                url: "https://grupovisualcont.com/cotizar#quote-form",
                 description:
                   "Formulario para enviar tus datos y recibir una propuesta personalizada.",
               },
               {
                 "@type": "FAQPage",
                 name: "Preguntas frecuentes",
-                url: "https://www.softwarecontableerp.com/cotizar#faq",
-                mainEntity: [], // si tu componente FAQ ya inyecta JSON-LD de FAQPage, déjalo vacío aquí
+                url: "https://grupovisualcont.com/cotizar#faq",
+                mainEntity: [
+                  {
+                    "@type": "Question",
+                    name: "¿El software cumple con las normativas fiscales según SUNAT?",
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: "<p>Sí, nuestro software cumple al 100% con las normativas fiscales establecidas por la SUNAT (Superintendencia Nacional de Administración Tributaria del Perú). Está diseñado y actualizado continuamente para adaptarse a los requisitos tributarios vigentes.</p>",
+                    },
+                  },
+                  {
+                    "@type": "Question",
+                    name: "¿El software está actualizado conforme a las últimas disposiciones de SUNAT sobre el SIRE?",
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: "<p>Sí, nuestro sistema se actualiza automáticamente para cumplir con los cambios normativos y garantizar que siempre estés en regla.</p>",
+                    },
+                  },
+                  {
+                    "@type": "Question",
+                    name: "¿El sistema calcula automáticamente IGV, detracciones, percepciones y retenciones?",
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: "<p>Sí, puedes configurar estos conceptos para que el sistema los aplique automáticamente en las operaciones.</p>",
+                    },
+                  },
+                  {
+                    "@type": "Question",
+                    name: "¿Puedo personalizar los reportes o comprobantes?",
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: "<p>Sí, puedes personalizar los formatos de comprobantes (con tu logo, colores, datos), y también configurar reportes y de gestión según tus necesidades.</p>",
+                    },
+                  },
+                  {
+                    "@type": "Question",
+                    name: "¿Funciona en la nube o es local?",
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: "<p>Ofrecemos ambas opciones: versión en la nube (para acceder desde cualquier lugar) y versión local (instalada en tu equipo). Tú eliges la que prefieras.</p>",
+                    },
+                  },
+                  {
+                    "@type": "Question",
+                    name: "¿Puedo usarlo si tengo un negocio pequeño o recién estoy empezando?",
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: "<p>Claro que sí. Tenemos planes diseñados especialmente para emprendedores y pequeñas empresas que necesitan una solución simple, eficiente y económica.</p>",
+                    },
+                  },
+                  {
+                    "@type": "Question",
+                    name: "¿Entregan manuales o material de apoyo?",
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: "<p>Sí, incluimos manuales, videotutoriales y acceso a nuestra base de conocimientos en línea.</p>",
+                    },
+                  },
+                  {
+                    "@type": "Question",
+                    name: "¿Qué necesito para empezar a usar el software?",
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: "<p>Solo necesitas definir el plan que se ajuste a tu negocio, brindarnos algunos datos básicos y ¡listo! Agendamos la instalación y capacitación.</p>",
+                    },
+                  },
+                  {
+                    "@type": "Question",
+                    name: "¿Puedo ver una demostración antes de comprar?",
+                    acceptedAnswer: {
+                      "@type": "Answer",
+                      text: "<p>Sí, puedes solicitar una demo gratuita para ver el sistema en funcionamiento y resolver todas tus dudas.</p>",
+                    },
+                  },
+                ],
               },
             ],
             potentialAction: {
@@ -94,7 +165,7 @@ function Cotizar() {
               target: {
                 "@type": "EntryPoint",
                 urlTemplate:
-                  "https://www.softwarecontableerp.com/api/formulario", // ajusta a tu endpoint real
+                  "https://visual-api-gray.vercel.app/api/formulario",
                 actionPlatform: [
                   "http://schema.org/DesktopWebPlatform",
                   "http://schema.org/MobileWebPlatform",
@@ -121,13 +192,13 @@ function Cotizar() {
                 "@type": "ListItem",
                 position: 1,
                 name: "Inicio",
-                item: "https://www.softwarecontableerp.com/",
+                item: "https://grupovisualcont.com/",
               },
               {
                 "@type": "ListItem",
                 position: 2,
                 name: "Cotizar",
-                item: "https://www.softwarecontableerp.com/cotizar",
+                item: "https://grupovisualcont.com/cotizar",
               },
             ],
           }),

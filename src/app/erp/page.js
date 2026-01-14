@@ -5,7 +5,7 @@ import Features from "@/components/services/features";
 import Capabilities from "@/components/services/capabilities";
 import Pricing from "@/components/services/pricing";
 import Demo from "@/shared/demo";
-import WhatsAppFab from "@/shared/whatsappFab";
+import IconsGroup from "@/shared/iconsGroup";
 import {
   Warehouse,
   Receipt,
@@ -19,34 +19,33 @@ import {
 import Script from "next/script";
 
 export const metadata = {
-  title: "Software ERP Integrado VisualINT",
+  title: "Software ERP Integrado VisualERP",
   description:
-    "Nuestro sistema web VisualINT cuenta con inventarios (KARDEX SUNAT), ventas y facturación, compras, tesorería y bancos, cierre contable (EEFF) y multiempresa. Accede a una demo gratis por 15 días.",
+    "Nuestro sistema web VisualERP cuenta con inventarios (KARDEX SUNAT), ventas y facturación, compras, tesorería y bancos, cierre contable (EEFF) y multiempresa. Accede a una demo gratis por 15 días.",
   alternates: {
     canonical: "/erp",
   },
   keywords: [
     "ERP Perú",
     "ERP integrado",
-    "KARDEX SUNAT",
     "inventario",
     "tesorería",
     "facturación",
     "compras",
     "cuentas por pagar",
     "multiempresa",
-    "VisualINT",
+    "VisualERP",
   ],
   openGraph: {
     type: "website",
     url: "/erp",
-    title: "Software ERP Integrado | VisualINT",
+    title: "Software ERP Integrado | VisualERP",
     description:
       "Control total: inventarios, ventas, compras, tesorería y cierre contable. Multiempresa y 100% web.",
     images: [
       {
-        url: "https://www.softwarecontableerp.com/images/logos/LogVBlancoRelleno.svg",
-        alt: "VisualINT",
+        url: "/images/banner/visualBanner.jpg",
+        alt: "VisualERP",
       },
     ],
     siteName: "Visual ERP",
@@ -54,11 +53,11 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Software ERP Integrado | VisualINT",
+    title: "Software ERP Integrado | VisualERP",
     description:
       "ERP web escalable con módulos de inventario, ventas, compras y tesorería. Pruébalo 15 días gratis.",
     images: [
-      "https://www.softwarecontableerp.com/images/logos/LogVBlancoRelleno.svg",
+      "/images/banner/visualBanner.jpg",
     ],
   },
   robots: {
@@ -88,8 +87,8 @@ const services = [
   },
   {
     id: 3,
-    title: "Compras y CxP",
-    description: "Órdenes de compra, provisiones y recibos por honorarios.",
+    title: "Conexión API",
+    description: "Integra contabilidad, inventario y ventas en una sola plataforma",
     icon: ShoppingCart,
     color: "bg-[#257CD0]",
   },
@@ -109,23 +108,23 @@ const services = [
   },
   {
     id: 6,
-    title: "Sistema en red",
+    title: "Inteligencia Artificial",
     description:
-      "Hasta 6 maquinas en red segun el plan con personalizacion incluida.",
+      "Anticipa las ventas y tendencias para planificar mejor.",
     icon: Network,
     color: "bg-[#257CD0]",
   },
   {
     id: 7,
-    title: "Multirubro",
-    description: "Diseñado para farmacias, tiendas, ferreterías y más.",
+    title: "Inventario en tiempo real",
+    description: "Controla entradas, salidas y niveles de stock al instante.",
     icon: Factory,
     color: "bg-[#257CD0]",
   },
   {
     id: 8,
-    title: "100% Web",
-    description: "Sistema online con SQL para máximo rendimiento y seguridad.",
+    title: "Ecommerce y facturación electrónica",
+    description: "Conecta tu negocio online, gestiona pedidos y emite comprobantes.",
     icon: CloudCheck,
     color: "bg-[#257CD0]",
   },
@@ -133,11 +132,11 @@ const services = [
 
 const capabilitiesData = [
   {
-    title: "Un ERP sólido y listo para crecer contigo",
+    title: "Un ERP sólido listo para crecer contigo y tu negocio",
     content: [
       "Soporte especializado y constante para garantizar continuidad en tus operaciones",
-      "Plataforma escalable que centraliza finanzas, clientes y procesos clave en un solo sistema",
-      "Seguridad de primer nivel respaldada en AWS, asegurando la integridad y disponibilidad de tus datos",
+      "Plataforma escalable que centraliza finanzas, clientes y procesos clave en un unico sistema",
+      "Seguridad de primer nivel respaldada por AWS, asegurando la integridad y disponibilidad de tu información",
     ],
     description:
       "Con VisualERP tu organización logra un control total de sus procesos, con soporte permanente, tecnología escalable y la seguridad de trabajar en la nube con estándares internacionales.",
@@ -206,24 +205,24 @@ export default function SistemaIntegrado() {
       <Navbar />
       <div className="container pt-4">
         <Hero
-          logoLight="/images/integrado/visualINT.webp"
-          logoDark="/images/integrado/visualINT-b.webp"
+          logoLight="/images/integrado/visualERP.webp"
+          logoDark="/images/integrado/visualERP-b.webp"
           heroImageSrc="/images/integrado/integrado-image.webp"
-          serviceName="Sistema Integrado"
+          serviceName="Sistema ERP Integrado"
           title="Optimiza tu gestión financiera con nuestro"
-          titleColored="Sistema Integrado"
-          content="Nuestro Sistema Integrado está diseñado para simplificar y automatizar la gestión financiera de tu empresa. Ahorra tiempo y reduce errores con nuestro sistema confiable y eficiente."
+          titleColored="Sistema ERP"
+          content="ERP integrado que conecta todas las áreas, optimiza recursos y centraliza la información de clientes, ofreciendo análisis avanzados para mejorar la gestión y la toma de decisiones."
           button="Contáctanos"
         />
         <Features
           title="Descubre las funcionalidades mas importantes del "
-          coloredTitle="Sistema Integrado ERP"
+          coloredTitle="Sistema ERP"
           description="Ofrecemos una variedad de servicios para optimizar la gestión integrada de tu empresa."
           services={services}
         />
         <Capabilities
-          service="VisualINT"
-          coloredTitle="repotencia tu negocio"
+          service="VisualERP"
+          coloredTitle="Repotencia todas las gestiones de tu negocio"
           capabilities={capabilitiesData}
         />
         <Pricing plans={plans} hasMonthly={false} hasAnnual={true} />
@@ -231,8 +230,8 @@ export default function SistemaIntegrado() {
       </div>
       <Footer />
 
-      {/* Whatsapp Icono Flotante */}
-      <WhatsAppFab href="https://wa.me/51956703375?text=Hola%2C%20%C2%BFMe%20puede%20explicar%20como%20el%20sistema%20me%20puede%20dar%20mejores%20resultados%3F%20%C2%BFMe%20podr%C3%ADa%20agendar%20una%20demo%3F%20Much%C3%ADsimas%20gracias" />
+      {/* Grupo de Iconos*/}
+      <IconsGroup />
 
       {/* JSON-LD: ERP Integrado + planes */}
       <Script
@@ -242,26 +241,26 @@ export default function SistemaIntegrado() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
-            name: "VisualINT - ERP Integrado",
+            name: "VisualERP - ERP Integrado",
             applicationCategory: "BusinessApplication",
             operatingSystem: "Web",
             description:
               "ERP web para empresas: almacén e inventarios (KARDEX SUNAT), ventas y facturación, compras y CxP, tesorería y bancos, cierre contable y multiempresa.",
-            url: "https://www.softwarecontableerp.com/erp",
-            logo: "https://www.softwarecontableerp.com/images/logos/LogVBlancoRelleno.svg",
+            url: "https://grupovisualcont.com/erp",
+            logo: "https://grupovisualcont.com/images/logos/LogVBlancoRelleno.svg",
             inLanguage: "es-PE",
             areaServed: "PE",
             provider: {
               "@type": "Organization",
               name: "Visual ERP",
-              url: "https://www.softwarecontableerp.com/",
+              url: "https://grupovisualcont.com/",
             },
             publisher: {
               "@type": "Organization",
               name: "Visual ERP",
-              url: "https://www.softwarecontableerp.com/",
+              url: "https://grupovisualcont.com/",
             },
-            brand: { "@type": "Brand", name: "VisualINT" },
+            brand: { "@type": "Brand", name: "VisualERP" },
             featureList: [
               "Almacén e inventario con KARDEX SUNAT",
               "Ventas y facturación (cotizaciones, guías, notas)",
@@ -273,8 +272,8 @@ export default function SistemaIntegrado() {
             ],
             offers: {
               "@type": "OfferCatalog",
-              name: "Planes de VisualINT",
-              url: "https://www.softwarecontableerp.com/erp#pricing",
+              name: "Planes de VisualERP",
+              url: "https://grupovisualcont.com/erp#pricing",
               itemListElement: [
                 {
                   "@type": "Offer",
@@ -300,7 +299,7 @@ export default function SistemaIntegrado() {
             },
             mainEntityOfPage: {
               "@type": "WebPage",
-              url: "https://www.softwarecontableerp.com/erp",
+              url: "https://grupovisualcont.com/erp",
             },
           }),
         }}
@@ -314,49 +313,49 @@ export default function SistemaIntegrado() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebPage",
-            "@id": "https://www.softwarecontableerp.com/erp#webpage",
-            url: "https://www.softwarecontableerp.com/erp",
-            name: "Software ERP Integrado | VisualINT",
+            "@id": "https://grupovisualcont.com/erp#webpage",
+            url: "https://grupovisualcont.com/erp",
+            name: "Software ERP Integrado | VisualERP",
             description:
               "ERP web con inventarios, ventas, compras, tesorería y cierre contable. Multiempresa y escalable.",
             inLanguage: "es-PE",
             isPartOf: {
               "@type": "WebSite",
               name: "Visual ERP",
-              url: "https://www.softwarecontableerp.com/",
+              url: "https://grupovisualcont.com/",
             },
             hasPart: [
               {
                 "@type": "WebPageElement",
                 name: "Hero",
-                url: "https://www.softwarecontableerp.com/erp#hero",
+                url: "https://grupovisualcont.com/erp#hero",
                 description: "Propuesta de valor y llamada a la acción.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Características",
-                url: "https://www.softwarecontableerp.com/erp#features",
+                url: "https://grupovisualcont.com/erp#features",
                 description:
                   "Inventario (KARDEX SUNAT), ventas y facturación, compras y CxP, tesorería y bancos, cierre contable.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Capacidades",
-                url: "https://www.softwarecontableerp.com/erp#capabilities",
+                url: "https://grupovisualcont.com/erp#capabilities",
                 description:
                   "Soporte especializado, plataforma escalable y seguridad en la nube.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Precios",
-                url: "https://www.softwarecontableerp.com/erp#pricing",
+                url: "https://grupovisualcont.com/erp#pricing",
                 description:
                   "Planes Básico, Mype y Pyme en modalidad mensual y anual.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Demo",
-                url: "https://www.softwarecontableerp.com/erp#demo",
+                url: "https://grupovisualcont.com/erp#demo",
                 description:
                   "WhatsApp para solicitar demo gratuita de 15 días.",
               },
@@ -378,13 +377,13 @@ export default function SistemaIntegrado() {
                 "@type": "ListItem",
                 position: 1,
                 name: "Inicio",
-                item: "https://www.softwarecontableerp.com/",
+                item: "https://grupovisualcont.com/",
               },
               {
                 "@type": "ListItem",
                 position: 2,
                 name: "ERP Integrado",
-                item: "https://www.softwarecontableerp.com/erp",
+                item: "https://grupovisualcont.com/erp",
               },
             ],
           }),

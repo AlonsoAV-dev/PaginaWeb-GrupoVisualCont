@@ -45,7 +45,7 @@ const testimonials = [
         name: "Augusto Sanchez",
         role: "Dueño cevicheria",
         content:
-            "El restaurante presentaba problema con las comandas, pedidos retrasados confusiones con los montos de caja, VisualFOOD llego para potenciar un mejor orden en temas de comandas y resolver el proble",
+            "El restaurante presentaba problema con las comandas, pedidos retrasados confusiones con los montos de caja, VisualFOOD llego para potenciar un mejor orden en temas de comandas y resolver el problema.",
         rating: 5,
         avatar: "/images/testimonios/Augusto.webp",
     },

@@ -1,14 +1,17 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { z } from "zod";
 import Script from "next/script";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Certificates from "@/shared/certificates";
+import { dlEvent } from "../../../lib/datalayer";
+import { usePathname } from "next/navigation";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
-const ORIGIN = typeof window !== "undefined" ? window.location.origin : "";
+const GA_MEAS_ID = process.env.NEXT_PUBLIC_GA_ID || "";
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
 
 // --- Reglas (frontend, JS) ---
 const schema = z.object({
@@ -46,64 +49,174 @@ const schema = z.object({
 
 function ErrorText({ children }) {
   if (!children) return null;
-  return <p className="mt-1 text-sm text-red-500">{children}</p>;
+  return <p className="text-sm text-red-500">{children}</p>;
+}
+
+function mpBeacon(eventName, params = {}) {
+  try {
+    const url = new URL("https://www.google-analytics.com/g/collect");
+    const search = new URLSearchParams({
+      v: "2",
+      tid: GA_MEAS_ID,
+      // client/session mínimos para que GA4 “cuente”
+      cid: "lead." + (crypto?.randomUUID?.() || Date.now()),
+      sid: String(Math.floor(Date.now() / 1000)),
+      sct: "1",
+      seg: "1",
+      _s: "1",
+      dl: typeof window !== "undefined" ? window.location.href : "",
+      dt: typeof document !== "undefined" ? document.title : "",
+      sr:
+        typeof window !== "undefined"
+          ? `${window.screen?.width || 0}x${window.screen?.height || 0}`
+          : "0x0",
+      ul:
+        typeof navigator !== "undefined"
+          ? (navigator.language || "es-es").toLowerCase()
+          : "es-es",
+      en: eventName,
+      // params -> ep.*
+      ...Object.fromEntries(
+        Object.entries(params).map(([k, v]) => [`ep.${k}`, String(v ?? "")])
+      ),
+    }).toString();
+    url.search = search;
+
+    if (typeof navigator !== "undefined" && navigator.sendBeacon) {
+      navigator.sendBeacon(url.toString());
+    } else {
+      fetch(url.toString(), { method: "GET", keepalive: true });
+    }
+  } catch {}
+}
+
+function sendGA(eventName, params = {}) {
+  dlEvent(eventName, params);
+
+  const hasGtag =
+    typeof window !== "undefined" && typeof window.gtag === "function";
+  const hasGTM =
+    typeof window !== "undefined" &&
+    typeof window.google_tag_manager !== "undefined";
+
+  if (!hasGtag && !hasGTM) {
+    mpBeacon(eventName, params);
+  }
 }
 
 export default function Form() {
+  const pathname = usePathname();
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     setValue,
+    setError,
+    clearErrors,
     reset,
-  } = useForm({
-    resolver: zodResolver(schema),
-    mode: "onBlur",
-  });
+  } = useForm({ resolver: zodResolver(schema), mode: "onBlur" });
+
+  const tsContainerRef = useRef(null);
+  const tsWidgetIdRef = useRef(null);
 
   useEffect(() => {
-    // @ts-ignore
-    window.onTurnstile = (t) => {
-      setValue("turnstileToken", t, { shouldValidate: true });
-    };
-  }, [setValue]);
+    setValue("turnstileToken", "", { shouldValidate: true });
+    clearErrors("turnstileToken");
 
-  //aqui va a ir la logica para enviar el formulario al backend
+    function renderTurnstile() {
+      const ts = typeof window !== "undefined" ? window.turnstile : undefined;
+      if (!ts || !tsContainerRef.current || !TURNSTILE_SITE_KEY) return;
+
+      // Si ya existe un widget, lo reseteamos para forzar nuevo token
+      if (tsWidgetIdRef.current) {
+        try {
+          ts.reset(tsWidgetIdRef.current);
+        } catch {}
+      } else {
+        tsWidgetIdRef.current = ts.render(tsContainerRef.current, {
+          sitekey: TURNSTILE_SITE_KEY,
+          theme: "auto",
+          callback: (token) => {
+            setValue("turnstileToken", token, { shouldValidate: true });
+            clearErrors("turnstileToken");
+          },
+          "error-callback": () => {
+            setError("turnstileToken", {
+              type: "manual",
+              message: "Vuelve a verificar",
+            });
+          },
+          "timeout-callback": () => {
+            setError("turnstileToken", {
+              type: "manual",
+              message: "La verificación expiró",
+            });
+          },
+          "expired-callback": () => {
+            setValue("turnstileToken", "", { shouldValidate: true });
+            setError("turnstileToken", {
+              type: "manual",
+              message: "La verificación expiró",
+            });
+          },
+        });
+      }
+    }
+
+    // Si el script aún no está listo, reintenta suave
+    let tries = 0;
+    const id = setInterval(() => {
+      if (typeof window !== "undefined" && window.turnstile) {
+        clearInterval(id);
+        renderTurnstile();
+      } else if (++tries > 20) {
+        clearInterval(id);
+      }
+    }, 150);
+
+    return () => clearInterval(id);
+  }, [pathname, setValue, setError, clearErrors]);
+
   const onSubmit = async (data) => {
-    // console.log('✅ Datos validados (front):', data);
-    // alert('Formulario válido. (Aún no enviamos al backend)');
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
-    const res = await fetch(API_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-    if (!res.ok) {
-      const j = await res.json().catch(() => ({}));
-      alert(j?.error || "No se pudo enviar. Intenta de nuevo.");
-      return
-    };
-    const j = await res.json().catch(() => ({}));
-    alert("¡Enviado! Te responderemos pronto.");
-    reset();
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        alert(j?.error || "No se pudo enviar. Intenta de nuevo.");
+        return;
+      }
+      await res.json().catch(() => ({}));
+      
+      // ÉXITO
+      sendGA("lead_form_submitted", {
+        form_id: "cotizar",
+        service: data.service || "(none)",
+        method: "web",
+      });
+      alert("¡Enviado! Te responderemos pronto.");
+      reset();
+
+      // Reiniciamos Turnstile
+      if (
+        typeof window !== "undefined" &&
+        window.turnstile &&
+        tsWidgetIdRef.current
+      ) {
+        window.turnstile.reset(tsWidgetIdRef.current);
+      }
+    } catch (err) {
+      alert("No se pudo enviar. Intenta de nuevo.");
+    }
   };
 
   return (
     <section id="quote-form" role="region" aria-labelledby="quote-form-title">
-      <h2
-        className="text-black dark:text-white text-4xl md:text-6xl font-medium text-center"
-        id="quote-form-title"
-      >
-        Contáctanos a cualquier hora y <br />
-        <span className="text-[#00AEEF] dark:text-[#00AEEF]">
-          desde cualquier lugar
-        </span>
-      </h2>
-      <p className="mt-6 text-gray-700 dark:text-gray-300 max-w-2xl mx-auto text-center">
-        Incluye capacitacion sin coste alguno y soporte tecnico, comunicate con
-        nuestro team especializado. ¡Dinos cómo podemos ayudarte!
-      </p>
-
       <div className="w-full flex flex-col md:flex-row gap-6 md:items-start pt-6 md:pt-12">
         <div className="flex flex-col w-full md:w-1/2">
           <Certificates className="grid grid-cols-1 gap-y-8 px-6 md:px-10 py-6 md:py-12" />
@@ -123,7 +236,10 @@ export default function Form() {
           aria-labelledby="quote-form-title"
           aria-describedby="quote-form-desc"
         >
-          <h2 className="text-lg sm:text-xl font-semibold" id="quote-form-desc">
+          <h2
+            className="text-lg sm:text-xl font-semibold"
+            id="quote-form-title"
+          >
             Solicita tu demo sin costo alguno.
           </h2>
 
@@ -162,6 +278,7 @@ export default function Form() {
                   placeholder="2045XXXXXXXX"
                   className="w-full rounded-xl bg-[#E7E6E9] dark:bg-[#232428] px-4 py-3 text-black dark:text-white placeholder:text-neutral-400 outline-none transition focus:ring-4 focus:ring-[#00AEEF]/30"
                   aria-invalid={!!errors.ruc}
+                  maxLength={11}
                 />
                 <ErrorText>{errors.ruc?.message}</ErrorText>
               </div>
@@ -221,9 +338,10 @@ export default function Form() {
                   type="tel"
                   inputMode="tel"
                   {...register("phone")}
-                  placeholder="+51 999 999 999"
+                  placeholder="999 999 999"
                   className="w-full rounded-xl bg-[#E7E6E9] dark:bg-[#232428] px-4 py-3 text-black dark:text-white placeholder:text-neutral-400 outline-none transition focus:ring-4 focus:ring-[#00AEEF]/30"
                   aria-invalid={!!errors.phone}
+                  maxLength={9}
                 />
                 <ErrorText>{errors.phone?.message}</ErrorText>
               </div>
@@ -277,15 +395,8 @@ export default function Form() {
               <ErrorText>{errors.message?.message}</ErrorText>
             </div>
 
-            <div
-              className="cf-turnstile"
-              data-sitekey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY}
-              data-callback="onTurnstile"
-            />
-
-            {errors.turnstileToken && (
-              <p className="error">{errors.turnstileToken.message}</p>
-            )}
+            <div ref={tsContainerRef} className="mt-2" aria-live="polite" />
+            <ErrorText>{errors.turnstileToken?.message}</ErrorText>
           </div>
 
           <div className="mt-6 flex justify-end">

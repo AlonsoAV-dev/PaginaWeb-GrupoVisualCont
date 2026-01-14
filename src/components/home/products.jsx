@@ -15,7 +15,7 @@ const products = [
       "Integración con cualquier sistema integrado ERP",
       "Conexión con API sunat",
       "Validación de comprobantes electrónicos",
-      "Mira la propuesta del registro de compras y ventas SIRE sunat", // observa por mira
+      "Mira la propuesta del registro de compras y el registro de ventas SIRE sunat", // observa por mira
       "Software Multiempresa",
       "Libros de contabilidad automáticos",
       "Exportación a Excel y cualquier formato",
@@ -28,16 +28,16 @@ const products = [
     id: "facturacion",
     name: "Software de Facturación",
     description:
-      "Agiliza tus gestiones diarias con nuestro sistema de facturación diseñado para centralizar todas tus operaciones en un solo lugar, minimizando errores y manteniendo el control de tu negocio.",
+      "Simplifica la emisión de tus comprobantes electrónicos see sunat, tus guías de remisión y notas de créditos serán validadas y aceptadas por sunat en tiempo real y ahora tus declaraciones de impuestos estarán en la propuesta.",
     features: [
-      "Personalización del logo",
-      "Reportes avanzados",
-      "Acceso a tu información desde cualquier lugar",
-      "Automatización de procesos",
-      "Importación masiva",
-      "Exportación a Excel",
-      "Actualización SUNAT",
-      "Obten reportes automaticos para un mejor control",
+      "Certificado digital incluido",
+      "Personaliza colores y logotipo de tu empresa",
+      "Homologación con sunat exonerada",
+      "Envío por email a tus clientes",
+      "Soporte técnico permanente",
+      "Puedes trabajar con varios establecimientos a la vez",
+      "Conexión API con cualquier software ERP",
+      "Integramos tu contabilidad, inventario y ventas a nuestras soluciones.",
     ],
     image: "/images/facturador/facturador-producto.webp",
     href: "/facturador",
@@ -46,16 +46,14 @@ const products = [
     id: "planilla",
     name: "Software de Planillas",
     description:
-      "Optimiza la administración de tu personal con el sistema de planillas que automatiza los procesos, centraliza información clave y asegura el cumplimiento de tus obligaciones laborales y tributarias.",
+      "Gestiona a tus colaboradores cumpliendo con normas y regulaciones laborales. Genera contratos, planillas electrónicas, beneficios sociales, AFP, PLAME, T-Registro, bancos y más de manera segura y eficiente.",
     features: [
-      "Planilla y calculos de sueldos en segundos",
-      "Control de asistencia de empleados",
-      "Emision de boletas de pago",
-      "Automatizacion de firma electronica en documentos",
-      "Construcción civil (CAPECO)",
-      "Evaluaciones de desempeño de trabajadores",
-      "Cálculo de quincenas",
-      "AFP.NET ya integrado",
+      "Optimiza la gestión de tu fuerza laboral para potenciar el negocio",
+      "Centraliza datos de personas y habilidades en una sola plataforma",
+      "Actualizaciones automáticas ante cambios legales y regulatorios",
+      "Obtén planillas de sueldos en segundos con cálculos automatizados",
+      "Permite la firma electrónica de documentos",
+      "Controla asistencia y horarios de tus colaboradores",
     ],
     image: "/images/planilla/planilla-producto.webp",
     href: "/planilla",
@@ -64,20 +62,21 @@ const products = [
     id: "integrado",
     name: "Software ERP Integrado",
     description:
-      "Controla cada área de tu negocio con el ERP todo en uno, creado para integrar procesos de ventas, compras, inventarios y finanzas, logrando operaciones más simples y eficientes.",
+      "Centraliza y automatiza funciones clave de tu negocio: compras, ventas, inventarios, tesorería y contabilidad. Escalable y adaptable, con integraciones API a SUNAT y otros softwares. Incluye capacitación y soporte técnico.",
     features: [
-      "Almacén y control de inventarios",
-      "Ventas y facturación",
-      "Compras y cuentas por pagar",
-      "Tesorería, caja y bancos",
-      "Procesos de cierre (EEFF)",
-      "Integración con API SUNAT",
-      "Software multiempresa",
-      "Accede desde cualquier lugar",
+      "Registra y controla inventarios, operaciones de entrada y salida",
+      "Gestión multi-almacén con control de ubicaciones",
+      "Inventarios en tiempo real con lotes y ajustes automáticos",
+      "Tesorería y flujo de caja, optimiza tu sistema de tesoreria",
+      "Integra tu ecommerce con inventarios, pedidos y facturación electrónica",
+      "Automatiza tu contabilidad con compras, ventas y reportes",
+      "Genera libros electrónicos PLE y SIRE SUNAT con total seguridad",
     ],
     image: "/images/integrado/integrado-producto.webp",
     href: "/erp",
   },
+  
+
 ];
 
 export default function Products() {
@@ -156,9 +155,9 @@ export default function Products() {
             <Image
               src={activeProduct.image || "/placeholder.svg"}
               alt={activeProduct.name}
-              width={600}
+              width={300}
               height={300}
-              className="rounded-lg max-w-full"
+              className="rounded-lg w-full"
               priority
             />
           </div>

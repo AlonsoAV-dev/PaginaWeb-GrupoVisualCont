@@ -4,29 +4,29 @@ import Image from "next/image";
 const certificates = [
   {
     name: "AWS",
-    logo: "/images/home/cert-logo-aws.png",
+    logo: "/images/home/cert-logo-aws.webp",
     alt: "AWS Certificado",
   },
   {
     name: "Colegio Contadores",
-    logo: "/images/home/cert-logo-colegio.png",
+    logo: "/images/home/cert-logo-colegio.webp",
     alt: "Colegio Contadores Certificado",
   },
   {
     name: "Indecopi",
-    logo: "/images/home/cert-logo-indecopi.png",
+    logo: "/images/home/cert-logo-indecopi.webp",
     alt: "Indecopi Certificado",
   },
   {
     name: "ISO 27001",
-    logo: "/images/home/cert-logo-iso.png",
+    logo: "/images/home/cert-logo-iso.webp",
     alt: "ISO 27001 Certificado",
   },
   {
     name: "SUNAT",
-    logo: "/images/home/cert-logo-sunat.png",
+    logo: "/images/home/cert-logo-sunat.webp",
     alt: "SUNAT Certificado",
-    routeFile: "docs/certificado-sunat.pdf",
+    routeFile: "/docs/certificado-sunat.pdf",
   },
 ];
 

@@ -5,7 +5,7 @@ import Features from "@/components/services/features";
 import Capabilities from "@/components/services/capabilities";
 import Pricing from "@/components/services/pricing";
 import Demo from "@/shared/demo";
-import WhatsAppFab from "@/shared/whatsappFab";
+import IconsGroup from "@/shared/iconsGroup";
 import {
   Database,
   ReceiptText,
@@ -45,7 +45,7 @@ export const metadata = {
       "Con VisualPlAN Automatiza remuneraciones, AFP/ONP, PLAME y T-Registro. Gratificaciones, CTS y vacaciones. Multiempresa y seguridad de datos.",
     images: [
       {
-        url: "https://www.softwarecontableerp.com/images/logos/LogVBlancoRelleno.svg",
+        url: "/images/banner/visualBanner.jpg",
         alt: "VisualPLAN",
       },
     ],
@@ -58,7 +58,7 @@ export const metadata = {
     description:
       "Cálculo de planillas, AFP/ONP, PLAME y T-Registro con AFP.NET integrado. Pruébalo 15 días gratis.",
     images: [
-      "https://www.softwarecontableerp.com/images/logos/LogVBlancoRelleno.svg",
+      "/images/banner/visualBanner.jpg",
     ],
   },
   robots: {
@@ -115,8 +115,8 @@ const services = [
   },
   {
     id: 7,
-    title: "Cálculo de quincena",
-    description: "Adelantos quincenales y reportes exportables a Excel.",
+    title: "Sistema de planilla",
+    description: "Genera planillas de sueldos en pocos segundos con cálculos totalmente automatizados.",
     icon: CalendarDays,
     color: "bg-[#257CD0]",
   },
@@ -131,14 +131,14 @@ const services = [
 
 const capabilitiesData = [
   {
-    title: "Un sistema confiable para tu gestión de planillas",
+    title: "Un sistema confiable para la gestión de tu planilla",
     content: [
-      "Obtén tu planilla de sueldos en segundos con todos los cálculos de aportes, descuentos y beneficios automatizados.",
+      "Obtén tu planilla de sueldos en segundos con todos los cálculos de aportes, descuentos y beneficios de manera automatica.",
       "Integra fácilmente con PLAME y cumple con tus obligaciones laborales de forma ágil y segura.",
-      "Administra contratos, boletas y documentación laboral en un solo lugar, siempre actualizada y accesible.",
+      "Administra los contratos, boletas y la documentación laboral en un solo lugar, siempre actualizada y accesible.",
     ],
     description:
-      "Optimiza el cálculo de sueldos, beneficios y obligaciones laborales con una plataforma rápida, segura y siempre acompañada por soporte experto.",
+      "Optimiza los cálculo de sueldos, beneficios y obligaciones laborales de forma rapida, segura y siempre acompañada por el mejor soporte.",
     buttonText: "Pruébalo gratis",
     image: "/images/planilla/planilla-capacidad.webp",
     reverse: false,
@@ -230,7 +230,7 @@ export default function SistemaPlanilla() {
           serviceName="Sistema de Planilla"
           title="Optimiza tus gestiones con nuestro"
           titleColored="Sistema de Planillas"
-          content="Nuestro Sistema de Planilla está diseñado para simplificar y automatizar la gestión financiera de tu empresa. Ahorra tiempo y reduce errores con nuestro sistema confiable y eficiente."
+          content="Un sistema de planillas que simplifica el cálculo de boletas de pago, la generación de archivos PLAME y AFPnet, la gestión de remuneraciones, la centralización contable y mucho más."
           button="Contáctanos"
         />
         <Features
@@ -241,7 +241,7 @@ export default function SistemaPlanilla() {
         />
         <Capabilities
           service="VisualPLAN"
-          coloredTitle="Mejora tu planilla"
+          coloredTitle="Repotencia la gestion de tu planilla"
           capabilities={capabilitiesData}
         />
         <Pricing plans={plans} />
@@ -249,8 +249,8 @@ export default function SistemaPlanilla() {
       </div>
       <Footer />
 
-      {/* Whatsapp Icono Flotante */}
-      <WhatsAppFab href="https://wa.me/51956703375?text=Hola%2C%20%C2%BFMe%20puede%20explicar%20c%C3%B3mo%20el%20sistema%20me%20puede%20dar%20mejores%20resultados%3F%20%C2%BFMe%20podr%C3%ADa%20agendar%20una%20demo%3F%20Much%C3%ADsimas%20gracias" />
+      {/* Grupo de Iconos*/}
+      <IconsGroup />
 
       {/* JSON-LD: Software de Planilla + planes */}
       <Script
@@ -265,19 +265,19 @@ export default function SistemaPlanilla() {
             operatingSystem: "Web",
             description:
               "Planilla en Perú: remuneraciones, AFP/ONP, PLAME y T-Registro, gratificaciones, CTS y vacaciones. Multiempresa, AFP.NET integrado y exportación a Excel.",
-            url: "https://www.softwarecontableerp.com/planilla",
-            logo: "https://www.softwarecontableerp.com/images/logos/LogVBlancoRelleno.svg",
+            url: "https://grupovisualcont.com/planilla",
+            logo: "https://grupovisualcont.com/images/logos/LogVBlancoRelleno.svg",
             inLanguage: "es-PE",
             areaServed: "PE",
             provider: {
               "@type": "Organization",
               name: "Visual ERP",
-              url: "https://www.softwarecontableerp.com/",
+              url: "https://grupovisualcont.com/",
             },
             publisher: {
               "@type": "Organization",
               name: "Visual ERP",
-              url: "https://www.softwarecontableerp.com/",
+              url: "https://grupovisualcont.com/",
             },
             brand: { "@type": "Brand", name: "VisualPLAN" },
             featureList: [
@@ -293,7 +293,7 @@ export default function SistemaPlanilla() {
             offers: {
               "@type": "OfferCatalog",
               name: "Planes de VisualPLAN",
-              url: "https://www.softwarecontableerp.com/planilla#pricing",
+              url: "https://grupovisualcont.com/planilla#pricing",
               itemListElement: [
                 {
                   "@type": "Offer",
@@ -359,7 +359,7 @@ export default function SistemaPlanilla() {
             },
             mainEntityOfPage: {
               "@type": "WebPage",
-              url: "https://www.softwarecontableerp.com/planilla",
+              url: "https://grupovisualcont.com/planilla",
             },
           }),
         }}
@@ -373,8 +373,8 @@ export default function SistemaPlanilla() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebPage",
-            "@id": "https://www.softwarecontableerp.com/planilla#webpage",
-            url: "https://www.softwarecontableerp.com/planilla",
+            "@id": "https://grupovisualcont.com/planilla#webpage",
+            url: "https://grupovisualcont.com/planilla",
             name: "Software de Planilla y RR.HH. | VisualPLAN",
             description:
               "Automatiza planillas: sueldos, AFP/ONP, PLAME y T-Registro, gratificaciones, CTS y vacaciones. Multiempresa con AFP.NET integrado.",
@@ -382,40 +382,40 @@ export default function SistemaPlanilla() {
             isPartOf: {
               "@type": "WebSite",
               name: "Visual ERP",
-              url: "https://www.softwarecontableerp.com/",
+              url: "https://grupovisualcont.com/",
             },
             hasPart: [
               {
                 "@type": "WebPageElement",
                 name: "Hero",
-                url: "https://www.softwarecontableerp.com/planilla#hero",
+                url: "https://grupovisualcont.com/planilla#hero",
                 description: "Propuesta de valor y llamada a la acción.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Características",
-                url: "https://www.softwarecontableerp.com/planilla#features",
+                url: "https://grupovisualcont.com/planilla#features",
                 description:
                   "Base de datos, boletas, multiempresa, AFP/ONP, construcción civil CAPECO, T-Registro y PLAME.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Capacidades",
-                url: "https://www.softwarecontableerp.com/planilla#capabilities",
+                url: "https://grupovisualcont.com/planilla#capabilities",
                 description:
                   "Implementación ágil, soporte especializado y seguridad de datos.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Precios",
-                url: "https://www.softwarecontableerp.com/planilla#pricing",
+                url: "https://grupovisualcont.com/planilla#pricing",
                 description:
                   "Planes Básico, Mype y Pyme en modalidad mensual y anual.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Demo",
-                url: "https://www.softwarecontableerp.com/planilla#demo",
+                url: "https://grupovisualcont.com/planilla#demo",
                 description:
                   "WhatsApp para solicitar demo gratuita de 15 días.",
               },
@@ -437,13 +437,13 @@ export default function SistemaPlanilla() {
                 "@type": "ListItem",
                 position: 1,
                 name: "Inicio",
-                item: "https://www.softwarecontableerp.com/",
+                item: "https://grupovisualcont.com/",
               },
               {
                 "@type": "ListItem",
                 position: 2,
                 name: "Planilla",
-                item: "https://www.softwarecontableerp.com/planilla",
+                item: "https://grupovisualcont.com/planilla",
               },
             ],
           }),

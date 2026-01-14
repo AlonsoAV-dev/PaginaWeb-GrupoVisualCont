@@ -11,6 +11,7 @@ import { useEffect } from "react";
 
 const heroContent = [
   {
+    idTitle:"Software Contable",
     title: "Automatiza ",
     titleBlue: "tu negocio con el Software de Contabilidad ",
     title2: "y Factura Electrónica",
@@ -20,6 +21,7 @@ const heroContent = [
     imageSrc: "/images/home/hero-business-woman.webp",
   },
   {
+    idTitle:"API SUNAT",
     title: "Nueva tecnología ",
     titleBlue: "API SUNAT para SIRE ",
     title2: "y Sistema de Factura Electrónica",
@@ -29,6 +31,7 @@ const heroContent = [
     imageSrc: "/images/home/hero-afpnet.webp",
   },
   {
+    idTitle:"Fiscalizaciones SUNAFIL",
     title: "¿Cómo puedo ",
     titleBlue: "evitar las fiscalizaciones de SUNAFIL ",
     title2: " para mi negocio?",
@@ -68,6 +71,7 @@ function HeroCarousel(props) {
               >
                 <HeroCardCarousel
                   key={index}
+                  idTitle={heroContent[index].idTitle}
                   title={heroContent[index].title}
                   titleBlue={heroContent[index].titleBlue}
                   title2={heroContent[index].title2}

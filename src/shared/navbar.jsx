@@ -1,5 +1,6 @@
 "use client";
 
+import { dlEvent } from "../../lib/datalayer";
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
@@ -41,7 +42,7 @@ const resourcesDropdownData = [
       external: false,
     },
     {
-      title: "Software Integra ERP",
+      title: "Software ERP",
       description: "Automatiza la gestión de tu empresa",
       href: "/erp",
       icon: Network,
@@ -51,6 +52,31 @@ const resourcesDropdownData = [
   ],
 ];
 
+function mpBeacon(event, params = {}) {
+  try {
+    const url = new URL("https://www.google-analytics.com/g/collect");
+    const search = new URLSearchParams({
+      v: "2",
+      tid: GA_ID,
+      cid: "wapp." + (crypto?.randomUUID?.() || Date.now()),
+      sid: String(Math.floor(Date.now() / 1000)),
+      sct: "1",
+      seg: "1",
+      _s: "1",
+      dl: typeof window !== "undefined" ? window.location.href : "",
+      dt: typeof document !== "undefined" ? document.title : "",
+      sr: `${window.screen?.width || 0}x${window.screen?.height || 0}`,
+      ul: (navigator.language || "es-es").toLowerCase(),
+      en: event,
+      "ep.cta_id": params.cta_id,
+      "ep.page_location": params.page_location,
+    }).toString();
+    url.search = search;
+    if (navigator.sendBeacon) navigator.sendBeacon(url.toString());
+    else fetch(url.toString(), { method: "GET", keepalive: true });
+  } catch {}
+}
+
 function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { resolvedTheme } = useTheme();
@@ -58,6 +84,25 @@ function Navbar() {
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+
+  const onClick = () => {
+    const params = {
+      method: "cotizar",
+      page_location: typeof window !== "undefined" ? window.location.href : "",
+    };
+
+    dlEvent("cotizar_click", params);
+
+    // Fallback si no existe GA/GTM
+    const hasGtag =
+      typeof window !== "undefined" && typeof window.gtag === "function";
+    const hasGTM =
+      typeof window !== "undefined" &&
+      typeof window.google_tag_manager !== "undefined";
+    if (!hasGtag && !hasGTM) {
+      mpBeacon("cotizar_click", params);
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -89,8 +134,8 @@ function Navbar() {
 
   const logoSrc =
     mounted && resolvedTheme === "dark"
-      ? "/images/logo-light.png"
-      : "/images/logo-dark.png";
+      ? "/images/logo-light.webp"
+      : "/images/logo-dark.webp";
 
   const handleLogoClick = (e) => {
     e.preventDefault();
@@ -108,6 +153,7 @@ function Navbar() {
       >
         <div className="container py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
+            {/* Logo Visual */}
             <Link
               href="/"
               className="flex items-center -ms-5"
@@ -115,7 +161,7 @@ function Navbar() {
             >
               {mounted ? (
                 <Image
-                  src={logoSrc || "/images/logo-dark.png"}
+                  src={logoSrc || "/images/logo-dark.webp"}
                   alt="Visual Logo"
                   width={200}
                   height={50}
@@ -127,6 +173,7 @@ function Navbar() {
               )}
             </Link>
             <ul className="flex space-x-6">
+              {/* Soluciones Boton Menu-Normal */}
               <li className="hidden md:block">
                 <NavDropdown
                   trigger="Soluciones"
@@ -134,11 +181,12 @@ function Navbar() {
                   columns={2}
                 />
               </li>
+              {/* Nosotros Boton Menu-Normal*/}
               <li className="hidden md:block">
                 <Link
                   href="/nosotros"
                   className={`transition-colors ${
-                    mounted && pathname === "/nosotros"
+                    mounted && pathname === "/nosotros/"
                       ? "text-[#0070F2] dark:text-[#0070F2] font-medium underline underline-offset-[6px] decoration-1"
                       : "text-black dark:text-white hover:text-[#0070F2] dark:hover:text-[#0070F2] underlineText"
                   }`}
@@ -146,17 +194,15 @@ function Navbar() {
                   Nosotros
                 </Link>
               </li>
+              {/* Noticias Boton Menu-Normal */}
               <li className="hidden md:block">
                 <Link
-                  href="/"
-                  className={` ${
-                    mounted && pathname === "/noticias"
-                      ? "text-[#021349] dark:text-[#021349] "
-                      : "text-black dark:text-white"
-                      // transition-colors
-                      //  font-medium underline underline-offset-[6px] decoration-1
-                      // hover:text-[#0070F2] dark:hover:text-[#0070F2] underlineText
-                  } cursor-not-allowed`}
+                  href="/noticias"
+                  className={`transition-colors ${
+                    mounted && pathname === "/noticias/"
+                      ? "text-[#0070F2] dark:text-[#0070F2] font-medium underline underline-offset-[6px] decoration-1"
+                      : "text-black dark:text-white hover:text-[#0070F2] dark:hover:text-[#0070F2] underlineText"
+                  }`}
                 >
                   Noticias
                 </Link>
@@ -164,19 +210,23 @@ function Navbar() {
             </ul>
           </div>
 
+          {/* Botones de Accion Menu Normal */}
           <div className="flex items-center space-x-4">
             <nav className="hidden lg:block space-x-4">
               <DefaultButton
-                className=" text-sm font-medium underlineText text-black dark:text-white hover:text-[#0070F2] dark:hover:text-[#0070F2]"
+                className="text-base font-medium underlineText text-black dark:text-white hover:text-[#0070F2] dark:hover:text-[#0070F2]"
                 target="_blank"
                 rel="noopener noreferrer"
-                route={
-                  "https://api.whatsapp.com/send/?phone=51956703375&text=Hola%2C+estoy+interesad%40+en+acceder+a+la+demo+gratuita+de+15+d%C3%ADas.%0D%0A%0D%0A%C2%BFPodr%C3%ADa+indicarme+si+es+posible+acceder+y+explicarme+m%C3%A1s+en+detalle+acerca+de+los+servicios+disponibles%3F%0D%0A-+Contabilidad%0D%0A-+Facturaci%C3%B3n%0D%0A-+Planilla%0D%0A-+ERP+-%0D%0AMuchas+gracias.&type=phone_number&app_absent=0"
-                }
+                route={"https://e-vf.softwareintegrado.com/vc-cpe/login"}
               >
-                Demo Gratis
+                Ingresar Ahora
               </DefaultButton>
-              <DefaultButton route={"/cotizar"}>Cotiza Ya</DefaultButton>
+              <DefaultButton 
+                route={"/cotizar"}
+                action={onClick}
+              >
+                Cotiza Ya
+              </DefaultButton>
             </nav>
 
             <ThemeToggle />

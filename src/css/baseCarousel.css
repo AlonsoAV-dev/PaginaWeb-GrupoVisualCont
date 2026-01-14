@@ -18,14 +18,6 @@
   }
 }
 
-/* Variables para clase dark de Tailwind */
-:root.dark {
-  --text-high-contrast-rgb-value: 209, 213, 219;
-  --detail-medium-contrast: #9ca3af;
-  --text-body: #d1d5db;
-  --detail-high-contrast: #6b7280;
-}
-
 .embla {
   margin: auto;
   --slide-height: 19rem;
@@ -101,10 +93,6 @@
   color: var(--detail-high-contrast);
 }
 
-.embla__button:hover:not(:disabled) {
-  color: #021349;
-}
-
 .embla__button__svg {
   width: 35%;
   height: 35%;
@@ -149,11 +137,6 @@
   transition: all 0.2s ease;
 }
 
-.embla__dot:hover:after {
-  box-shadow: inset 0 0 0 0.2rem #021349;
-  background-color: #021349;
-}
-
 .embla__dot--selected:after {
   box-shadow: inset 0 0 0 0.2rem var(--text-body);
   background-color: var(--text-body);
@@ -168,7 +151,7 @@
   --slide-size: 33%;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 1024px) {
   .emblaTestimonials {
     --slide-size: 100%;
   }
@@ -219,30 +202,6 @@
   color: var(--detail-high-contrast);
   background-color: rgba(255, 255, 255, 0.5);
   cursor: not-allowed;
-}
-
-/*Hover*/
-.embla__button--overlay:hover:not(:disabled) {
-  color: #00aeef;
-  background-color: rgba(255, 255, 255, 1);
-}
-
-.dark .embla__button--overlay:hover:not(:disabled) {
-  color: #00aeef;
-  background-color: rgba(31, 41, 55, 1);
-}
-
-/* Dark mode styles for overlay buttons */
-.dark .embla__button--overlay {
-  color: #d1d5db;
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-
-
-.dark .embla__button--overlay:disabled {
-  background-color: rgba(31, 41, 55, 0.5);
-  color: #6b7280;
 }
 
 .embla__button--overlay .embla__button__svg {

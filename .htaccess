@@ -1,0 +1,22 @@
+# Activa mod_rewrite
+RewriteEngine On
+
+# Fuerza HTTPS + WWW
+RewriteCond %{HTTPS} !=on [OR]
+RewriteCond %{HTTP_HOST} !^www\.grupovisualcont\.com$ [NC]
+RewriteRule ^ https://www.grupovisualcont.com%{REQUEST_URI} [L,R=301]
+
+# Redirecciones de rutas antiguas
+RedirectMatch 301 ^/category/contabilidad/?$ /contable/
+RedirectMatch 301 ^/category/empresas/?$ /nosotros/
+RedirectMatch 301 ^/category/facturacion-electronica-peru/?$ /facturador/
+
+# Enviar HSTS cuando ya se esta en HTTPS
+Strict-Transport-Security: max-age=16070400; includeSubDomains
+
+# Índice por defecto y 404
+DirectoryIndex index.html
+ErrorDocument 404 /404.html
+
+# Deslistar directorios
+Options -Indexes

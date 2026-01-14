@@ -5,7 +5,7 @@ import Features from "@/components/services/features";
 import Capabilities from "@/components/services/capabilities";
 import Pricing from "@/components/services/pricing";
 import Demo from "@/shared/demo";
-import WhatsAppFab from "@/shared/whatsappFab";
+import IconsGroup from "@/shared/iconsGroup";
 import {
   CircleUserRound,
   ChartBar,
@@ -42,7 +42,7 @@ export const metadata = {
       "Facturación electrónica 100% web y válida ante SUNAT. Reportes, Excel, importaciones masivas y firma digital.",
     images: [
       {
-        url: "https://www.softwarecontableerp.com/images/logos/LogVBlancoRelleno.svg",
+        url: "/images/banner/visualBanner.jpg",
         alt: "VisualFACT",
       },
     ],
@@ -55,7 +55,7 @@ export const metadata = {
     description:
       "Emisión electrónica homologada con SUNAT, reportes avanzados y Excel. Pruébalo 15 días gratis.",
     images: [
-      "https://www.softwarecontableerp.com/images/logos/LogVBlancoRelleno.svg",
+      "/images/banner/visualBanner.jpg",
     ],
   },
   robots: {
@@ -84,8 +84,8 @@ const services = [
   },
   {
     id: 3,
-    title: "100% web",
-    description: "Accede sin instalación desde cualquier navegador 24/7.",
+    title: "Facturación automatizada y precisa",
+    description: "Emite comprobantes con total exactitud, reduciendo errores y ahorrando tiempo.",
     icon: CloudCheck,
     color: "bg-[#257CD0]",
   },
@@ -106,8 +106,8 @@ const services = [
   },
   {
     id: 6,
-    title: "Exportación a Excel",
-    description: "Genera reportes y consolidados de ventas en Excel.",
+    title: "Gestión ágil de cobros y pagos",
+    description: "Optimiza transacciones y mejora el flujo para mantener tus finanzas en orden.",
     icon: Sheet,
     color: "bg-[#257CD0]",
   },
@@ -131,12 +131,12 @@ const capabilitiesData = [
   {
     title: "Facturación electrónica simple y 100% válida ante SUNAT",
     content: [
-      "Emite boletas y facturas electrónicas homologadas con SUNAT en segundos",
-      "Genera notas de crédito, débito y guías de remisión de forma sencilla",
-      "Accede a reportes automáticos de tus ventas",
+      "Emite boletas y facturas electrónicas homologadas con SUNAT en tan solo unos segundos",
+      "Genera notas de crédito, débito y guías de remisión electrónicas de manera sencilla",
+      "Accede en cualquier momento a reportes generados automaticamente de tus ventas",
     ],
     description:
-      "Cumple con la normativa peruana sin complicaciones: un sistema ágil, seguro y listo para facturar desde el primer día.",
+      "Cumple con la normativa nacional sin complicaciones: un sistema ágil, seguro y listo para facturar desde el primer día.",
     buttonText: "Pruébalo gratis",
     image: "/images/facturador/facturador-capacidad.webp",
     reverse: true,
@@ -146,19 +146,25 @@ const capabilitiesData = [
 const plans = [
   {
     name: "Súper Micro",
-    monthly: 40,
-    annual: 348,
+    monthly: 29,
+    monthlyOld: 49,
+    annual: 290,
     custom: false,
     highlighted: false,
     cta: "Elegir Súper Micro",
     features: [
-      "Boletas electrónicas",
-      "Notas de crédito electrónicas",
-      "Notas de débito electrónicas",
-      "Registro de hasta 50 comprobantes",
+      "Emite hasta 50 comprobantes electrónicos",
+      "Factura Electrónicas",
+      "Boleta de Venta Electrónica",
+      "Nota de Crédito / Débito",
+      "Maneja hasta 3 series diferentes para tus comprobantes",
+      "Gestiona un (01) Punto de Venta TPV POS",
+      "Registra un (01) Usuario",
+      "Envío automático de facturas por email a tus clientes.",
+      "Validación automática de tus emisiones con SUNAT",
       "Gestión sencilla para pequeñas empresas",
-      "Soporte técnico incluido",
-      "Capacitación básica",
+      "Capacitación uso del sistema",
+      "Soporte técnico",
     ],
     ctaAnnualUrl:
       "https://api.whatsapp.com/send/?phone=51956703375&text=Hola%2C+me+interesa+contratar+el+PLAN+S%C3%9APER+MICRO+ANUAL+del+Software+de+Facturaci%C3%B3n+web.%0A%C2%BFPodr%C3%ADan+contarme+m%C3%A1s+detalles+sobre+las+ventajas+y+funciones+incluidas%3F&type=phone_number&app_absent=0",
@@ -167,20 +173,25 @@ const plans = [
   },
   {
     name: "Mype",
-    monthly: 100,
-    annual: 960,
+    monthly: 80,
+    monthlyOld: 100,
+    annual: 800,
     custom: false,
     highlighted: true, // favorito
     cta: "Elegir Mype",
     features: [
-      "Facturas y boletas electrónicas",
-      "Notas de crédito y débito electrónicas",
-      "PLE – registro de ventas 14.1",
-      "Interfaz integrada con software contable",
-      "Registro de compras automatizado",
-      "Comprobantes ilimitados",
-      "Soporte técnico especializado",
-      "Capacitación incluida",
+      "Emisión ilimitada de comprobantes electrónicos: Facturas, Boletas, Nota de Crédito/Débito, Guías Transportista y Remitente electrónicas",
+      "Maneja hasta 10 series diferentes para tus comprobantes",
+      "Emite Pedidos y cotizaciones",
+      "Gestiona hasta 4 Puntos de Venta",
+      "Registra hasta 4 usuarios",
+      "Carga masiva de boletas y facturas desde Excel",
+      "Obtén tu Reporte de Ventas Resumen y Detallado",
+      "Descarga tu Reporte SIRE/PLE sunat de Ventas y Compras",
+      "Formato y Reporte Contable de Ventas y Compras para pasar al software contable VisualCont, StarSoft, Concar, Contasis, Siscont y otros (previa evaluación)",
+      "Personaliza tu factura con el logo, colores, formato de letras, mensajes predefinidos (hasta 2 veces al año)",
+      "Soporte técnico por ticket, correo, WhatsApp y llamada. Actualizaciones sin costo adicional.",
+      "También incluye todo el plan anterior",
     ],
     ctaAnnualUrl:
       "https://api.whatsapp.com/send/?phone=51956703375&text=Hola%2C+me+interesa+contratar+el+PLAN+MYPE+ANUAL+del+Software+de+Facturaci%C3%B3n+web.%0A%C2%BFPodr%C3%ADan+contarme+m%C3%A1s+detalles+sobre+las+ventajas+y+funciones+incluidas%3F&type=phone_number&app_absent=0",
@@ -189,20 +200,35 @@ const plans = [
   },
   {
     name: "Premium",
-    monthly: 150,
-    annual: 1500,
+    monthly: 125,
+    monthlyOld: 150,
+    annual: 1250,
     custom: false,
     highlighted: false,
     cta: "Elegir Premium",
     features: [
-      "Facturas, boletas y guías electrónicas",
-      "Notas de crédito, débito, retención y percepción",
-      "Registro y deducción de anticipos",
-      "PLE – registro de ventas 14.1",
-      "Módulo completo de compras e inventario",
-      "Tesorería: cuentas por cobrar y pagar",
-      "Movimientos de caja y bancos",
-      "Comprobantes ilimitados",
+      "Emisión ilimitada de comprobantes electrónicos: facturas, boletas, notas de crédito y débito, guías de transportista y remitente",
+      "Manejo de hasta 20 series diferentes de comprobantes",
+      "Emisión de pedidos y cotizaciones",
+      "Gestión de hasta 7 puntos de venta",
+      "Registro de hasta 7 usuarios",
+      "Carga masiva de boletas y facturas desde Excel",
+      "Reporte de ventas resumen y detallado",
+      "Descarga de reportes SIRE / PLE SUNAT de ventas y compras",
+      "Formato y reporte contable de ventas y compras compatible con VisualCont, StarSoft, Concar, Contasis, Siscont y otros (previa evaluación)",
+      "Módulo de orden de compra",
+      "Módulo de compra directa",
+      "Reporte de registro de compras",
+      "Módulo de ingreso de almacén",
+      "Módulo de salida de almacén",
+      "Módulo de base de datos de inventario",
+      "Reporte de stock de inventario",
+      "Reporte de control de inventario",
+      "Reporte de catálogo de inventario",
+      "Reporte de control de inventario en unidades físicas (Kardex)",
+      "Personalización de factura con logo, colores, tipografía y mensajes predefinidos (hasta 2 veces al año)",
+      "Soporte técnico por ticket, correo, WhatsApp y llamada, con actualizaciones sin costo adicional",
+      "Incluye todas las funcionalidades del plan anterior",
     ],
     ctaAnnualUrl:
       "https://api.whatsapp.com/send/?phone=51956703375&text=Hola%2C+me+interesa+contratar+el+PLAN+PREMIUM+ANUAL+del+Software+de+Facturaci%C3%B3n+web.%0A%C2%BFPodr%C3%ADan+contarme+m%C3%A1s+detalles+sobre+las+ventajas+y+funciones+incluidas%3F&type=phone_number&app_absent=0",
@@ -233,7 +259,7 @@ export default function SistemaFacturador() {
           serviceName="Sistema Facturador"
           title="Optimiza tu gestión financiera con nuestro"
           titleColored="Sistema Facturador"
-          content="Nuestro Sistema de Facturación Electrónica está diseñado para simplificar y automatizar la gestión financiera de tu empresa. Ahorra tiempo y reduce errores con nuestro sistema confiable y eficiente."
+          content="Genera comprobantes electrónicos válidos en segundos, gestiona inventarios de forma automática y consulta tus reportes al instante."
           button="Contáctanos"
         />
         <Features
@@ -244,16 +270,16 @@ export default function SistemaFacturador() {
         />
         <Capabilities
           service="VisualFACT"
-          coloredTitle="repotencia tu Sistema de Facturación"
+          coloredTitle="Repotencia tu sistema de Facturación Electrónica"
           capabilities={capabilitiesData}
         />
-        <Pricing plans={plans} />
+        <Pricing plans={plans}  />
         <Demo data={demoData} />
       </div>
       <Footer />
 
-      {/* Whatsapp Icono Flotante */}
-      <WhatsAppFab href="https://wa.me/51956703375?text=Hola%2C%20%C2%BFMe%20puede%20explicar%20c%C3%B3mo%20el%20sistema%20me%20puede%20dar%20mejores%20resultados%3F%20%C2%BFMe%20podr%C3%ADa%20agendar%20una%20demo%3F%20Much%C3%ADsimas%20gracias" />
+      {/* Grupo de Iconos*/}
+      <IconsGroup />
 
       {/* JSON-LD: Software de Facturación + planes */}
       <Script
@@ -268,19 +294,19 @@ export default function SistemaFacturador() {
             operatingSystem: "Web",
             description:
               "Facturación electrónica en Perú: facturas y boletas, notas, guías, reportes y Excel. Válido ante SUNAT con firma digital.",
-            url: "https://www.softwarecontableerp.com/facturador",
-            logo: "https://www.softwarecontableerp.com/images/logos/LogVBlancoRelleno.svg",
+            url: "https://grupovisualcont.com/facturador",
+            logo: "https://grupovisualcont.com/images/logos/LogVBlancoRelleno.svg",
             inLanguage: "es-PE",
             areaServed: "PE",
             provider: {
               "@type": "Organization",
               name: "Visual ERP",
-              url: "https://www.softwarecontableerp.com/",
+              url: "https://grupovisualcont.com/",
             },
             publisher: {
               "@type": "Organization",
               name: "Visual ERP",
-              url: "https://www.softwarecontableerp.com/",
+              url: "https://grupovisualcont.com/",
             },
             brand: { "@type": "Brand", name: "VisualFACT" },
             featureList: [
@@ -294,7 +320,7 @@ export default function SistemaFacturador() {
             offers: {
               "@type": "OfferCatalog",
               name: "Planes de VisualFACT",
-              url: "https://www.softwarecontableerp.com/facturador#pricing",
+              url: "https://grupovisualcont.com/facturador#pricing",
               itemListElement: [
                 {
                   "@type": "Offer",
@@ -361,7 +387,7 @@ export default function SistemaFacturador() {
             // Documento de autorización SUNAT expuesto como recurso informativo
             mainEntityOfPage: {
               "@type": "WebPage",
-              url: "https://www.softwarecontableerp.com/facturador",
+              url: "https://grupovisualcont.com/facturador",
             },
           }),
         }}
@@ -375,8 +401,8 @@ export default function SistemaFacturador() {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "WebPage",
-            "@id": "https://www.softwarecontableerp.com/facturador#webpage",
-            url: "https://www.softwarecontableerp.com/facturador",
+            "@id": "https://grupovisualcont.com/facturador#webpage",
+            url: "https://grupovisualcont.com/facturador",
             name: "Software de Facturación Electrónica en Perú | VisualFACT",
             description:
               "Emite comprobantes electrónicos válidos ante SUNAT y gestiona reportes y Excel. Demo gratuita de 15 días.",
@@ -384,40 +410,40 @@ export default function SistemaFacturador() {
             isPartOf: {
               "@type": "WebSite",
               name: "Visual ERP",
-              url: "https://www.softwarecontableerp.com/",
+              url: "https://grupovisualcont.com/",
             },
             hasPart: [
               {
                 "@type": "WebPageElement",
                 name: "Hero",
-                url: "https://www.softwarecontableerp.com/facturador#hero",
+                url: "https://grupovisualcont.com/facturador#hero",
                 description: "Propuesta de valor y llamada a la acción.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Características",
-                url: "https://www.softwarecontableerp.com/facturador#features",
+                url: "https://grupovisualcont.com/facturador#features",
                 description:
                   "Autorización SUNAT, 100% web, reportes, importaciones, Excel, firma digital.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Capacidades",
-                url: "https://www.softwarecontableerp.com/facturador#capabilities",
+                url: "https://grupovisualcont.com/facturador#capabilities",
                 description:
                   "Emisión de comprobantes, notas y guías; analítica de ventas.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Precios",
-                url: "https://www.softwarecontableerp.com/facturador#pricing",
+                url: "https://grupovisualcont.com/facturador#pricing",
                 description:
                   "Planes Super-Micro, Micro y Básico en modalidad mensual y anual.",
               },
               {
                 "@type": "WebPageElement",
                 name: "Demo",
-                url: "https://www.softwarecontableerp.com/facturador#demo",
+                url: "https://grupovisualcont.com/facturador#demo",
                 description:
                   "WhatsApp para solicitar la demo gratuita de 15 días.",
               },
@@ -439,13 +465,13 @@ export default function SistemaFacturador() {
                 "@type": "ListItem",
                 position: 1,
                 name: "Inicio",
-                item: "https://www.softwarecontableerp.com/",
+                item: "https://grupovisualcont.com/",
               },
               {
                 "@type": "ListItem",
                 position: 2,
                 name: "Facturación",
-                item: "https://www.softwarecontableerp.com/facturador",
+                item: "https://grupovisualcont.com/facturador",
               },
             ],
           }),

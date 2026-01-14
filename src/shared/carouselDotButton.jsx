@@ -43,7 +43,7 @@ export const DotButton = (props) => {
   const { children, ...restProps } = props
 
   return (
-    <button type="button" {...restProps}>
+    <button area-label="dot button" type="button" {...restProps}>
       {children}
     </button>
   )

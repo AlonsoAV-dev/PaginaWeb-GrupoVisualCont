@@ -1,37 +1,76 @@
+"use client";
+
+import { dlEvent } from "../../lib/datalayer";
+import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faWhatsapp } from "@fortawesome/free-brands-svg-icons/faWhatsapp";
+
+function mpBeacon(event, params = {}) {
+  try {
+    const url = new URL("https://www.google-analytics.com/g/collect");
+    const search = new URLSearchParams({
+      v: "2",
+      tid: GA_ID,
+      cid: "wapp." + (crypto?.randomUUID?.() || Date.now()),
+      sid: String(Math.floor(Date.now() / 1000)),
+      sct: "1",
+      seg: "1",
+      _s: "1",
+      dl: typeof window !== "undefined" ? window.location.href : "",
+      dt: typeof document !== "undefined" ? document.title : "",
+      sr: `${window.screen?.width || 0}x${window.screen?.height || 0}`,
+      ul: (navigator.language || "es-es").toLowerCase(),
+      en: event,
+      "ep.cta_id": params.cta_id,
+      "ep.method": params.method,
+      "ep.product": params.product,
+      "ep.page_location": params.page_location,
+    }).toString();
+    url.search = search;
+    if (navigator.sendBeacon) navigator.sendBeacon(url.toString());
+    else fetch(url.toString(), { method: "GET", keepalive: true });
+  } catch {}
+}
+
 function WhatsAppFab({
-  href = "",
+  href = "https://wa.me/51956703375?text=Hola%2C%20%C2%BFPodr%C3%ADa%20darme%20m%C3%A1s%20informaci%C3%B3n%20sobre%20el%20sistema%20y%20c%C3%B3mo%20podr%C3%ADa%20ayudar%20a%20mi%20empresa%3F%20Gracias.",
   ariaLabel = "Contactar por WhatsApp",
+  cta_id = "whatsapp_float",
   className = "",
 }) {
+  const onClick = () => {
+    const params = {
+      method: "whatsapp",
+      product: "VisualERP",
+      cta_id,
+      page_location: typeof window !== "undefined" ? window.location.href : "",
+    };
+
+    dlEvent("whatsapp_click", params);
+
+    // Fallback si no existe GA/GTM
+    const hasGtag =
+      typeof window !== "undefined" && typeof window.gtag === "function";
+    const hasGTM =
+      typeof window !== "undefined" &&
+      typeof window.google_tag_manager !== "undefined";
+    if (!hasGtag && !hasGTM) {
+      mpBeacon("whatsapp_click", params);
+    }
+  };
+
   return (
-    <a
+    <Link
       href={href}
+      onClick={onClick}
       aria-label={ariaLabel}
       target="_blank"
       rel="noopener noreferrer"
-      className={`fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg ring-1 ring-black/10 hover:brightness-95 hover:ring-2 hover:ring-offset-8 hover:ring-[#25d366] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 transition ${className}`}
+      className={`text-3xl fixed bottom-6 left-4 md:bottom-8 md:left-6 z-50 inline-flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg ring-1 ring-black/10 hover:brightness-95 hover:ring-2 hover:ring-offset-8 hover:ring-[#25d366] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/70 transition ${className}`}
     >
       {/* Ícono WhatsApp */}
-      <svg
-        viewBox="0 0 32 32"
-        className="h-7 w-7"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 16 16"
-          aria-label="WhatsApp logo"
-          role="img"
-        >
-          <circle cx="8" cy="8" r="8" fill="#25D366" />
-          <path
-            fill="#fff"
-            d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"
-          />
-        </svg>
-      </svg>
-    </a>
+      <FontAwesomeIcon icon={faWhatsapp} />
+    </Link>
   );
 }
 

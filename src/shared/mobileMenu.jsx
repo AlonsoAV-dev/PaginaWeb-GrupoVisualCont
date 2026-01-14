@@ -37,7 +37,7 @@ const resourcesDropdownData = [
       external: false,
     },
     {
-      title: "Software Integra ERP",
+      title: "Software ERP",
       description: "Automatiza la gestión de tu empresa",
       href: "/erp",
       icon: Network,
@@ -98,8 +98,8 @@ export default function MobileMenu({ isOpen, onClose }) {
 
   // Determine which logo to show based on theme
   const logoSrc = isDarkMode
-    ? "/images/logo-light.png"
-    : "/images/logo-dark.png";
+    ? "/images/logo-light.webp"
+    : "/images/logo-dark.webp";
 
   return (
     <div
@@ -259,7 +259,7 @@ export default function MobileMenu({ isOpen, onClose }) {
               <Link
                 href="/nosotros"
                 className={`flex items-center py-3 px-4 rounded-lg text-base ${
-                  pathname === "/nosotros"
+                  pathname === "/nosotros/"
                     ? "bg-[#257CD0]/10 text-[#257CD0]"
                     : "text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
                 }`}
@@ -270,23 +270,42 @@ export default function MobileMenu({ isOpen, onClose }) {
             </li>
 
             <li>
-              <li>
-                <span className="flex items-center py-3 px-4 rounded-lg text-base text-gray-400 dark:text-gray-600 cursor-not-allowed opacity-50 pointer-events-none">
-                  Noticias
-                </span>
-              </li>
+              <Link
+                href="/noticias"
+                className={`flex items-center py-3 px-4 rounded-lg text-base ${
+                  pathname === "/noticias/"
+                    ? "bg-[#257CD0]/10 text-[#257CD0]"
+                    : "text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800"
+                }`}
+                onClick={onClose}
+              >
+                Noticias
+              </Link>
             </li>
           </ul>
         </nav>
 
         <div className="p-4 mt-4 border-t border-gray-200 dark:border-gray-800">
-          <Link
-            href="/cotizar"
-            className="flex items-center justify-center w-full py-3 px-4 bg-[#257CD0] text-white rounded-lg text-base font-medium hover:bg-opacity-90 transition-colors"
-            onClick={onClose}
-          >
-            Cotiza Ya!
-          </Link>
+          <ul className="space-y-2">
+            <li>
+              <Link
+                href="https://e-vf.softwareintegrado.com/vc-cpe/login"
+                className="flex items-center justify-center w-full py-3 px-4 bg-[#257CD0] text-white rounded-lg text-base font-medium hover:bg-opacity-90 transition-colors"
+                onClick={onClose}
+              >
+                Ingresar Ahora
+              </Link>
+            </li>
+            <li>
+              <Link
+                href="/cotizar"
+                className="flex items-center justify-center w-full py-3 px-4 bg-[#257CD0] text-white rounded-lg text-base font-medium hover:bg-opacity-90 transition-colors"
+                onClick={onClose}
+              >
+                Cotiza Ya!
+              </Link>
+            </li>
+          </ul>
         </div>
       </div>
     </div>

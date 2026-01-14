@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://www.softwarecontableerp.com
+Host: https://www.grupovisualcont.com
 
 # Sitemaps
-Sitemap: https://www.softwarecontableerp.com/sitemap.xml
+Sitemap: https://www.grupovisualcont.com/sitemap.xml
