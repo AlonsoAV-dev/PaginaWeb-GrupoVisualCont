@@ -174,7 +174,7 @@ export default function Footer() {
                       : "hover:text-[#0070F2] text-sm text-gray-600 dark:text-gray-400 dark:hover:text-white transition-colors"
                   }`}
                 >
-                  Libro de Reclamacioness
+                  Libro de Reclamaciones
                 </Link>
               </li>
             </ul>
