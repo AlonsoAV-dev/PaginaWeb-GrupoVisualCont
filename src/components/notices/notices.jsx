@@ -1,13 +1,14 @@
 "use client";
 import NoticeCard from "@/shared/noticeCard";
 import { useState, useMemo, useEffect } from "react";
-import { NoticeData } from "../../../lib/utils";
+import { NoticeData } from "../../../lib/Utils";
 import Image from "next/image";
 import Link from "next/link";
 import FilterNotices from "./filterNotices";
-import { sidebarImages, visualSolutions } from "../../../lib/utils";
+import { sidebarImages, visualSolutions } from "../../../lib/Utils";
 import Pagination from "@/shared/pagination";
-import { paginateNotices } from "../../../lib/utils";
+import { paginateNotices } from "../../../lib/Utils";
+import QuickLogin from "./quickLogin";
 
 function Notices() {
   const [activeFilter, setActiveFilter] = useState("all");
@@ -67,6 +68,12 @@ function Notices() {
           {/* Sidebar */}
           <div className="px-2 hidden md:block">
             <div className="overflow-hidden grid grid-cols-1 gap-4">
+              <div className="bg-[#257CD0] text-center text-white rounded-bl-xl rounded-tr-xl ">
+                <h2 className="text-lg py-2 font-semibold">
+                  Zona de Suscriptores
+                </h2>
+                <QuickLogin />
+              </div>
               <div className="bg-[#257CD0] text-center text-white rounded-bl-xl rounded-tr-xl">
                 <h2 className="text-lg py-2 font-semibold">
                   ¡Lo mejor para tu negocio!
