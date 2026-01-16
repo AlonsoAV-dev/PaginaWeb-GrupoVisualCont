@@ -1,26 +1,71 @@
 "use client";
 import NoticeCard from "@/shared/noticeCard";
 import { useState, useMemo, useEffect } from "react";
-import { NoticeData } from "../../../lib/Utils";
 import Image from "next/image";
 import Link from "next/link";
 import FilterNotices from "./filterNotices";
 import { sidebarImages, visualSolutions } from "../../../lib/Utils";
 import Pagination from "@/shared/pagination";
-import { paginateNotices } from "../../../lib/Utils";
+import { paginateNotices, NOTICES_PER_PAGE } from "../../../lib/Utils";
 import QuickLogin from "./quickLogin";
 
 function Notices() {
   const [activeFilter, setActiveFilter] = useState("all");
-  const filteredNotices =
-    activeFilter === "all"
-      ? NoticeData
-      : NoticeData.filter((notice) => notice.categories.includes(activeFilter));
+  const [noticias, setNoticias] = useState([]);
+  const [categorias, setCategorias] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [total, setTotal] = useState(0);
 
-  const { notices, pagination } = useMemo(() => {
-    return paginateNotices(filteredNotices, currentPage);
-  }, [filteredNotices, currentPage]);
+  // Cargar categorías solo una vez
+  useEffect(() => {
+    loadCategorias();
+  }, []);
+
+  // Cargar noticias cuando cambie filtro o página
+  useEffect(() => {
+    loadNoticias();
+  }, [activeFilter, currentPage]);
+
+  const loadNoticias = async () => {
+    try {
+      setLoading(true);
+      const params = new URLSearchParams({
+        estado: 'publicada',
+        page: currentPage.toString(),
+        limit: '12'
+      });
+      
+      if (activeFilter !== 'all') {
+        params.append('categoria', activeFilter);
+      }
+      
+      const res = await fetch(`/api/noticias?${params}`, {
+        next: { revalidate: 60 } // Revalidar cada 60 segundos
+      });
+      const data = await res.json();
+      setNoticias(data.noticias || []);
+      setTotalPages(data.pagination?.totalPages || 1);
+      setTotal(data.pagination?.total || 0);
+    } catch (error) {
+      console.error('Error al cargar noticias:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadCategorias = async () => {
+    try {
+      const res = await fetch('/api/categorias', {
+        next: { revalidate: 3600 } // Revalidar cada hora
+      });
+      const data = await res.json();
+      setCategorias(data.categorias || []);
+    } catch (error) {
+      console.error('Error al cargar categorías:', error);
+    }
+  };
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
@@ -53,17 +98,32 @@ function Notices() {
         <FilterNotices
           activeFilter={activeFilter}
           setActiveFilter={setActiveFilter}
+          categorias={categorias}
         />
 
-        <div className="grid grid-cols-4 gap-6">
-          {/* Contenido */}
+        {/* Contenido */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-full md:col-span-3">
-            {/* Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              {notices.map((notice) => (
-                <NoticeCard key={notice.slug} notice={notice} />
-              ))}
-            </div>
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#257CD0]"></div>
+                <p className="text-gray-600 dark:text-gray-400 mt-4">Cargando noticias...</p>
+              </div>
+            ) : noticias.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                {noticias.map((notice) => (
+                  <NoticeCard key={notice.id_noticia} notice={notice} />
+                ))}
+              </div>
+            ) : (
+              <div className="col-span-2 text-center py-12">
+                <p className="text-gray-600 dark:text-gray-400">
+                  {activeFilter !== 'all' 
+                    ? 'No hay noticias en esta categoría' 
+                    : 'No hay noticias disponibles'}
+                </p>
+              </div>
+            )}
           </div>
           {/* Sidebar */}
           <div className="px-2 hidden md:block">
@@ -131,7 +191,12 @@ function Notices() {
           </div>
         </div>
 
-        <Pagination pagination={pagination} onPageChange={handlePageChange} />
+        {!loading && totalPages > 1 && (
+          <Pagination 
+            pagination={{ totalPages, currentPage }} 
+            onPageChange={handlePageChange} 
+          />
+        )}
 
       </div>
     </section>

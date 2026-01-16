@@ -1,9 +1,21 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  faNewspaper,
+  faCommentDots,
+  faUsers,
+  faArrowTrendUp,
+  faEye,
+  faPenToSquare,
+  faCheckCircle,
+  faTags
+} from '@fortawesome/free-solid-svg-icons';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
     noticias: 0,
+    noticiasPublicadas: 0,
     comentariosPendientes: 0,
     usuarios: 0,
   });
@@ -19,24 +31,28 @@ export default function AdminDashboard() {
       // Obtener usuario actual
       const userRes = await fetch('/api/auth/me');
       const userData = await userRes.json();
-      
+
       if (userData.success) {
-        setUser(userData.usuario);
+        setUser(userData.user);
       }
 
       // Cargar estadísticas
       const [noticiasRes, comentariosRes, usuariosRes] = await Promise.all([
         fetch('/api/noticias'),
         fetch('/api/comentarios?estado=2'),
-        userData.usuario?.rol === 'admin' ? fetch('/api/usuarios') : Promise.resolve({ json: () => ({ usuarios: [] }) }),
+        userData.user?.rol === 'admin' ? fetch('/api/usuarios') : Promise.resolve({ json: () => ({ usuarios: [] }) }),
       ]);
 
       const noticias = await noticiasRes.json();
       const comentarios = await comentariosRes.json();
-      const usuarios = userData.usuario?.rol === 'admin' ? await usuariosRes.json() : { usuarios: [] };
+      const usuarios = userData.user?.rol === 'admin' ? await usuariosRes.json() : { usuarios: [] };
+
+      // Calcular noticias publicadas
+      const noticiasPublicadas = noticias.noticias?.filter(n => n.estado === 'publicada').length || 0;
 
       setStats({
         noticias: noticias.noticias?.length || 0,
+        noticiasPublicadas,
         comentariosPendientes: comentarios.comentarios?.length || 0,
         usuarios: usuarios.usuarios?.length || 0,
       });
@@ -48,165 +64,176 @@ export default function AdminDashboard() {
   };
 
   if (loading) {
-    return <div className="text-center py-8">Cargando...</div>;
+    return (
+      <div className="text-center py-12">
+        <div className="inline-block animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mb-4"></div>
+        <p className="text-sm text-gray-600 dark:text-gray-400">Cargando estadísticas...</p>
+      </div>
+    );
   }
 
+  const statsCards = [
+    {
+      title: 'Total Noticias',
+      value: stats.noticias,
+      icon: faNewspaper,
+      iconColor: 'text-blue-600',
+      bgColor: 'bg-blue-50 dark:bg-blue-900/10',
+      borderColor: 'border-blue-200 dark:border-blue-800',
+      description: `${stats.noticiasPublicadas} publicadas`
+    },
+    {
+      title: 'Comentarios Pendientes',
+      value: stats.comentariosPendientes,
+      icon: faCommentDots,
+      iconColor: 'text-amber-600',
+      bgColor: 'bg-amber-50 dark:bg-amber-900/10',
+      borderColor: 'border-amber-200 dark:border-amber-800',
+      description: 'Esperan moderación'
+    },
+    ...(user?.rol === 'admin' ? [{
+      title: 'Total Usuarios',
+      value: stats.usuarios,
+      icon: faUsers,
+      iconColor: 'text-green-600',
+      bgColor: 'bg-green-50 dark:bg-green-900/10',
+      borderColor: 'border-green-200 dark:border-green-800',
+      description: 'Usuarios activos'
+    }] : [])
+  ];
+
   return (
-    <div>
-      {/* Título personalizado por rol */}
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-        {user?.rol === 'admin' ? 'Dashboard de Administración' : 'Dashboard de Editor'}
-      </h1>
-      <p className="text-gray-600 dark:text-gray-400 mb-8">
-        {user?.rol === 'admin' 
-          ? 'Bienvenido al panel de control completo del sistema' 
-          : 'Bienvenido a tu panel de gestión de contenido'}
-      </p>
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-          <div className="flex items-center">
-            <div className="flex-shrink-0 bg-[#257CD0] rounded-md p-3">
-              <svg
-                className="h-6 w-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-            </div>
-            <div className="ml-5">
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                Total Noticias
-              </p>
-              <p className="text-2xl font-semibold text-gray-900 dark:text-white">
-                {stats.noticias}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-          <div className="flex items-center">
-            <div className="flex-shrink-0 bg-yellow-500 rounded-md p-3">
-              <svg
-                className="h-6 w-6 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"
-                />
-              </svg>
-            </div>
-            <div className="ml-5">
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                Comentarios Pendientes
-              </p>
-              <p className="text-2xl font-semibold text-gray-900 dark:text-white">
-                {stats.comentariosPendientes}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {user?.rol === 'admin' && (
-          <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-            <div className="flex items-center">
-              <div className="flex-shrink-0 bg-green-500 rounded-md p-3">
-                <svg
-                  className="h-6 w-6 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                  />
-                </svg>
-              </div>
-              <div className="ml-5">
-                <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  Total Usuarios
-                </p>
-                <p className="text-2xl font-semibold text-gray-900 dark:text-white">
-                  {stats.usuarios}
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
+    <div className="space-y-6">
+      {/* Header profesional */}
+      <div>
+        <h1 className="text-2xl font-semibold text-gray-900 dark:text-white mb-1">
+          {user?.rol === 'admin' ? 'Panel de Administración' : 'Panel de Editor'}
+        </h1>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          Resumen general del sistema
+        </p>
       </div>
 
-      {/* Quick Actions */}
-      <div className="mt-8">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+      {/* Stats Grid - Diseño corporativo */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {statsCards.map((stat, index) => (
+          <div
+            key={index}
+            className={`${stat.bgColor} border ${stat.borderColor} rounded-lg p-5 hover:shadow-md transition-shadow`}
+          >
+            <div className="flex items-start justify-between mb-3">
+              <div className={`p-2.5 ${stat.bgColor} rounded-lg border ${stat.borderColor}`}>
+                <FontAwesomeIcon icon={stat.icon} className={`w-5 h-5 ${stat.iconColor}`} />
+              </div>
+              <div className="text-right">
+                <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                  {stat.value}
+                </p>
+              </div>
+            </div>
+            <div>
+              <h3 className="text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-1">
+                {stat.title}
+              </h3>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {stat.description}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Acciones Rápidas - Diseño ejecutivo */}
+      <div>
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
           {user?.rol === 'admin' ? 'Acciones Rápidas' : 'Mis Acciones'}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <a
             href="/admin/noticias"
-            className="block p-4 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition-shadow"
+            className="block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md transition-all"
           >
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-              {user?.rol === 'admin' ? 'Gestionar Noticias' : 'Mis Noticias'}
-            </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              {user?.rol === 'admin' 
-                ? 'Administra todas las publicaciones del blog' 
-                : 'Crea y edita tus publicaciones'}
-            </p>
+            <div className="flex items-start space-x-3">
+              <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <FontAwesomeIcon icon={faPenToSquare} className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
+                  {user?.rol === 'admin' ? 'Gestionar Noticias' : 'Mis Noticias'}
+                </h3>
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  {user?.rol === 'admin'
+                    ? 'Administra todas las publicaciones'
+                    : 'Crea y edita tus publicaciones'}
+                </p>
+              </div>
+            </div>
           </a>
+
           <a
             href="/admin/comentarios"
-            className="block p-4 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition-shadow"
+            className="block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-amber-300 dark:hover:border-amber-700 hover:shadow-md transition-all"
           >
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-              Revisar Comentarios
-            </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              {user?.rol === 'admin' 
-                ? 'Modera todos los comentarios del sistema' 
-                : 'Gestiona los comentarios pendientes'}
-            </p>
+            <div className="flex items-start space-x-3">
+              <div className="p-2 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
+                <FontAwesomeIcon icon={faEye} className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
+                  Revisar Comentarios
+                </h3>
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  {user?.rol === 'admin'
+                    ? 'Modera los comentarios del sistema'
+                    : 'Gestiona comentarios pendientes'}
+                </p>
+                {stats.comentariosPendientes > 0 && (
+                  <span className="inline-block mt-2 px-2 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 text-xs font-medium rounded">
+                    {stats.comentariosPendientes} pendientes
+                  </span>
+                )}
+              </div>
+            </div>
           </a>
+
           {user?.rol === 'admin' && (
             <a
               href="/admin/usuarios"
-              className="block p-4 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition-shadow"
+              className="block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-green-300 dark:hover:border-green-700 hover:shadow-md transition-all"
             >
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                Gestionar Usuarios
-              </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Administra los usuarios del sistema
-              </p>
+              <div className="flex items-start space-x-3">
+                <div className="p-2 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
+                  <FontAwesomeIcon icon={faUsers} className="w-5 h-5 text-green-600 dark:text-green-400" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
+                    Gestionar Usuarios
+                  </h3>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">
+                    Administra usuarios del sistema
+                  </p>
+                </div>
+              </div>
             </a>
           )}
+
           <a
             href="/admin/keywords"
-            className="block p-4 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition-shadow"
+            className="block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-purple-300 dark:hover:border-purple-700 hover:shadow-md transition-all"
           >
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-              Keywords SEO
-            </h3>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-              Gestiona las palabras clave para SEO
-            </p>
+            <div className="flex items-start space-x-3">
+              <div className="p-2 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
+                <FontAwesomeIcon icon={faTags} className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
+                  Keywords SEO
+                </h3>
+                <p className="text-xs text-gray-600 dark:text-gray-400">
+                  Gestiona palabras clave para SEO
+                </p>
+              </div>
+            </div>
           </a>
         </div>
       </div>

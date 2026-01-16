@@ -1,32 +1,29 @@
 "use client"
 
-import { id } from "zod/v4/locales"
-
-export default function FilterNotices({ activeFilter, setActiveFilter }) {
-  const filters = [
-    { id: "all", label: "Todas las Noticias" },
-    { id: "tributación", label: "Tributación" },
-    { id: "contabilidad", label: "Contabilidad" },
-    { id: "laboral", label: "Laboral" },
-    { id: "finanzas", label: "Finanzas" },
-    { id: "economía", label: "Economía" },
-    { id: "tecnología", label: "Tecnología" },
-    { id: "coaching", label: "Coaching" },
-  ]
-
+export default function FilterNotices({ activeFilter, setActiveFilter, categorias }) {
   return (
     <div className="mb-8 flex flex-wrap gap-2">
-      {filters.map((filter) => (
+      <button
+        onClick={() => setActiveFilter("all")}
+        className={`px-4 py-2 rounded-md text-sm transition-colors ${
+          activeFilter === "all"
+            ? "bg-[#247cd1] text-white"
+            : "bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700"
+        }`}
+      >
+        Todas las Noticias
+      </button>
+      {categorias.map((categoria) => (
         <button
-          key={filter.id}
-          onClick={() => setActiveFilter(filter.id)}
+          key={categoria.id_categoria}
+          onClick={() => setActiveFilter(categoria.id_categoria.toString())}
           className={`px-4 py-2 rounded-md text-sm transition-colors ${
-            activeFilter === filter.id
+            activeFilter === categoria.id_categoria.toString()
               ? "bg-[#247cd1] text-white"
               : "bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-700"
           }`}
         >
-          {filter.label}
+          {categoria.nombre}
         </button>
       ))}
     </div>

@@ -14,6 +14,16 @@ function NoticeCard({ notice }) {
     setSelectedNotice(null);
   };
 
+  const formatFecha = (fecha) => {
+    if (!fecha) return '';
+    const date = new Date(fecha);
+    return date.toLocaleDateString('es-PE', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+  };
+
   return (
     <>
       <Link
@@ -29,24 +39,23 @@ function NoticeCard({ notice }) {
           <div className="block h-full flex flex-col">
             <div className="flex items-center justify-center p-4 pt-6 bg-gray-100 dark:bg-gray-800 relative">
               <Image
-                src={notice.mainImage || "/images/placeholder.jpg"}
-                alt={notice.title}
+                src={notice.imagen_principal || "/images/placeholder.jpg"}
+                alt={notice.titulo}
                 width={600}
                 height={400}
                 className="w-full h-auto object-contain max-h-[210px]"
               />
-              {notice.categories && (
+              {notice.categoria_nombre && (
                 <div className="absolute top-4 left-4">
                   <span className="px-2 py-1 bg-white/80 dark:bg-black/50 backdrop-blur-sm rounded-full text-xs text-gray-800 dark:text-white">
-                    {notice.categories[0].charAt(0).toUpperCase() +
-                      notice.categories[0].slice(1).toLowerCase()}
+                    {notice.categoria_nombre}
                   </span>
                 </div>
               )}
-              {notice.pubDate && (
+              {notice.fecha_publicacion && (
                 <div className="absolute top-4 right-4 px-2 py-1">
                   <span className="px-2 py-1 bg-white/80 dark:bg-black/50 backdrop-blur-sm rounded-full text-xs text-gray-800 dark:text-white">
-                    {notice.pubDate}
+                    {formatFecha(notice.fecha_publicacion)}
                   </span>
                 </div>
               )}
@@ -54,13 +63,13 @@ function NoticeCard({ notice }) {
 
             <div className="p-4 md:p-6 flex flex-col flex-grow">
               <span className="text-sm text-gray-500 dark:text-gray-400 mb-1">
-                {notice.author.name}
+                {notice.autor_nombre || 'Visual ERP'}
               </span>
               <h3 className="font-medium text-gray-900 dark:text-white text-lg mb-2 line-clamp-2">
-                {notice.title}
+                {notice.titulo}
               </h3>
               <p className="text-sm text-gray-700 dark:text-gray-300 mb-4 line-clamp-2">
-                {notice.shortDescription}
+                {notice.descripcion_corta}
               </p>
               <div className="inline-flex items-center text-[#0070F2] text-sm font-medium mt-auto group">
                 Ver Noticia{" "}

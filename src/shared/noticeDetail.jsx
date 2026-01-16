@@ -5,9 +5,19 @@ import WhatsAppFab from "@/shared/whatsappFab";
 import Image from "next/image";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import NoticeAuthorCard from "./noticeAuthorCard";
-import { sidebarImages, visualSolutions } from "../../lib/utils";
+import { sidebarImages, visualSolutions } from "../../lib/Utils";
 
 function NoticeDetail({ selectedNotice }) {
+  const formatFecha = (fecha) => {
+    if (!fecha) return '';
+    const date = new Date(fecha);
+    return date.toLocaleDateString('es-PE', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
   return (
     <>
       <Navbar />
@@ -27,8 +37,8 @@ function NoticeDetail({ selectedNotice }) {
           <div className="lg:col-span-2">
             <div className="bg-gray-100 dark:bg-gray-800 rounded-xl p-6 mb-8 flex items-center justify-center">
               <Image
-                src={selectedNotice.mainImage || "/images/placeholder.jpg"}
-                alt={selectedNotice.title || "Visual Notice"}
+                src={selectedNotice.imagen_principal || "/images/placeholder.jpg"}
+                alt={selectedNotice.titulo || "Visual Notice"}
                 width={1200}
                 height={675}
                 className="max-w-full h-auto object-contain max-h-[600px]"
@@ -38,10 +48,15 @@ function NoticeDetail({ selectedNotice }) {
 
             <div className="prose prose-lg dark:prose-invert max-w-none">
               <div
-                dangerouslySetInnerHTML={{ __html: selectedNotice.content }}
+                dangerouslySetInnerHTML={{ __html: selectedNotice.contenido }}
               />
             </div>
-            <NoticeAuthorCard selectedAuthor={selectedNotice.author} />
+            {selectedNotice.autor_nombre && (
+              <NoticeAuthorCard selectedAuthor={{
+                name: selectedNotice.autor_nombre,
+                email: selectedNotice.autor_email
+              }} />
+            )}
           </div>
 
           {/* Segunda Columna */}
@@ -51,51 +66,53 @@ function NoticeDetail({ selectedNotice }) {
               <div className="flex items-center gap-4 mb-6">
                 <div>
                   <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
-                    {selectedNotice.title}
+                    {selectedNotice.titulo}
                   </h1>
                   <p className="text-gray-700 dark:text-gray-300">
-                    {selectedNotice.shortDescription}
+                    {selectedNotice.descripcion_corta}
                   </p>
                 </div>
               </div>
 
-              {selectedNotice.projectUrl && (
-                <a
-                  href={selectedNotice.projectUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-[#1f4c8f] text-white rounded-lg text-base font-medium hover:bg-[#00AEEF] transition-colors"
-                >
-                  Mas información
-                  <ExternalLink className="w-4 h-4" />
-                </a>
-              )}
-
-              <div className="mt-6">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
-                  Categorias
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {selectedNotice.categories
-                    ?.filter((cat) => cat !== "all")
-                    .map((category) => (
-                      <span
-                        key={category}
-                        className="px-3 py-1 bg-gray-200 dark:bg-gray-800 rounded-full text-sm text-gray-800 dark:text-gray-200"
-                      >
-                        {category.charAt(0).toUpperCase() + category.slice(1)}
-                      </span>
-                    ))}
+              {selectedNotice.categoria_nombre && (
+                <div className="mt-6">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
+                    Categoría
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    <span className="px-3 py-1 bg-gray-200 dark:bg-gray-800 rounded-full text-sm text-gray-800 dark:text-gray-200">
+                      {selectedNotice.categoria_nombre}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              )}
+              
               <div className="mt-6">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
                   Fecha de publicación
                 </h3>
                 <span className="px-3 py-1 bg-gray-200 dark:bg-gray-800 rounded-full text-sm text-gray-800 dark:text-gray-200">
-                  {selectedNotice.pubDate}
+                  {formatFecha(selectedNotice.fecha_publicacion || selectedNotice.creado_en)}
                 </span>
               </div>
+
+              {selectedNotice.keywords && selectedNotice.keywords.length > 0 && (
+                <div className="mt-6">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-3">
+                    Keywords
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedNotice.keywords.map((keyword) => (
+                      <span
+                        key={keyword.id_keyword}
+                        className="px-3 py-1 bg-blue-100 dark:bg-blue-900 rounded-full text-sm text-blue-800 dark:text-blue-200"
+                      >
+                        {keyword.nombre}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             {/* Promociones */}
             <div className="hidden md:block">

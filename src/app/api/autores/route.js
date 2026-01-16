@@ -1,14 +1,18 @@
 import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 
-// GET - Obtener todos los autores
+// GET - Obtener todos los autores con caché
 export async function GET() {
   try {
     const autores = await query(
-      'SELECT * FROM autor WHERE estado = "activo" ORDER BY nombre ASC'
+      'SELECT id_autor, nombre, email, tipo, estado FROM autor WHERE estado = "activo" ORDER BY nombre ASC'
     );
 
-    return NextResponse.json({ success: true, autores });
+    return NextResponse.json({ success: true, autores }, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=3600' // Cache 30 min
+      }
+    });
   } catch (error) {
     console.error('Error al obtener autores:', error);
     return NextResponse.json(

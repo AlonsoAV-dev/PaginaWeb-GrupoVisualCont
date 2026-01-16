@@ -58,6 +58,18 @@ CREATE TABLE keywords (
 );
 
 /* =========================================================
+   CATEGORÍAS
+========================================================= */
+CREATE TABLE categorias (
+    id_categoria INT AUTO_INCREMENT PRIMARY KEY,
+    nombre VARCHAR(100) NOT NULL UNIQUE,
+    slug VARCHAR(100) NOT NULL UNIQUE,
+    descripcion TEXT,
+    estado TINYINT DEFAULT 1,
+    creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+/* =========================================================
    SERVICIO ↔ KEYWORD
 ========================================================= */
 CREATE TABLE servicio_keyword (
@@ -75,13 +87,17 @@ CREATE TABLE noticias (
     id_noticia INT AUTO_INCREMENT PRIMARY KEY,
     cod_unico VARCHAR(50) NOT NULL UNIQUE,
     titulo VARCHAR(255) NOT NULL,
-    slug VARCHAR(255),
+    slug VARCHAR(255) UNIQUE,
     contenido TEXT NOT NULL,
+    descripcion_corta VARCHAR(500),
+    imagen_principal VARCHAR(255),
+    id_categoria INT,
     id_servicio INT,
     id_autor INT NOT NULL,
     estado ENUM('publicada','borrador') DEFAULT 'borrador',
     fecha_publicacion DATETIME,
     creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_categoria) REFERENCES categorias(id_categoria),
     FOREIGN KEY (id_servicio) REFERENCES servicios(id_servicio),
     FOREIGN KEY (id_autor) REFERENCES autor(id_autor)
 );
@@ -142,3 +158,10 @@ INSERT INTO keywords (nombre) VALUES
 ('SUNAT'),
 ('empresas'),
 ('software');
+
+-- Categorías de ejemplo
+INSERT INTO categorias (nombre, slug, descripcion) VALUES 
+('Contabilidad', 'contabilidad', 'Noticias sobre contabilidad empresarial'),
+('Tributación', 'tributacion', 'Novedades y actualizaciones tributarias'),
+('Laboral', 'laboral', 'Temas relacionados con recursos humanos y planillas'),
+('Tecnología', 'tecnologia', 'Innovación y tecnología empresarial');

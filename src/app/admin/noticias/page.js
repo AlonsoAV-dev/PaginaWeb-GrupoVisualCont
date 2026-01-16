@@ -97,7 +97,7 @@ export default function NoticiasAdmin() {
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                  {noticia.autor_nombre}
+                  {noticia.nombre_autor} 
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span

@@ -10,10 +10,11 @@ export async function GET(request, { params }) {
     const { id } = await params;
 
     const noticias = await query(
-      `SELECT n.*, a.nombre as autor_nombre, s.nombre as servicio_nombre
+      `SELECT n.*, a.nombre as autor_nombre, s.nombre as servicio_nombre, c.nombre as categoria_nombre, c.slug as categoria_slug
        FROM noticias n
        LEFT JOIN autor a ON n.id_autor = a.id_autor
        LEFT JOIN servicios s ON n.id_servicio = s.id_servicio
+       LEFT JOIN categorias c ON n.id_categoria = c.id_categoria
        WHERE n.id_noticia = ?`,
       [id]
     );
@@ -54,11 +55,12 @@ export async function PUT(request, { params }) {
     
     const { 
       titulo, 
-      slug, 
-      contenido, 
-      id_servicio, 
+      contenido,
+      descripcion_corta,
+      imagen_principal,
+      id_categoria,
+      nombre_autor,
       estado,
-      fecha_publicacion,
       keywords 
     } = await request.json();
 
@@ -70,18 +72,60 @@ export async function PUT(request, { params }) {
       );
     }
 
+    // Generar slug desde el título si cambió
+    const generarSlug = (texto) => {
+      return texto
+        .toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    };
+
+    let slug = generarSlug(titulo);
+    
+    // Verificar si el slug ya existe (excluyendo la noticia actual)
+    const slugsExistentes = await query(
+      'SELECT slug FROM noticias WHERE slug LIKE ? AND id_noticia != ?',
+      [`${slug}%`, id]
+    );
+    
+    if (slugsExistentes.length > 0) {
+      const slugs = slugsExistentes.map(n => n.slug);
+      let contador = 1;
+      let slugFinal = slug;
+      while (slugs.includes(slugFinal)) {
+        slugFinal = `${slug}-${contador}`;
+        contador++;
+      }
+      slug = slugFinal;
+    }
+
+    // Actualizar fecha_publicacion automáticamente si cambia a 'publicada'
+    const noticiaActual = await query(
+      'SELECT estado, fecha_publicacion FROM noticias WHERE id_noticia = ?',
+      [id]
+    );
+    
+    let fecha_publicacion = noticiaActual[0].fecha_publicacion;
+    if (estado === 'publicada' && noticiaActual[0].estado !== 'publicada' && !fecha_publicacion) {
+      fecha_publicacion = new Date();
+    }
+
     // Actualizar noticia
     await query(
       `UPDATE noticias 
-       SET titulo = ?, slug = ?, contenido = ?, id_servicio = ?, estado = ?, fecha_publicacion = ?
+       SET titulo = ?, slug = ?, contenido = ?, descripcion_corta = ?, imagen_principal = ?, id_categoria = ?, nombre_autor = ?, estado = ?, fecha_publicacion = ?
        WHERE id_noticia = ?`,
       [
         titulo,
-        slug || titulo.toLowerCase().replace(/\s+/g, '-'),
+        slug,
         contenido,
-        id_servicio || null,
+        descripcion_corta || null,
+        imagen_principal || null,
+        id_categoria || null,
+        nombre_autor,
         estado || 'borrador',
-        fecha_publicacion || null,
+        fecha_publicacion,
         id,
       ]
     );

@@ -236,14 +236,14 @@ export default function UsuariosAdmin() {
                   >
                     Editar
                   </button>
-                  <button
+                  {/* <button
                     onClick={() =>
                       handleToggleEstado(usuario.id_usuario, usuario.estado)
                     }
                     className="text-orange-600 hover:text-orange-900 dark:text-orange-400"
                   >
                     {usuario.estado === 1 ? 'Suspender' : 'Activar'}
-                  </button>
+                  </button> */}
                   <button
                     onClick={() => handleDelete(usuario.id_usuario)}
                     className="text-red-600 hover:text-red-900 dark:text-red-400"

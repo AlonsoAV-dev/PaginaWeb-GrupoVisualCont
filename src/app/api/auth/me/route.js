@@ -16,7 +16,7 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      usuario: user,
+      user: user,
     });
   } catch (error) {
     console.error('Error en me:', error);

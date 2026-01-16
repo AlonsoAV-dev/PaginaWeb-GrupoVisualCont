@@ -1,13 +1,32 @@
 import NoticeDetail from "@/shared/noticeDetail";
-import { NoticeData } from "../../../../lib/utils";
 import { notFound } from "next/navigation";
 import Script from "next/script";
 
+async function getNoticia(slug) {
+  try {
+    const res = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/api/noticias/slug/${slug}`,
+      {
+        next: { 
+          revalidate: 300, // Revalidar cada 5 minutos
+          tags: [`noticia-${slug}`] // Tag para revalidación bajo demanda
+        }
+      }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.noticia;
+  } catch (error) {
+    console.error('Error fetching noticia:', error);
+    return null;
+  }
+}
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const notice = NoticeData.find((item) => item.slug === slug);
+  const noticia = await getNoticia(slug);
 
-  if (!notice) {
+  if (!noticia) {
     return {
       title: "Pagina No Existente | Visual Noticias",
       description: "La pagina indicada no existe.",
@@ -20,25 +39,27 @@ export async function generateMetadata({ params }) {
   }
 
   return {
-    title: `${notice.title} | Visual Noticias`,
-    description: notice.shortDescription,
+    title: `${noticia.titulo} | Visual Noticias`,
+    description: noticia.descripcion_corta || noticia.titulo,
     alternates: {
-      canonical: `/noticias/${notice.slug}`,
+      canonical: `/noticias/${noticia.slug}`,
     },
     openGraph: {
-      title: `${notice.title} | Visual Noticias`,
-      description: notice.shortDescription,
-      url: `/noticias/${notice.slug}`,
+      title: `${noticia.titulo} | Visual Noticias`,
+      description: noticia.descripcion_corta || noticia.titulo,
+      url: `/noticias/${noticia.slug}`,
       type: "article",
       siteName: "Visual ERP",
       locale: "es_PE",
-      authors: ["Visual ERP"],
+      authors: [noticia.autor_nombre || "Visual ERP"],
+      images: noticia.imagen_principal ? [noticia.imagen_principal] : [],
     },
 
     twitter: {
       card: "summary_large_image",
-      title: `${notice.title}`,
-      description: `${notice.description}`,
+      title: `${noticia.titulo}`,
+      description: noticia.descripcion_corta || noticia.titulo,
+      images: noticia.imagen_principal ? [noticia.imagen_principal] : [],
     },
     robots: {
       index: true,
@@ -49,9 +70,9 @@ export async function generateMetadata({ params }) {
 
 export default async function Detail({ params }) {
   const { slug } = await params;
-  const notice = NoticeData.find((item) => item.slug === slug);
+  const noticia = await getNoticia(slug);
 
-  if (!notice) {
+  if (!noticia) {
     notFound();
   }
 
@@ -60,7 +81,7 @@ export default async function Detail({ params }) {
 
   return (
     <>
-      <NoticeDetail selectedNotice={notice} />
+      <NoticeDetail selectedNotice={noticia} />
 
       <Script
         id="ld-news-article"
@@ -69,10 +90,10 @@ export default async function Detail({ params }) {
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "NewsArticle",
-            mainEntityOfPage: abs(`/noticias/${notice.slug}`),
-            headline: notice.title,
-            description: notice.description,
-            author: { "@type": "Organization", name: "Visual ERP" },
+            mainEntityOfPage: abs(`/noticias/${noticia.slug}`),
+            headline: noticia.titulo,
+            description: noticia.descripcion_corta || noticia.titulo,
+            author: { "@type": "Person", name: noticia.autor_nombre || "Visual ERP" },
             publisher: {
               "@type": "Organization",
               name: "Visual ERP",
@@ -81,6 +102,8 @@ export default async function Detail({ params }) {
                 url: abs("/images/Logos/LogVBlancoRelleno.svg"),
               },
             },
+            datePublished: noticia.fecha_publicacion || noticia.creado_en,
+            dateModified: noticia.creado_en,
           }),
         }}
       />
@@ -108,8 +131,8 @@ export default async function Detail({ params }) {
               {
                 "@type": "ListItem",
                 position: 3,
-                name: notice.title,
-                item: `https://grupovisualcont.com/noticias/${notice.slug}`,
+                name: noticia.titulo,
+                item: `https://grupovisualcont.com/noticias/${noticia.slug}`,
               },
             ],
           }),
@@ -117,12 +140,4 @@ export default async function Detail({ params }) {
       />
     </>
   );
-}
-
-export function generateStaticParams() {
-  const noticeData = NoticeData;
-
-  return noticeData.map((item) => ({
-    slug: item.slug,
-  }));
 }

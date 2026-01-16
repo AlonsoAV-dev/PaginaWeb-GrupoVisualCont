@@ -2,16 +2,18 @@ import { NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { requireAuth } from '@/lib/auth';
 
-export const dynamic = 'force-dynamic';
-
-// GET - Obtener todas las keywords
+// GET - Obtener todas las keywords con caché
 export async function GET() {
   try {
     const keywords = await query(
-      'SELECT * FROM keywords ORDER BY nombre ASC'
+      'SELECT id_keyword, nombre FROM keywords ORDER BY nombre ASC'
     );
 
-    return NextResponse.json({ success: true, keywords });
+    return NextResponse.json({ success: true, keywords }, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=3600' // Cache 30 min
+      }
+    });
   } catch (error) {
     console.error('Error al obtener keywords:', error);
     return NextResponse.json(

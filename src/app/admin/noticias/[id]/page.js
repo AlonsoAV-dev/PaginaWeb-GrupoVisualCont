@@ -1,6 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import dynamic from 'next/dynamic';
+
+const TinyMCEEditor = dynamic(() => import('@/components/admin/TinyMCEEditor'), {
+  ssr: false,
+  loading: () => <p>Cargando editor...</p>,
+});
 
 export default function NoticiaEditor() {
   const router = useRouter();
@@ -8,19 +14,19 @@ export default function NoticiaEditor() {
   const isEditing = params?.id && params.id !== 'nueva';
 
   const [formData, setFormData] = useState({
-    cod_unico: '',
     titulo: '',
     slug: '',
     contenido: '',
-    id_servicio: '',
-    id_autor: '',
+    descripcion_corta: '',
+    imagen_principal: '',
+    id_categoria: '',
+    nombre_autor: '',
     estado: 'borrador',
-    fecha_publicacion: '',
     keywords: [],
   });
 
   const [autores, setAutores] = useState([]);
-  const [servicios, setServicios] = useState([]);
+  const [categorias, setCategorias] = useState([]);
   const [keywords, setKeywords] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -34,18 +40,18 @@ export default function NoticiaEditor() {
 
   const loadData = async () => {
     try {
-      const [autoresRes, serviciosRes, keywordsRes] = await Promise.all([
+      const [autoresRes, categoriasRes, keywordsRes] = await Promise.all([
         fetch('/api/autores'),
-        fetch('/api/servicios'),
+        fetch('/api/categorias'),
         fetch('/api/keywords'),
       ]);
 
       const autoresData = await autoresRes.json();
-      const serviciosData = await serviciosRes.json();
+      const categoriasData = await categoriasRes.json();
       const keywordsData = await keywordsRes.json();
 
       setAutores(autoresData.autores || []);
-      setServicios(serviciosData.servicios || []);
+      setCategorias(categoriasData.categorias || []);
       setKeywords(keywordsData.keywords || []);
     } catch (error) {
       console.error('Error al cargar datos:', error);
@@ -59,11 +65,15 @@ export default function NoticiaEditor() {
       
       if (data.noticia) {
         setFormData({
-          ...data.noticia,
+          titulo: data.noticia.titulo || '',
+          slug: data.noticia.slug || '',
+          contenido: data.noticia.contenido || '',
+          descripcion_corta: data.noticia.descripcion_corta || '',
+          imagen_principal: data.noticia.imagen_principal || '',
+          id_categoria: data.noticia.id_categoria || '',
+          nombre_autor: data.noticia.nombre_autor || '',
+          estado: data.noticia.estado || 'borrador',
           keywords: data.noticia.keywords?.map(k => k.id_keyword) || [],
-          fecha_publicacion: data.noticia.fecha_publicacion 
-            ? new Date(data.noticia.fecha_publicacion).toISOString().slice(0, 16)
-            : '',
         });
       }
     } catch (error) {
@@ -126,39 +136,18 @@ export default function NoticiaEditor() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Código Único *
+                Autor *
               </label>
               <input
                 type="text"
-                value={formData.cod_unico}
+                value={formData.nombre_autor}
                 onChange={(e) =>
-                  setFormData({ ...formData, cod_unico: e.target.value })
+                  setFormData({ ...formData, nombre_autor: e.target.value })
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                placeholder="Nombre del autor"
                 required
-                disabled={isEditing}
               />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Autor *
-              </label>
-              <select
-                value={formData.id_autor}
-                onChange={(e) =>
-                  setFormData({ ...formData, id_autor: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
-                required
-              >
-                <option value="">Seleccionar autor</option>
-                {autores.map((autor) => (
-                  <option key={autor.id_autor} value={autor.id_autor}>
-                    {autor.nombre}
-                  </option>
-                ))}
-              </select>
             </div>
 
             <div className="md:col-span-2">
@@ -178,34 +167,59 @@ export default function NoticiaEditor() {
 
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Slug (URL)
+                Descripción Corta *
+              </label>
+              <textarea
+                value={formData.descripcion_corta}
+                onChange={(e) =>
+                  setFormData({ ...formData, descripcion_corta: e.target.value })
+                }
+                rows="3"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                placeholder="Descripción breve que aparecerá en las tarjetas de noticias"
+                required
+              ></textarea>
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                Imagen Principal (URL)
               </label>
               <input
                 type="text"
-                value={formData.slug}
+                value={formData.imagen_principal}
                 onChange={(e) =>
-                  setFormData({ ...formData, slug: e.target.value })
+                  setFormData({ ...formData, imagen_principal: e.target.value })
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
-                placeholder="Se genera automáticamente del título"
               />
+              {formData.imagen_principal && (
+                <div className="mt-2">
+                  <img 
+                    src={formData.imagen_principal} 
+                    alt="Preview" 
+                    className="h-32 object-cover rounded-md"
+                    onError={(e) => e.target.style.display = 'none'}
+                  />
+                </div>
+              )}
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Servicio
+                Categoría
               </label>
               <select
-                value={formData.id_servicio}
+                value={formData.id_categoria}
                 onChange={(e) =>
-                  setFormData({ ...formData, id_servicio: e.target.value })
+                  setFormData({ ...formData, id_categoria: e.target.value })
                 }
                 className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
               >
-                <option value="">Sin servicio</option>
-                {servicios.map((servicio) => (
-                  <option key={servicio.id_servicio} value={servicio.id_servicio}>
-                    {servicio.nombre}
+                <option value="">Sin categoría</option>
+                {categorias.map((categoria) => (
+                  <option key={categoria.id_categoria} value={categoria.id_categoria}>
+                    {categoria.nombre}
                   </option>
                 ))}
               </select>
@@ -230,31 +244,17 @@ export default function NoticiaEditor() {
 
             <div className="md:col-span-2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Fecha de Publicación
-              </label>
-              <input
-                type="datetime-local"
-                value={formData.fecha_publicacion}
-                onChange={(e) =>
-                  setFormData({ ...formData, fecha_publicacion: e.target.value })
-                }
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Contenido *
               </label>
-              <textarea
-                value={formData.contenido}
-                onChange={(e) =>
-                  setFormData({ ...formData, contenido: e.target.value })
-                }
-                rows="10"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
-                required
-              ></textarea>
+              <div className="border border-gray-300 rounded-md overflow-hidden">
+                <TinyMCEEditor
+                  value={formData.contenido}
+                  onChange={(content) =>
+                    setFormData({ ...formData, contenido: content })
+                  }
+                  height={500}
+                />
+              </div>
             </div>
 
             <div className="md:col-span-2">

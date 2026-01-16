@@ -1,12 +1,30 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function QuickLogin() {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
   const router = useRouter();
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  const checkAuth = async () => {
+    try {
+      const res = await fetch('/api/auth/me');
+      if (res.ok) {
+        const data = await res.json();
+        setUser(data.user);
+      }
+    } catch (err) {
+      // Usuario no autenticado
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -35,6 +53,29 @@ export default function QuickLogin() {
       setLoading(false);
     }
   };
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Buenos días';
+    if (hour < 19) return 'Buenas tardes';
+    return 'Buenas noches';
+  };
+
+  if (user) {
+    return (
+      <div className="bg-white border-[#257CD0] border-2 rounded-bl-xl p-6 text-center">
+        <p className="text-gray-900 text-base mb-3">
+          {getGreeting()}, <span className="font-semibold">{user.nombre}</span>
+        </p>
+        <Link
+          href="/admin/dashboard"
+          className="inline-block w-full py-2 px-4 bg-[#257CD0] text-white rounded-md hover:bg-[#1e6bb8] transition-colors"
+        >
+          Ingresar al Panel
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white border-[#257CD0] border-2 rounded-bl-xl p-4">

@@ -1,7 +1,7 @@
 "use client";
 
 import ChatBotBar from "./ChatBotBar";
-import WhatsAppFab from "./WhatsAppFab";
+import WhatsAppFab from "./whatsappFab";
 
 export default function IconsGroup() {
   return (
