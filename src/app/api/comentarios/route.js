@@ -79,15 +79,57 @@ export async function GET(request) {
   }
 }
 
-// POST - Crear nuevo comentario (público)
+// POST - Crear nuevo comentario (público y usuarios logueados)
 export async function POST(request) {
   try {
-    const { id_noticia, nombre, email, comentario } = await request.json();
+    const body = await request.json();
+    const { id_noticia, nombre, email, comentario } = body;
 
-    // Validación
-    if (!id_noticia || !nombre || !email || !comentario) {
+    // Validación básica
+    if (!id_noticia || !comentario) {
       return NextResponse.json(
-        { error: 'Todos los campos son requeridos' },
+        { error: 'La noticia y el comentario son requeridos' },
+        { status: 400 }
+      );
+    }
+
+    let id_autor;
+    let nombreFinal = nombre;
+    let emailFinal = email;
+
+    // Verificar si el usuario está logueado
+    try {
+      const { cookies } = await import('next/headers');
+      const cookieStore = await cookies();
+      const token = cookieStore.get('auth-token')?.value;
+      
+      if (token) {
+        // Usuario logueado - obtener info del token
+        const { verifyToken } = await import('@/lib/auth');
+        const userData = await verifyToken(token);
+        
+        if (userData && userData.id_usuario) {
+          // Buscar el usuario en la base de datos
+          const [usuario] = await query(
+            'SELECT nombre, email FROM usuarios WHERE id_usuario = ?',
+            [userData.id_usuario]
+          );
+          
+          if (usuario) {
+            nombreFinal = usuario.nombre;
+            emailFinal = usuario.email;
+          }
+        }
+      }
+    } catch (authError) {
+      // No logueado, usar los datos del formulario
+      console.log('Usuario no autenticado, usando datos del formulario');
+    }
+
+    // Validar que tengamos nombre y email
+    if (!nombreFinal || !emailFinal) {
+      return NextResponse.json(
+        { error: 'El nombre y email son requeridos' },
         { status: 400 }
       );
     }
@@ -95,19 +137,23 @@ export async function POST(request) {
     // Buscar o crear autor
     let autor = await query(
       'SELECT id_autor FROM autor WHERE email = ?',
-      [email]
+      [emailFinal]
     );
 
-    let id_autor;
     if (autor.length === 0) {
       // Crear nuevo autor externo
       const result = await query(
         'INSERT INTO autor (nombre, email, tipo) VALUES (?, ?, ?)',
-        [nombre, email, 'externo']
+        [nombreFinal, emailFinal, 'externo']
       );
       id_autor = result.insertId;
     } else {
       id_autor = autor[0].id_autor;
+      // Actualizar nombre si cambió
+      await query(
+        'UPDATE autor SET nombre = ? WHERE id_autor = ?',
+        [nombreFinal, id_autor]
+      );
     }
 
     // Crear comentario (estado 2 = en espera)

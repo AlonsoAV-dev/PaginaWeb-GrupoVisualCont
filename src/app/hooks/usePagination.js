@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { getFilteredAndPaginatedNotices } from "../../../lib/utils";
+import { getFilteredAndPaginatedNotices } from "../../../lib/Utils";
 
 function usePagination(category, searchTerm) {
   const [currentPage, setCurrentPage] = useState(1);

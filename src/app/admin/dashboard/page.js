@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faNewspaper,
@@ -149,7 +150,7 @@ export default function AdminDashboard() {
           {user?.rol === 'admin' ? 'Acciones Rápidas' : 'Mis Acciones'}
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <a
+          <Link
             href="/admin/noticias"
             className="block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md transition-all"
           >
@@ -168,9 +169,9 @@ export default function AdminDashboard() {
                 </p>
               </div>
             </div>
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/admin/comentarios"
             className="block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-amber-300 dark:hover:border-amber-700 hover:shadow-md transition-all"
           >
@@ -194,10 +195,10 @@ export default function AdminDashboard() {
                 )}
               </div>
             </div>
-          </a>
+          </Link>
 
           {user?.rol === 'admin' && (
-            <a
+            <Link
               href="/admin/usuarios"
               className="block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-green-300 dark:hover:border-green-700 hover:shadow-md transition-all"
             >
@@ -214,10 +215,10 @@ export default function AdminDashboard() {
                   </p>
                 </div>
               </div>
-            </a>
+            </Link>
           )}
 
-          <a
+          <Link
             href="/admin/keywords"
             className="block bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-5 hover:border-purple-300 dark:hover:border-purple-700 hover:shadow-md transition-all"
           >
@@ -234,7 +235,7 @@ export default function AdminDashboard() {
                 </p>
               </div>
             </div>
-          </a>
+          </Link>
         </div>
       </div>
     </div>

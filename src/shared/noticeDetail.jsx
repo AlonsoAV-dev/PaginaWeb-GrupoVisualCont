@@ -6,6 +6,8 @@ import Image from "next/image";
 import { ArrowLeft, ExternalLink } from "lucide-react";
 import NoticeAuthorCard from "./noticeAuthorCard";
 import { sidebarImages, visualSolutions } from "../../lib/Utils";
+import CommentList from "@/components/notices/CommentList";
+import CommentForm from "@/components/notices/CommentForm";
 
 function NoticeDetail({ selectedNotice }) {
   const formatFecha = (fecha) => {
@@ -57,6 +59,12 @@ function NoticeDetail({ selectedNotice }) {
                 email: selectedNotice.autor_email
               }} />
             )}
+
+            {/* Sección de comentarios */}
+            <div className="mt-12 space-y-8">
+              <CommentList noticiaId={selectedNotice.id_noticia} />
+              <CommentForm noticiaId={selectedNotice.id_noticia} />
+            </div>
           </div>
 
           {/* Segunda Columna */}
