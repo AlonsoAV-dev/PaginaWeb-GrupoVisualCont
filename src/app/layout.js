@@ -71,9 +71,7 @@ export const metadata = {
     images: ["/images/banner/visualBanner.jpg"],
   },
   icons: {
-    icon: [
-      { url: "/images/logos/LogVBlancoRelleno.svg", type: "image/svg+xml" },
-    ],
+    icon: "/favicon.ico",
   },
   category: "software",
   referrer: "origin-when-cross-origin",
