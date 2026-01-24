@@ -1,8 +1,5 @@
 /* =========================================================
    BASE DE DATOS - VisualCont Blog
-   
-   Ejecutar este script en MySQL Workbench o desde línea de comandos:
-   mysql -u root -p < database/schema.sql
 ========================================================= */
 
 DROP DATABASE IF EXISTS visualcont_blog;
