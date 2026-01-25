@@ -125,7 +125,18 @@ function Notices() {
               </div>
             )}
           </div>
-          {/* Sidebar */}
+          
+          {/* Login visible en mobile */}
+          <div className="col-span-full md:hidden px-2 mb-4">
+            <div className="bg-[#257CD0] text-center text-white rounded-bl-xl rounded-tr-xl">
+              <h2 className="text-lg py-2 font-semibold">
+                Zona de Suscriptores
+              </h2>
+              <QuickLogin />
+            </div>
+          </div>
+
+          {/* Sidebar completo para desktop */}
           <div className="px-2 hidden md:block">
             <div className="overflow-hidden grid grid-cols-1 gap-4">
               <div className="bg-[#257CD0] text-center text-white rounded-bl-xl rounded-tr-xl ">
