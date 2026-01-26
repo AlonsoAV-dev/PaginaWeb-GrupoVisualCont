@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { query } from '@/lib/db';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // GET - Obtener una categoría
 export async function GET(request, { params }) {
@@ -95,6 +97,10 @@ export async function PUT(request, { params }) {
       values
     );
 
+    // Revalidar rutas
+    revalidatePath('/api/categorias');
+    revalidatePath('/admin/categorias');
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error:', error);
@@ -111,6 +117,10 @@ export async function DELETE(request, { params }) {
     const { id } = await params;
 
     await query('DELETE FROM categorias WHERE id_categoria = ?', [id]);
+
+    // Revalidar rutas
+    revalidatePath('/api/categorias');
+    revalidatePath('/admin/categorias');
 
     return NextResponse.json({ success: true });
   } catch (error) {

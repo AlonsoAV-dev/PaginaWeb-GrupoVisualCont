@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { query } from '@/lib/db';
 import { requireAuth } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // GET - Obtener una noticia con sus keywords
 export async function GET(request, { params }) {
@@ -144,6 +146,12 @@ export async function PUT(request, { params }) {
       }
     }
 
+    // Revalidar rutas para actualizar el cache
+    revalidatePath('/api/noticias');
+    revalidatePath('/admin/noticias');
+    revalidatePath('/noticias');
+    revalidatePath(`/noticias/${slug}`);
+
     return NextResponse.json({
       success: true,
       message: 'Noticia actualizada correctamente',
@@ -171,6 +179,11 @@ export async function DELETE(request, { params }) {
 
     // Eliminar noticia
     await query('DELETE FROM noticias WHERE id_noticia = ?', [id]);
+
+    // Revalidar rutas para actualizar el cache
+    revalidatePath('/api/noticias');
+    revalidatePath('/admin/noticias');
+    revalidatePath('/noticias');
 
     return NextResponse.json({
       success: true,

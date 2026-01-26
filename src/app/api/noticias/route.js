@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { query } from '@/lib/db';
 import { requireAuth } from '@/lib/auth';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // GET - Obtener todas las noticias con paginación
 export async function GET(request) {
@@ -80,7 +84,9 @@ export async function GET(request) {
       }
     }, {
       headers: {
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=120'
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
       }
     });
   } catch (error) {
@@ -181,6 +187,11 @@ export async function POST(request) {
         );
       }
     }
+
+    // Revalidar rutas para actualizar el cache
+    revalidatePath('/api/noticias');
+    revalidatePath('/admin/noticias');
+    revalidatePath('/noticias');
 
     return NextResponse.json({
       success: true,

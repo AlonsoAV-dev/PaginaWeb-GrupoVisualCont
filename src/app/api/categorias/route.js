@@ -1,5 +1,9 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { query } from '@/lib/db';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // GET - Listar categorías con caché
 export async function GET() {
@@ -10,7 +14,9 @@ export async function GET() {
 
     return NextResponse.json({ success: true, categorias }, {
       headers: {
-        'Cache-Control': 'public, s-maxage=3600, stale-while-revalidate=7200' // Cache 1 hora
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
       }
     });
   } catch (error) {
@@ -66,6 +72,10 @@ export async function POST(request) {
       'INSERT INTO categorias (nombre, slug, descripcion) VALUES (?, ?, ?)',
       [nombre, slug, descripcion || null]
     );
+
+    // Revalidar rutas
+    revalidatePath('/api/categorias');
+    revalidatePath('/admin/categorias');
 
     return NextResponse.json({
       success: true,

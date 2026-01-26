@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { query } from '@/lib/db';
 import { requireAuth } from '@/lib/auth';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // GET - Obtener todas las keywords con caché
 export async function GET() {
@@ -11,7 +15,9 @@ export async function GET() {
 
     return NextResponse.json({ success: true, keywords }, {
       headers: {
-        'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=3600' // Cache 30 min
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
       }
     });
   } catch (error) {
@@ -53,6 +59,10 @@ export async function POST(request) {
       'INSERT INTO keywords (nombre) VALUES (?)',
       [nombre]
     );
+
+    // Revalidar rutas
+    revalidatePath('/api/keywords');
+    revalidatePath('/admin/keywords');
 
     return NextResponse.json({
       success: true,

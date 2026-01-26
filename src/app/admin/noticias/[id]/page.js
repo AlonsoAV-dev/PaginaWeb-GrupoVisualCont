@@ -99,8 +99,8 @@ export default function NoticiaEditor() {
       const data = await res.json();
 
       if (res.ok) {
-        router.refresh();
-        router.push('/admin/noticias');
+        // Forzar recarga completa de la página de noticias
+        window.location.href = '/admin/noticias';
       } else {
         setError(data.error || 'Error al guardar noticia');
       }

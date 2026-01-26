@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { query } from '@/lib/db';
 import { requireAuth } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // DELETE - Eliminar keyword
 export async function DELETE(request, { params }) {
@@ -16,6 +18,10 @@ export async function DELETE(request, { params }) {
 
     // Eliminar keyword
     await query('DELETE FROM keywords WHERE id_keyword = ?', [id]);
+
+    // Revalidar rutas
+    revalidatePath('/api/keywords');
+    revalidatePath('/admin/keywords');
 
     return NextResponse.json({
       success: true,

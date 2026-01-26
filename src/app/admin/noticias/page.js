@@ -14,7 +14,11 @@ export default function NoticiasAdmin() {
 
   const loadNoticias = async () => {
     try {
-      const res = await fetch('/api/noticias');
+      // Agregar timestamp para evitar cache del navegador
+      const timestamp = new Date().getTime();
+      const res = await fetch(`/api/noticias?_t=${timestamp}`, {
+        cache: 'no-store'
+      });
       const data = await res.json();
       setNoticias(data.noticias || []);
     } catch (error) {
@@ -46,6 +50,8 @@ export default function NoticiasAdmin() {
               : noticia
           )
         );
+        // Recargar lista completa para asegurar sincronización
+        await loadNoticias();
       }
     } catch (error) {
       console.error('Error:', error);
@@ -63,6 +69,8 @@ export default function NoticiasAdmin() {
       if (res.ok) {
         // Actualizar estado inmediatamente eliminando la noticia
         setNoticias(prev => prev.filter(noticia => noticia.id_noticia !== id));
+        // Recargar lista completa para asegurar sincronización
+        await loadNoticias();
       }
     } catch (error) {
       console.error('Error:', error);

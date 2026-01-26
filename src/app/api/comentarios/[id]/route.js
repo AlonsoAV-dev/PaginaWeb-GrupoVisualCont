@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { query } from '@/lib/db';
 import { requireAuth } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // PUT - Actualizar estado del comentario
 export async function PUT(request, { params }) {
@@ -24,6 +26,10 @@ export async function PUT(request, { params }) {
       [estado, id]
     );
 
+    // Revalidar rutas
+    revalidatePath('/api/comentarios');
+    revalidatePath('/admin/comentarios');
+
     return NextResponse.json({
       success: true,
       message: 'Comentario actualizado correctamente',
@@ -44,6 +50,10 @@ export async function DELETE(request, { params }) {
     const { id } = await params;
 
     await query('DELETE FROM comentarios WHERE id_comentario = ?', [id]);
+
+    // Revalidar rutas
+    revalidatePath('/api/comentarios');
+    revalidatePath('/admin/comentarios');
 
     return NextResponse.json({
       success: true,
