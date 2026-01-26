@@ -24,6 +24,34 @@ export default function NoticiasAdmin() {
     }
   };
 
+  const handleToggleEstado = async (id, estadoActual) => {
+    const nuevoEstado = estadoActual === 'publicada' ? 'borrador' : 'publicada';
+    const accion = nuevoEstado === 'publicada' ? 'publicar' : 'pasar a borrador';
+    
+    if (!confirm(`¿Estás seguro de ${accion} esta noticia?`)) return;
+
+    try {
+      const res = await fetch(`/api/noticias/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ estado: nuevoEstado }),
+      });
+
+      if (res.ok) {
+        // Actualizar estado inmediatamente
+        setNoticias(prev =>
+          prev.map(noticia =>
+            noticia.id_noticia === id
+              ? { ...noticia, estado: nuevoEstado }
+              : noticia
+          )
+        );
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   const handleDelete = async (id) => {
     if (!confirm('¿Estás seguro de eliminar esta noticia?')) return;
 
@@ -103,21 +131,23 @@ export default function NoticiasAdmin() {
                   {noticia.nombre_autor} 
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <span
-                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getEstadoBadge(
+                  <button
+                    onClick={() => handleToggleEstado(noticia.id_noticia, noticia.estado)}
+                    className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full cursor-pointer transition-colors ${getEstadoBadge(
                       noticia.estado
-                    )}`}
+                    )} hover:opacity-80`}
+                    title={`Click para cambiar a ${noticia.estado === 'publicada' ? 'borrador' : 'publicada'}`}
                   >
                     {noticia.estado}
-                  </span>
+                  </button>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   {new Date(noticia.creado_en).toLocaleDateString()}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium space-x-3">
                   <Link
                     href={`/admin/noticias/${noticia.id_noticia}`}
-                    className="text-[#257CD0] hover:text-[#1e6bb8] mr-4"
+                    className="text-[#257CD0] hover:text-[#1e6bb8]"
                   >
                     Editar
                   </Link>
