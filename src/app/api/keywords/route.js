@@ -57,7 +57,10 @@ export async function POST(request) {
     return NextResponse.json({
       success: true,
       message: 'Keyword creada correctamente',
-      id_keyword: result.insertId,
+      keyword: {
+        id_keyword: result.insertId,
+        nombre
+      }
     });
   } catch (error) {
     console.error('Error al crear keyword:', error);

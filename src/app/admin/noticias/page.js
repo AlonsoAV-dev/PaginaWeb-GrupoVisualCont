@@ -1,8 +1,10 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function NoticiasAdmin() {
+  const router = useRouter();
   const [noticias, setNoticias] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -31,7 +33,8 @@ export default function NoticiasAdmin() {
       });
 
       if (res.ok) {
-        loadNoticias();
+        // Actualizar estado inmediatamente eliminando la noticia
+        setNoticias(prev => prev.filter(noticia => noticia.id_noticia !== id));
       }
     } catch (error) {
       console.error('Error:', error);

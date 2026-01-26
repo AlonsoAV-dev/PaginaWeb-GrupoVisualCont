@@ -1,7 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function CategoriasAdmin() {
+  const router = useRouter();
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -37,9 +39,11 @@ export default function CategoriasAdmin() {
       });
 
       if (res.ok) {
+        const data = await res.json();
+        // Actualizar estado inmediatamente con la nueva categoría
+        setCategorias(prev => [...prev, data.categoria]);
         setFormData({ nombre: '', descripcion: '' });
         setShowModal(false);
-        loadCategorias();
       } else {
         const data = await res.json();
         alert(data.error);
@@ -68,10 +72,17 @@ export default function CategoriasAdmin() {
       });
 
       if (res.ok) {
+        // Actualizar estado inmediatamente
+        setCategorias(prev => 
+          prev.map(cat => 
+            cat.id_categoria === editingCategoria.id_categoria 
+              ? { ...cat, ...formData }
+              : cat
+          )
+        );
         setFormData({ nombre: '', descripcion: '' });
         setShowModal(false);
         setEditingCategoria(null);
-        loadCategorias();
       } else {
         const data = await res.json();
         alert(data.error);
@@ -90,7 +101,8 @@ export default function CategoriasAdmin() {
       });
 
       if (res.ok) {
-        loadCategorias();
+        // Actualizar estado inmediatamente eliminando la categoría
+        setCategorias(prev => prev.filter(cat => cat.id_categoria !== id));
       } else {
         const data = await res.json();
         alert(data.error);
@@ -132,9 +144,6 @@ export default function CategoriasAdmin() {
                 Nombre
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                Slug
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                 Descripción
               </th>
               <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -147,9 +156,6 @@ export default function CategoriasAdmin() {
               <tr key={categoria.id_categoria}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                   {categoria.nombre}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                  {categoria.slug}
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
                   {categoria.descripcion || '-'}

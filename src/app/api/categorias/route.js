@@ -69,7 +69,12 @@ export async function POST(request) {
 
     return NextResponse.json({
       success: true,
-      id_categoria: result.insertId,
+      categoria: {
+        id_categoria: result.insertId,
+        nombre,
+        slug,
+        descripcion: descripcion || null
+      }
     });
   } catch (error) {
     console.error('Error:', error);

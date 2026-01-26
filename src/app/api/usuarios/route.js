@@ -73,7 +73,15 @@ export async function POST(request) {
     return NextResponse.json({
       success: true,
       message: 'Usuario creado correctamente',
-      id_usuario: result.insertId,
+      usuario: {
+        id_usuario: result.insertId,
+        nombre,
+        email,
+        rol,
+        estado: 1,
+        ultimo_login: null,
+        creado_en: new Date()
+      }
     });
   } catch (error) {
     console.error('Error al crear usuario:', error);

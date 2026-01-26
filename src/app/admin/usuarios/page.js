@@ -1,7 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function UsuariosAdmin() {
+  const router = useRouter();
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -39,9 +41,11 @@ export default function UsuariosAdmin() {
       });
 
       if (res.ok) {
+        const data = await res.json();
+        // Actualizar estado inmediatamente con el nuevo usuario
+        setUsuarios(prev => [...prev, data.usuario]);
         setFormData({ nombre: '', email: '', password: '', rol: 'editor' });
         setShowModal(false);
-        loadUsuarios();
       } else {
         const data = await res.json();
         alert(data.error);
@@ -83,10 +87,17 @@ export default function UsuariosAdmin() {
       });
 
       if (res.ok) {
+        // Actualizar estado inmediatamente
+        setUsuarios(prev =>
+          prev.map(user =>
+            user.id_usuario === editingUser.id_usuario
+              ? { ...user, nombre: formData.nombre, email: formData.email, rol: formData.rol }
+              : user
+          )
+        );
         setFormData({ nombre: '', email: '', password: '', rol: 'editor' });
         setShowModal(false);
         setEditingUser(null);
-        loadUsuarios();
       } else {
         const data = await res.json();
         alert(data.error);
@@ -109,7 +120,14 @@ export default function UsuariosAdmin() {
       });
 
       if (res.ok) {
-        loadUsuarios();
+        // Actualizar estado inmediatamente
+        setUsuarios(prev =>
+          prev.map(user =>
+            user.id_usuario === id
+              ? { ...user, estado: nuevoEstado }
+              : user
+          )
+        );
       }
     } catch (error) {
       console.error('Error:', error);
@@ -125,7 +143,8 @@ export default function UsuariosAdmin() {
       });
 
       if (res.ok) {
-        loadUsuarios();
+        // Actualizar estado inmediatamente eliminando el usuario
+        setUsuarios(prev => prev.filter(user => user.id_usuario !== id));
       } else {
         const data = await res.json();
         alert(data.error);

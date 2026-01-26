@@ -1,7 +1,9 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function KeywordsAdmin() {
+  const router = useRouter();
   const [keywords, setKeywords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
@@ -33,9 +35,11 @@ export default function KeywordsAdmin() {
       });
 
       if (res.ok) {
+       const data = await res.json();
+        // Actualizar estado inmediatamente con la nueva keyword
+        setKeywords(prev => [...prev, data.keyword]);
         setNewKeyword('');
         setShowModal(false);
-        loadKeywords();
       } else {
         const data = await res.json();
         alert(data.error);
@@ -54,7 +58,8 @@ export default function KeywordsAdmin() {
       });
 
       if (res.ok) {
-        loadKeywords();
+        // Actualizar estado inmediatamente eliminando la keyword
+        setKeywords(prev => prev.filter(kw => kw.id_keyword !== id));
       }
     } catch (error) {
       console.error('Error:', error);

@@ -9,7 +9,7 @@ import Certificates from "@/shared/certificates";
 import { dlEvent } from "../../../lib/datalayer";
 import { usePathname } from "next/navigation";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_FORM_API_URL;
 const GA_MEAS_ID = process.env.NEXT_PUBLIC_GA_ID || "";
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || "";
 

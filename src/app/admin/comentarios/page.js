@@ -1,10 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function ComentariosAdmin() {
+  const router = useRouter();
   const [comentarios, setComentarios] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [filtro, setFiltro] = useState('2'); // 2 = En espera
+  const [filtro, setFiltro] = useState(''); // '' = Todos
 
   useEffect(() => {
     loadComentarios();
@@ -34,7 +36,14 @@ export default function ComentariosAdmin() {
       });
 
       if (res.ok) {
-        loadComentarios();
+        // Actualizar estado inmediatamente
+        setComentarios(prev => 
+          prev.map(com => 
+            com.id_comentario === id 
+              ? { ...com, estado: nuevoEstado }
+              : com
+          )
+        );
       }
     } catch (error) {
       console.error('Error:', error);
@@ -50,7 +59,8 @@ export default function ComentariosAdmin() {
       });
 
       if (res.ok) {
-        loadComentarios();
+        // Actualizar estado inmediatamente eliminando el comentario
+        setComentarios(prev => prev.filter(com => com.id_comentario !== id));
       }
     } catch (error) {
       console.error('Error:', error);
