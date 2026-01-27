@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { query } from '@/lib/db';
 import { hashPassword, requireAuth } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // GET - Obtener todos los usuarios
 export async function GET() {
@@ -69,6 +71,10 @@ export async function POST(request) {
        VALUES (?, ?, ?, ?)`,
       [nombre, email, hashedPassword, rol]
     );
+
+    // Revalidar rutas
+    revalidatePath('/api/usuarios');
+    revalidatePath('/admin/usuarios');
 
     return NextResponse.json({
       success: true,

@@ -1,8 +1,10 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { query } from '@/lib/db';
 import { hashPassword, requireAuth } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 // GET - Obtener un usuario
 export async function GET(request, { params }) {
@@ -89,6 +91,10 @@ export async function PUT(request, { params }) {
 
     await query(updateQuery, updateParams);
 
+    // Revalidar rutas
+    revalidatePath('/api/usuarios');
+    revalidatePath('/admin/usuarios');
+
     return NextResponse.json({
       success: true,
       message: 'Usuario actualizado correctamente',
@@ -102,20 +108,34 @@ export async function PUT(request, { params }) {
   }
 }
 
-// DELETE - Eliminar usuario (soft delete)
+// DELETE - Eliminar usuario (hard delete)
 export async function DELETE(request, { params }) {
   try {
     await requireAuth('admin');
     const { id } = await params;
 
+    // Verificar que el usuario no sea el mismo que está logueado
+    const user = await requireAuth('admin');
+    if (user.id === parseInt(id)) {
+      return NextResponse.json(
+        { error: 'No puedes eliminar tu propio usuario' },
+        { status: 400 }
+      );
+    }
+
+    // Eliminar usuario definitivamente
     await query(
-      'UPDATE usuarios SET estado = 0 WHERE id_usuario = ?',
+      'DELETE FROM usuarios WHERE id_usuario = ?',
       [id]
     );
 
+    // Revalidar rutas
+    revalidatePath('/api/usuarios');
+    revalidatePath('/admin/usuarios');
+
     return NextResponse.json({
       success: true,
-      message: 'Usuario desactivado correctamente',
+      message: 'Usuario eliminado correctamente',
     });
   } catch (error) {
     console.error('Error al eliminar usuario:', error);

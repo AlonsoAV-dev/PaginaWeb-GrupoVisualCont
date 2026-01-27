@@ -21,7 +21,11 @@ export default function UsuariosAdmin() {
 
   const loadUsuarios = async () => {
     try {
-      const res = await fetch('/api/usuarios');
+      // Agregar timestamp para evitar cache del navegador
+      const timestamp = new Date().getTime();
+      const res = await fetch(`/api/usuarios?_t=${timestamp}`, {
+        cache: 'no-store'
+      });
       const data = await res.json();
       setUsuarios(data.usuarios || []);
     } catch (error) {
@@ -42,8 +46,8 @@ export default function UsuariosAdmin() {
 
       if (res.ok) {
         const data = await res.json();
-        // Actualizar estado inmediatamente con el nuevo usuario
-        setUsuarios(prev => [...prev, data.usuario]);
+        // Recargar la lista completa para asegurar sincronización
+        await loadUsuarios();
         setFormData({ nombre: '', email: '', password: '', rol: 'editor' });
         setShowModal(false);
       } else {
@@ -87,14 +91,8 @@ export default function UsuariosAdmin() {
       });
 
       if (res.ok) {
-        // Actualizar estado inmediatamente
-        setUsuarios(prev =>
-          prev.map(user =>
-            user.id_usuario === editingUser.id_usuario
-              ? { ...user, nombre: formData.nombre, email: formData.email, rol: formData.rol }
-              : user
-          )
-        );
+        // Recargar la lista completa para asegurar sincronización
+        await loadUsuarios();
         setFormData({ nombre: '', email: '', password: '', rol: 'editor' });
         setShowModal(false);
         setEditingUser(null);
@@ -120,14 +118,8 @@ export default function UsuariosAdmin() {
       });
 
       if (res.ok) {
-        // Actualizar estado inmediatamente
-        setUsuarios(prev =>
-          prev.map(user =>
-            user.id_usuario === id
-              ? { ...user, estado: nuevoEstado }
-              : user
-          )
-        );
+        // Recargar la lista completa para asegurar sincronización
+        await loadUsuarios();
       }
     } catch (error) {
       console.error('Error:', error);
@@ -143,8 +135,8 @@ export default function UsuariosAdmin() {
       });
 
       if (res.ok) {
-        // Actualizar estado inmediatamente eliminando el usuario
-        setUsuarios(prev => prev.filter(user => user.id_usuario !== id));
+        // Recargar la lista completa para asegurar sincronización
+        await loadUsuarios();
       } else {
         const data = await res.json();
         alert(data.error);
