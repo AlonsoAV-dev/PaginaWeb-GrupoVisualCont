@@ -1,10 +1,10 @@
-// app/layout.js
 import { Outfit } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import Script from "next/script";
 import FontAwesomeConfig from "./fontawesome";
 import ChatBotBar from "@/shared/chatBotBar";
+import DialogflowMessenger from "@/components/DialogflowMessenger";
 
 const outfit = Outfit({
   subsets: ["latin"],
@@ -190,6 +190,7 @@ export default function RootLayout({ children }) {
           disableTransitionOnChange
         >
           {children}
+          <DialogflowMessenger />
           <Script
             src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit"
             strategy="afterInteractive"

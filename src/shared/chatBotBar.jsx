@@ -1,8 +1,14 @@
 "use client";
 
 import { useCallback } from "react";
+import { usePathname } from "next/navigation";
 
 export default function ChatBotBar() {
+  const pathname = usePathname();
+  
+  // Ocultar en rutas de admin
+  const isAdminRoute = pathname?.startsWith('/admin');
+  
   const handleClick = useCallback(() => {
     const df = document.querySelector("df-messenger");
     if (!df || !df.shadowRoot) return;
@@ -13,6 +19,11 @@ export default function ChatBotBar() {
     if (!icon) return;
     icon.click();
   }, []);
+
+  // No renderizar en rutas de admin
+  if (isAdminRoute) {
+    return null;
+  }
 
   return (
     <button
