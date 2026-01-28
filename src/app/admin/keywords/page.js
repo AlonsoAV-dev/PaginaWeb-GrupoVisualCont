@@ -57,12 +57,19 @@ export default function KeywordsAdmin() {
         method: 'DELETE',
       });
 
+      const data = await res.json();
+
       if (res.ok) {
         // Actualizar estado inmediatamente eliminando la keyword
         setKeywords(prev => prev.filter(kw => kw.id_keyword !== id));
+        alert(data.message || 'Keyword eliminada correctamente');
+      } else {
+        // Mostrar error detallado
+        alert(data.error || 'Error al eliminar la keyword');
       }
     } catch (error) {
       console.error('Error:', error);
+      alert('Error de conexión al eliminar la keyword');
     }
   };
 

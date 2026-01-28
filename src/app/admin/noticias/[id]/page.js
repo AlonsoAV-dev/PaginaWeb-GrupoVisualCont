@@ -30,6 +30,9 @@ export default function NoticiaEditor() {
   const [keywords, setKeywords] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [showKeywordModal, setShowKeywordModal] = useState(false);
+  const [newKeywordName, setNewKeywordName] = useState('');
+  const [creatingKeyword, setCreatingKeyword] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -118,6 +121,43 @@ export default function NoticiaEditor() {
         ? prev.keywords.filter(k => k !== keywordId)
         : [...prev.keywords, keywordId],
     }));
+  };
+
+  const handleCreateKeyword = async (e) => {
+    e.preventDefault();
+    if (!newKeywordName.trim()) return;
+
+    setCreatingKeyword(true);
+    try {
+      const res = await fetch('/api/keywords', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre: newKeywordName.trim() }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        // Agregar la nueva keyword a la lista
+        setKeywords(prev => [...prev, data.keyword]);
+        // Seleccionar automáticamente la nueva keyword
+        setFormData(prev => ({
+          ...prev,
+          keywords: [...prev.keywords, data.keyword.id_keyword],
+        }));
+        // Limpiar y cerrar modal
+        setNewKeywordName('');
+        setShowKeywordModal(false);
+        alert('Keyword creada y agregada correctamente');
+      } else {
+        alert(data.error || 'Error al crear keyword');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error de conexión al crear keyword');
+    } finally {
+      setCreatingKeyword(false);
+    }
   };
 
   return (
@@ -259,25 +299,40 @@ export default function NoticiaEditor() {
             </div>
 
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Keywords (SEO)
-              </label>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
-                {keywords.map((keyword) => (
-                  <label
-                    key={keyword.id_keyword}
-                    className="flex items-center space-x-2 p-2 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={formData.keywords.includes(keyword.id_keyword)}
-                      onChange={() => handleKeywordToggle(keyword.id_keyword)}
-                      className="text-[#257CD0] focus:ring-[#257CD0]"
-                    />
-                    <span className="text-sm text-gray-700">{keyword.nombre}</span>
-                  </label>
-                ))}
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Keywords (SEO)
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowKeywordModal(true)}
+                  className="text-sm px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600"
+                >
+                  + Nueva Keyword
+                </button>
               </div>
+              {keywords.length === 0 ? (
+                <div className="text-center py-4 text-gray-500">
+                  No hay keywords. Crea una usando el botón de arriba.
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                  {keywords.map((keyword) => (
+                    <label
+                      key={keyword.id_keyword}
+                      className="flex items-center space-x-2 p-2 border border-gray-300 rounded-md cursor-pointer hover:bg-gray-50"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={formData.keywords.includes(keyword.id_keyword)}
+                        onChange={() => handleKeywordToggle(keyword.id_keyword)}
+                        className="text-[#257CD0] focus:ring-[#257CD0]"
+                      />
+                      <span className="text-sm text-gray-700">{keyword.nombre}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -299,6 +354,53 @@ export default function NoticiaEditor() {
           </button>
         </div>
       </form>
+
+      {/* Modal para crear keyword */}
+      {showKeywordModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-96">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+              Nueva Keyword
+            </h2>
+            <form onSubmit={handleCreateKeyword}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Nombre de la Keyword
+                </label>
+                <input
+                  type="text"
+                  value={newKeywordName}
+                  onChange={(e) => setNewKeywordName(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                  placeholder="Ej: facturación electrónica"
+                  required
+                  autoFocus
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowKeywordModal(false);
+                    setNewKeywordName('');
+                  }}
+                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  disabled={creatingKeyword}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={creatingKeyword}
+                  className="px-4 py-2 bg-[#257CD0] text-white rounded-md hover:bg-[#1e6bb8] disabled:opacity-50"
+                >
+                  {creatingKeyword ? 'Creando...' : 'Crear y Agregar'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

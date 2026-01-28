@@ -111,10 +111,38 @@ export async function PUT(request, { params }) {
   }
 }
 
-// DELETE - Eliminar categoría
+/**
+ * DELETE - Eliminar categoría con validación de uso
+ * 
+ * Esta función valida que la categoría no esté siendo usada antes de eliminarla.
+ * Verifica uso en:
+ * - Noticias (tabla noticias)
+ * 
+ * Si está en uso, retorna error 409 con detalles de cuántas noticias la usan.
+ */
 export async function DELETE(request, { params }) {
   try {
     const { id } = await params;
+
+    // Verificar si la categoría está siendo usada por noticias
+    const [results] = await query(
+      'SELECT COUNT(*) as count FROM noticias WHERE id_categoria = ?',
+      [id]
+    );
+
+    const noticiasCount = results[0]?.count || 0;
+
+    if (noticiasCount > 0) {
+      return NextResponse.json(
+        { 
+          error: `No se puede eliminar la categoría porque está siendo usada por ${noticiasCount} noticia${noticiasCount > 1 ? 's' : ''}`,
+          usage: {
+            noticias: noticiasCount
+          }
+        },
+        { status: 409 } // 409 Conflict
+      );
+    }
 
     await query('DELETE FROM categorias WHERE id_categoria = ?', [id]);
 
@@ -122,7 +150,10 @@ export async function DELETE(request, { params }) {
     revalidatePath('/api/categorias');
     revalidatePath('/admin/categorias');
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ 
+      success: true,
+      message: 'Categoría eliminada correctamente'
+    });
   } catch (error) {
     console.error('Error:', error);
     return NextResponse.json(

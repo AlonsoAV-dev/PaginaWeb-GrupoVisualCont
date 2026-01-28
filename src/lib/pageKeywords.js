@@ -62,3 +62,47 @@ export function formatKeywordsAsThings(keywords) {
     'name': k.keyword
   }));
 }
+
+/**
+ * Verifica si una keyword está siendo usada en páginas, noticias o servicios
+ * @param {number} keywordId - ID de la keyword a verificar
+ * @returns {Promise<Object>} Objeto con contadores de uso y detalle de dónde está siendo usada
+ */
+export async function checkKeywordUsage(keywordId) {
+  try {
+    const pool = await getConnection();
+    
+    // Consultas paralelas para verificar uso
+    const [noticiasResult] = await pool.execute(
+      'SELECT COUNT(*) as count FROM noticia_keyword WHERE id_keyword = ?',
+      [keywordId]
+    );
+    
+    const [pagesResult] = await pool.execute(
+      'SELECT COUNT(*) as count FROM page_keywords WHERE id_keyword = ?',
+      [keywordId]
+    );
+    
+    const [serviciosResult] = await pool.execute(
+      'SELECT COUNT(*) as count FROM servicio_keyword WHERE id_keyword = ?',
+      [keywordId]
+    );
+
+    const noticiasCount = noticiasResult[0]?.count || 0;
+    const pagesCount = pagesResult[0]?.count || 0;
+    const serviciosCount = serviciosResult[0]?.count || 0;
+
+    return {
+      isUsed: noticiasCount > 0 || pagesCount > 0 || serviciosCount > 0,
+      usage: {
+        noticias: noticiasCount,
+        pages: pagesCount,
+        servicios: serviciosCount
+      },
+      total: noticiasCount + pagesCount + serviciosCount
+    };
+  } catch (error) {
+    console.error(`Error checking keyword usage for ID ${keywordId}:`, error);
+    throw error;
+  }
+}

@@ -17,6 +17,9 @@ export default function PageKeywordsAdmin() {
   const [selectedKeywordIds, setSelectedKeywordIds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [showKeywordModal, setShowKeywordModal] = useState(false);
+  const [newKeywordName, setNewKeywordName] = useState('');
+  const [creatingKeyword, setCreatingKeyword] = useState(false);
 
   useEffect(() => {
     loadAllKeywords();
@@ -88,6 +91,40 @@ export default function PageKeywordsAdmin() {
     }
   };
 
+  const handleCreateKeyword = async (e) => {
+    e.preventDefault();
+    if (!newKeywordName.trim()) return;
+
+    setCreatingKeyword(true);
+    try {
+      const res = await fetch('/api/keywords', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre: newKeywordName.trim() }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        // Agregar la nueva keyword a la lista
+        setAllKeywords(prev => [...prev, data.keyword]);
+        // Seleccionar automáticamente la nueva keyword
+        setSelectedKeywordIds(prev => [...prev, data.keyword.id_keyword]);
+        // Limpiar y cerrar modal
+        setNewKeywordName('');
+        setShowKeywordModal(false);
+        alert('Keyword creada y agregada correctamente');
+      } else {
+        alert(data.error || 'Error al crear keyword');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error de conexión al crear keyword');
+    } finally {
+      setCreatingKeyword(false);
+    }
+  };
+
   if (loading) {
     return <div className="text-center py-8">Cargando...</div>;
   }
@@ -143,13 +180,21 @@ export default function PageKeywordsAdmin() {
           <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
             Keywords para: {currentPage?.name}
           </h2>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="px-6 py-2 bg-[#257CD0] text-white rounded-md hover:bg-[#1e6bb8] disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {saving ? 'Guardando...' : 'Guardar Cambios'}
-          </button>
+          <div className="flex space-x-2">
+            <button
+              onClick={() => setShowKeywordModal(true)}
+              className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+            >
+              + Nueva Keyword
+            </button>
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="px-6 py-2 bg-[#257CD0] text-white rounded-md hover:bg-[#1e6bb8] disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {saving ? 'Guardando...' : 'Guardar Cambios'}
+            </button>
+          </div>
         </div>
 
         {allKeywords.length === 0 ? (
@@ -214,6 +259,53 @@ export default function PageKeywordsAdmin() {
           <li>• Recomendado: 5-8 keywords por página</li>
         </ul>
       </div>
+
+      {/* Modal para crear keyword */}
+      {showKeywordModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-96">
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+              Nueva Keyword
+            </h2>
+            <form onSubmit={handleCreateKeyword}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Nombre de la Keyword
+                </label>
+                <input
+                  type="text"
+                  value={newKeywordName}
+                  onChange={(e) => setNewKeywordName(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900"
+                  placeholder="Ej: facturación electrónica"
+                  required
+                  autoFocus
+                />
+              </div>
+              <div className="flex justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowKeywordModal(false);
+                    setNewKeywordName('');
+                  }}
+                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                  disabled={creatingKeyword}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  disabled={creatingKeyword}
+                  className="px-4 py-2 bg-[#257CD0] text-white rounded-md hover:bg-[#1e6bb8] disabled:opacity-50"
+                >
+                  {creatingKeyword ? 'Creando...' : 'Crear y Agregar'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
