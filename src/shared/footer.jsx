@@ -41,14 +41,15 @@ export default function Footer() {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           {/* Logo and Description Section */}
           <div className="lg:col-span-2">
-            <Link href="/" className="flex items-center mb-4">
+            <Link href="/" className="flex items-center mb-4" title="Volver al inicio">
               {mounted ? (
                 <Image
                   src={logoSrc || "/placeholder.svg"}
-                  alt="Visual Logo"
+                  alt="Visual ERP - Software de gestión empresarial - ITS Business S.A.C."
                   width={200}
                   height={50}
                   className="-mx-5 h-10 w-auto"
+                  title="Visual ERP - Inicio"
                 />
               ) : (
                 <div className="h-10 w-[200px]" />

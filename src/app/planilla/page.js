@@ -17,57 +17,50 @@ import {
   Landmark,
 } from "lucide-react";
 import Script from "next/script";
+import { getPageKeywords, formatKeywordsForMetadata, formatKeywordsForSchema, formatKeywordsAsThings } from '@/lib/pageKeywords';
 
-export const metadata = {
-  title: "Software de Planilla VisualPLAN | Seguridad y confianza",
-  description:
-    "Administra tu planilla electrónica de trabajadores y recursos humanos, cumple con obligaciones laborales y tributarias, con el software de planillas VisualPlan podrás controlar: cuentas corrientes, cts, vacaciones, gratificaciones, eps, afp, t-registro, plame, contratos, horas trabajadas con dispositivo de asistencia biométrica y con integración api para la contabilidad. Solicita demo sin costo.",
-  alternates: {
-    canonical: "/planilla",
-  },
-  keywords: [
-    "software de planilla",
-    "recursos humanos",
-    "RR.HH.",
-    "planilla Perú",
-    "PLAME",
-    "T-Registro",
-    "AFP NET",
-    "CTS",
-    "gratificaciones",
-    "VisualPLAN",
-  ],
-  openGraph: {
-    type: "website",
-    url: "/planilla",
-    title: "Software de Planilla y RR.HH. | VisualPLAN",
-    description:
-      "Con VisualPlAN Automatiza remuneraciones, AFP/ONP, PLAME y T-Registro. Gratificaciones, CTS y vacaciones. Multiempresa y seguridad de datos.",
-    images: [
-      {
-        url: "/images/banner/visualBanner.jpg",
-        alt: "VisualPLAN",
-      },
-    ],
-    siteName: "Visual ERP",
-    locale: "es_PE",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Software de Planilla y RR.HH. | VisualPLAN",
-    description:
-      "Cálculo de planillas, AFP/ONP, PLAME y T-Registro con AFP.NET integrado. Pruébalo 15 días gratis.",
-    images: [
-      "/images/banner/visualBanner.jpg",
-    ],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    "max-image-preview": "large",
-    "max-snippet": -1,
-  },
-};
+export async function generateMetadata() {
+  const keywords = await getPageKeywords('planilla');
+  
+  return {
+    title: "Software de Planilla VisualPLAN | Seguridad y confianza",
+    description: "Administra tu planilla electrónica de trabajadores y recursos humanos, cumple con obligaciones laborales y tributarias, con el software de planillas VisualPlan podrás controlar: cuentas corrientes, cts, vacaciones, gratificaciones, eps, afp, t-registro, plame, contratos, horas trabajadas con dispositivo de asistencia biométrica y con integración api para la contabilidad. Solicita demo sin costo.",
+    alternates: {
+      canonical: "/planilla",
+    },
+    keywords: formatKeywordsForMetadata(keywords),
+    openGraph: {
+      type: "website",
+      url: "/planilla",
+      title: "Software de Planilla y RR.HH. | VisualPLAN",
+      description:
+        "Con VisualPlAN Automatiza remuneraciones, AFP/ONP, PLAME y T-Registro. Gratificaciones, CTS y vacaciones. Multiempresa y seguridad de datos.",
+      images: [
+        {
+          url: "/images/banner/visualBanner.jpg",
+          alt: "VisualPLAN",
+        },
+      ],
+      siteName: "Visual ERP",
+      locale: "es_PE",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Software de Planilla y RR.HH. | VisualPLAN",
+      description:
+        "Cálculo de planillas, AFP/ONP, PLAME y T-Registro con AFP.NET integrado. Pruébalo 15 días gratis.",
+      images: [
+        "/images/banner/visualBanner.jpg",
+      ],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  };
+}
 
 const services = [
   {
@@ -218,7 +211,9 @@ const demoData = {
     "https://api.whatsapp.com/send/?phone=51956703375&text=Hola%2C%20me%20interesa%20el%20Software%20de%20Planilla.%0D%0A%C2%BFQu%C3%A9%20m%C3%B3dulos%20incluye%20%28remuneraciones%2C%20AFP%2FONP%2C%20PDT%2FPLAME%29%20y%20c%C3%B3mo%20se%20integra%20con%20mi%20contabilidad%3F%20%C2%BFTienen%20demo%20y%20precios%3F%0D%0AMuchas%20gracias.&type=phone_number&app_absent=0",
 };
 
-export default function SistemaPlanilla() {
+export default async function SistemaPlanilla() {
+  const keywords = await getPageKeywords('planilla');
+  
   return (
     <>
       <Navbar />

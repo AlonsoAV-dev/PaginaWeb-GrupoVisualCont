@@ -154,10 +154,11 @@ export default function Products() {
           <div className="hidden md:block">
             <Image
               src={activeProduct.image || "/placeholder.svg"}
-              alt={activeProduct.name}
+              alt={`${activeProduct.name} - Módulo del sistema ERP Visual`}
               width={300}
               height={300}
               className="rounded-lg w-full"
+              title={`${activeProduct.name} - Software empresarial`}
               priority
             />
           </div>

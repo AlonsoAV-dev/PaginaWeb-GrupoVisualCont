@@ -26,7 +26,7 @@ export default function CTA() {
                 <div className="cta-fade__slide">
                   <Image
                     src="/images/cta/image1.webp"
-                    alt="slide 1"
+                    alt="Empresario usando software ERP Visual en computadora"
                     fill
                     sizes="(max-width: 1024px) 100vw, 400px"
                     className="object-cover rounded-t-3xl"
@@ -38,7 +38,7 @@ export default function CTA() {
                 <div className="cta-fade__slide">
                   <Image
                     src="/images/cta/image2.webp"
-                    alt="slide 2"
+                    alt="Sistema contable Visual mostrando reportes financieros"
                     fill
                     sizes="(max-width: 1024px) 100vw, 400px"
                     className="object-cover rounded-t-3xl"
@@ -49,7 +49,7 @@ export default function CTA() {
                 <div className="cta-fade__slide">
                   <Image
                     src="/images/cta/image3.webp"
-                    alt="slide 3"
+                    alt="Equipo empresarial gestionando facturación electrónica SUNAT"
                     fill
                     sizes="(max-width: 1024px) 100vw, 400px"
                     className="object-cover rounded-t-3xl"

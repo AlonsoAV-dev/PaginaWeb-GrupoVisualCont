@@ -17,56 +17,50 @@ import {
   CloudCheck,
 } from "lucide-react";
 import Script from "next/script";
+import { getPageKeywords, formatKeywordsForMetadata, formatKeywordsForSchema, formatKeywordsAsThings } from '@/lib/pageKeywords';
 
-export const metadata = {
-  title: "Software ERP Integrado VisualERP",
-  description:
-    "Nuestro sistema web VisualERP cuenta con inventarios (KARDEX SUNAT), ventas y facturación, compras, tesorería y bancos, cierre contable (EEFF) y multiempresa. Accede a una demo gratis por 15 días.",
-  alternates: {
-    canonical: "/erp",
-  },
-  keywords: [
-    "ERP Perú",
-    "ERP integrado",
-    "inventario",
-    "tesorería",
-    "facturación",
-    "compras",
-    "cuentas por pagar",
-    "multiempresa",
-    "VisualERP",
-  ],
-  openGraph: {
-    type: "website",
-    url: "/erp",
-    title: "Software ERP Integrado | VisualERP",
-    description:
-      "Control total: inventarios, ventas, compras, tesorería y cierre contable. Multiempresa y 100% web.",
-    images: [
-      {
-        url: "/images/banner/visualBanner.jpg",
-        alt: "VisualERP",
-      },
-    ],
-    siteName: "Visual ERP",
-    locale: "es_PE",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Software ERP Integrado | VisualERP",
-    description:
-      "ERP web escalable con módulos de inventario, ventas, compras y tesorería. Pruébalo 15 días gratis.",
-    images: [
-      "/images/banner/visualBanner.jpg",
-    ],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    "max-image-preview": "large",
-    "max-snippet": -1,
-  },
-};
+export async function generateMetadata() {
+  const keywords = await getPageKeywords('erp');
+  
+  return {
+    title: "Software ERP Integrado VisualERP",
+    description: "Nuestro sistema web VisualERP cuenta con inventarios (KARDEX SUNAT), ventas y facturación, compras, tesorería y bancos, cierre contable (EEFF) y multiempresa. Accede a una demo gratis por 15 días.",
+    alternates: {
+      canonical: "/erp",
+    },
+    keywords: formatKeywordsForMetadata(keywords),
+    openGraph: {
+      type: "website",
+      url: "/erp",
+      title: "Software ERP Integrado | VisualERP",
+      description:
+        "Control total: inventarios, ventas, compras, tesorería y cierre contable. Multiempresa y 100% web.",
+      images: [
+        {
+          url: "/images/banner/visualBanner.jpg",
+          alt: "VisualERP",
+        },
+      ],
+      siteName: "Visual ERP",
+      locale: "es_PE",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Software ERP Integrado | VisualERP",
+      description:
+        "ERP web escalable con módulos de inventario, ventas, compras y tesorería. Pruébalo 15 días gratis.",
+      images: [
+        "/images/banner/visualBanner.jpg",
+      ],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  };
+}
 
 const services = [
   {
@@ -199,7 +193,9 @@ const demoData = {
     "https://api.whatsapp.com/send/?phone=51956703375&text=Hola%2C%20me%20gustar%C3%ADa%20evaluar%20el%20Software%20de%20ERP%20Integrado.%0D%0A%C2%BFQu%C3%A9%20%C3%A1reas%20cubre%20%28ventas%2C%20compras%2C%20inventarios%2C%20contabilidad%29%20y%20c%C3%B3mo%20se%20adapta%20a%20mi%20negocio%3F%20%C2%BFPuedo%20agendar%20una%20demo%20de%2015%20d%C3%ADas%20y%20recibir%20precios%3F%0D%0AGracias.&type=phone_number&app_absent=0",
 };
 
-export default function SistemaIntegrado() {
+export default async function SistemaIntegrado() {
+  const keywords = await getPageKeywords('erp');
+  
   return (
     <>
       <Navbar />
@@ -242,6 +238,8 @@ export default function SistemaIntegrado() {
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
             name: "VisualERP - ERP Integrado",
+            "keywords": formatKeywordsForSchema(keywords),
+            "about": formatKeywordsAsThings(keywords),
             applicationCategory: "BusinessApplication",
             operatingSystem: "Web",
             description:

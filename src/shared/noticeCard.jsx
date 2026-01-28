@@ -40,10 +40,11 @@ function NoticeCard({ notice }) {
             <div className="flex items-center justify-center p-4 pt-6 bg-gray-100 dark:bg-gray-800 relative">
               <Image
                 src={notice.imagen_principal || "/images/placeholder.jpg"}
-                alt={notice.titulo}
+                alt={`${notice.titulo} - Noticia de ${notice.categoria_nombre || 'Visual ERP'}`}
                 width={600}
                 height={400}
                 className="w-full h-auto object-contain max-h-[210px]"
+                title={notice.titulo}
               />
               {notice.categoria_nombre && (
                 <div className="absolute top-4 left-4">

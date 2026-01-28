@@ -41,7 +41,7 @@ export default function Demo({ data }) {
         <div className="hidden md:block md:w-2/5 md:absolute md:right-0 md:top-0 md:h-full">
           <Image
             src={image || "/images/home/demo-business-men.webp"}
-            alt="image-demo"
+            alt="Profesionales empresariales utilizando software Visual ERP"
             fill
             className="object-cover  pe-5"
           />

@@ -162,10 +162,11 @@ function Navbar() {
               {mounted ? (
                 <Image
                   src={logoSrc || "/images/logo-dark.webp"}
-                  alt="Visual Logo"
+                  alt="Visual ERP - Software contable y de gestión empresarial para Perú"
                   width={200}
                   height={50}
                   className="h-12 w-auto"
+                  title="Visual ERP - Inicio"
                   priority
                 />
               ) : (

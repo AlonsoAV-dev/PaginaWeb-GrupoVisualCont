@@ -10,8 +10,40 @@ import Testimonials from "@/components/home/testimonials";
 import Footer from "@/shared/footer";
 import Script from "next/script";
 import IconsGroup from "@/shared/iconsGroup";
+import { getPageKeywords, formatKeywordsForMetadata, formatKeywordsForSchema, formatKeywordsAsThings } from '@/lib/pageKeywords';
 
-export const metadata = {
+export async function generateMetadata() {
+  const keywords = await getPageKeywords('home');
+  
+  return {
+    title: "Software Contable Visual | Eficiencia y Seguridad",
+    description: "Software Contable VisualERP: administra contabilidad, informes SUNAT, tesorería, inventarios y de forma automatica, segura y adaptable a tu empresa.",
+    keywords: formatKeywordsForMetadata(keywords),
+    alternates: { canonical: "/" },
+    openGraph: {
+      type: "website",
+      title: "Software Contable Visual | Eficiencia y Seguridad",
+      url: "/",
+      images: [
+        {
+          url: "/images/banner/visualBanner.jpg",
+          alt: "VisualCONT",
+        },
+      ],
+      description: "Software Contable VisualERP: administra contabilidad, informes SUNAT, tesorería, inventarios y de forma automatica, segura y adaptable a tu empresa.",
+      siteName: "Software Contable Visual | Eficiencia y Seguridad",
+    },
+    twitter: {
+      url: "https://grupovisualcont.com/",
+      title: "Software Contable Visual | Eficiencia y Seguridad",
+      description: "Software Contable VisualERP: administra contabilidad, informes SUNAT, tesorería, inventarios y de forma automatica, segura y adaptable a tu empresa.",
+      images: ["/images/banner/visualBanner.jpg"],
+      card: "summary_large_image",
+    },
+  };
+}
+
+const metadata_static = {
   title: "Software Contable Visual | Eficiencia y Seguridad",
   description:
     "Software Contable VisualERP: administra contabilidad, informes SUNAT, tesorería, inventarios y  de forma automatica, segura y adaptable a tu empresa.",
@@ -51,7 +83,9 @@ const demoData = {
   image: "/images/home/demo-business-men.webp",
 };
 
-export default function Home() {
+export default async function Home() {
+  const keywords = await getPageKeywords('home');
+  
   return (
     <>
       <Navbar />
@@ -78,6 +112,8 @@ export default function Home() {
             "@context": "https://schema.org",
             "@type": "WebPage",
             "@id": "https://grupovisualcont.com/",
+            "keywords": formatKeywordsForSchema(keywords),
+            "about": formatKeywordsAsThings(keywords),
             url: "https://grupovisualcont.com/",
             logo: "https://grupovisualcont.com/images/logos/LogVBlancoRelleno.svg",
             name: "Visual - Sistema ERP",

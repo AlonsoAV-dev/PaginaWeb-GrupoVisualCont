@@ -34,7 +34,8 @@ export default function ChatBotBar() {
       <div className="h-10 w-10 rounded-full overflow-hidden bg-white shadow flex items-center justify-center">
         <img
           src="/images/banner/visualBanner.jpg" 
-          alt="Asistente VisualCont"
+          alt="Asistente Virtual VisualCont - Soporte en línea"
+          title="Haz clic para abrir el chat de soporte"
           className="h-full w-full object-cover"
         />
       </div>

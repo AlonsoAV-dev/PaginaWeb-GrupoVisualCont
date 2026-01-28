@@ -17,51 +17,48 @@ import {
   Search,
 } from "lucide-react";
 import Script from "next/script";
+import { getPageKeywords, formatKeywordsForMetadata, formatKeywordsForSchema, formatKeywordsAsThings } from '@/lib/pageKeywords';
 
-export const metadata = {
-  title: "Software Contable VisualCONT | Optimización y Confianza",
-  description:
-    "Registra tus asientos contables de forma rápida y práctica, presenta tu contabilidad al día, genera libros electrónicos ple y sire sunat conforme a las normas tributarias, emite estados financieros e informes gerenciales en automático, integra con la API de sunat y software integrado ERP, solicita una demo sin costo alguno.",
-  alternates: {
-    canonical: "/contable",
-  },
-  keywords: [
-    "software contable",
-    "contabilidad Perú",
-    "libros electrónicos SUNAT",
-    "PDT",
-    "reportes contables",
-    "VisualCONT",
-  ],
-  openGraph: {
-    type: "website",
-    url: "/contable",
-    title: "Software de Contabilidad | VisualCONT",
-    description:
-      "Con visualCONT registra tus asientos contables de forma rápida y práctica, presenta tu contabilidad al día, genera libros electrónicos ple y sire sunat conforme a las normas tributarias.",
-    images: [
-      {
-        url: "/images/banner/visualBanner.jpg",
-        alt: "VisualCONT",
-      },
-    ],
-    siteName: "Visual ERP",
-    locale: "es_PE",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Software de Contabilidad | VisualCONT",
-    description:
-      "Con visualCONT registra tus asientos contables de forma rápida y práctica, presenta tu contabilidad al día, genera libros electrónicos ple y sire sunat conforme a las normas tributarias.",
-    images: ["/images/banner/visualBanner.jpg"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    "max-image-preview": "large",
-    "max-snippet": -1,
-  },
-};
+export async function generateMetadata() {
+  const keywords = await getPageKeywords('contable');
+  
+  return {
+    title: "Software Contable VisualCONT | Optimización y Confianza",
+    description: "Registra tus asientos contables de forma rápida y práctica, presenta tu contabilidad al día, genera libros electrónicos ple y sire sunat conforme a las normas tributarias, emite estados financieros e informes gerenciales en automático, integra con la API de sunat y software integrado ERP, solicita una demo sin costo alguno.",
+    alternates: {
+      canonical: "/contable",
+    },
+    keywords: formatKeywordsForMetadata(keywords),
+    openGraph: {
+      type: "website",
+      url: "/contable",
+      title: "Software de Contabilidad | VisualCONT",
+      description:
+        "Con visualCONT registra tus asientos contables de forma rápida y práctica, presenta tu contabilidad al día, genera libros electrónicos ple y sire sunat conforme a las normas tributarias.",
+      images: [
+        {
+          url: "/images/banner/visualBanner.jpg",
+          alt: "VisualCONT",
+        },
+      ],
+      siteName: "Visual ERP",
+      locale: "es_PE",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Software de Contabilidad | VisualCONT",
+      description:
+        "Con visualCONT registra tus asientos contables de forma rápida y práctica, presenta tu contabilidad al día, genera libros electrónicos ple y sire sunat conforme a las normas tributarias.",
+      images: ["/images/banner/visualBanner.jpg"],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  };
+}
 
 const services = [
   {
@@ -269,7 +266,9 @@ const demoData = {
     "https://api.whatsapp.com/send/?phone=51956703375&text=Hola%2C%20me%20gustar%C3%ADa%20conocer%20m%C3%A1s%20sobre%20el%20Software%20de%20Contabilidad.%0D%0A%C2%BFPodr%C3%ADan%20indicarme%20funciones%20clave%2C%20requisitos%20y%20precios%3F%20%C2%BFTienen%20demo%20de%2015%20d%C3%ADas%3F%0D%0AMuchas%20gracias.&type=phone_number&app_absent=0",
 };
 
-export default function SistemaContable() {
+export default async function SistemaContable() {
+  const keywords = await getPageKeywords('contable');
+  
   return (
     <>
       <Navbar />
@@ -312,6 +311,8 @@ export default function SistemaContable() {
             "@context": "https://schema.org",
             "@type": "SoftwareApplication",
             name: "VisualCONT - Software de Contabilidad",
+            "keywords": formatKeywordsForSchema(keywords),
+            "about": formatKeywordsAsThings(keywords),
             applicationCategory: "BusinessApplication",
             operatingSystem: "Web",
             description:
@@ -494,6 +495,73 @@ export default function SistemaContable() {
                 position: 2,
                 name: "Contabilidad",
                 item: "https://grupovisualcont.com/contable",
+              },
+            ],
+          }),
+        }}
+      />
+
+      {/* JSON-LD: Software Application */}
+      <Script
+        id="ld-software-contable"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            name: "VisualCONT - Software Contable",
+            applicationCategory: "BusinessApplication",
+            operatingSystem: "Windows, Web",
+            offers: {
+              "@type": "AggregateOffer",
+              priceCurrency: "PEN",
+              lowPrice: "99",
+              highPrice: "349",
+              offerCount: "3",
+            },
+            aggregateRating: {
+              "@type": "AggregateRating",
+              ratingValue: "4.8",
+              ratingCount: "150",
+            },
+            description: "Software contable integrado con SUNAT para registrar asientos, generar libros electrónicos PLE y SIRE, y presentar estados financieros automatizados.",
+            featureList: [
+              "Integración con API SIRE SUNAT",
+              "Generación de libros electrónicos PLE",
+              "Reportes contables automáticos",
+              "Conciliación bancaria",
+              "Estados financieros",
+              "Validación de comprobantes",
+            ],
+            screenshot: "https://grupovisualcont.com/images/contable/screenshot.jpg",
+            softwareVersion: "2024",
+            releaseNotes: "Integración completa con SUNAT, nuevas automatizaciones contables",
+            provider: {
+              "@type": "Organization",
+              name: "Grupo Visual Cont",
+              url: "https://grupovisualcont.com",
+            },
+            offers: [
+              {
+                "@type": "Offer",
+                name: "Plan Básico",
+                price: "99",
+                priceCurrency: "PEN",
+                billingIncrement: "Mensual",
+              },
+              {
+                "@type": "Offer",
+                name: "Plan Intermedio",
+                price: "199",
+                priceCurrency: "PEN",
+                billingIncrement: "Mensual",
+              },
+              {
+                "@type": "Offer",
+                name: "Plan Avanzado",
+                price: "349",
+                priceCurrency: "PEN",
+                billingIncrement: "Mensual",
               },
             ],
           }),

@@ -41,10 +41,11 @@ function HeroCardCarousel({
         <div className="hidden lg:block md:w-2/5 md:absolute md:right-0 md:top-0 md:bottom-0 md:items-center">
           <Image
             src={imageSrc}
-            alt="Blue Wave"
+            alt="Onda decorativa azul representando tecnología y software empresarial"
             width={500}
             height={500}
             className="w-full h-auto md:h-full md:w-auto md:object-cover md:object-left"
+            title="Visual ERP - Software empresarial"
           />
         </div>
       </div>

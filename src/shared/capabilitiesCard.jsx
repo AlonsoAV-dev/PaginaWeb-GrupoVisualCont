@@ -41,9 +41,10 @@ function CapabilitiesCard({ capabilitiy }) {
                     {image && (
                         <Image
                             src={image}
-                            alt={title}
+                            alt={`${title} - Funcionalidad del sistema Visual ERP`}
                             fill
                             className="object-cover"
+                            title={title}
                         />
                     )}
                 </div>

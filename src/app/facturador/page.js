@@ -17,54 +17,50 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import Script from "next/script";
+import { getPageKeywords, formatKeywordsForMetadata, formatKeywordsForSchema, formatKeywordsAsThings } from '@/lib/pageKeywords';
 
-export const metadata = {
-  title: "Software de Facturación Electrónica VisualFACT | SUNAT",
-  description:
-    "Con nuestro facturador electrónico, emite facturas y boletas electrónicas válidas ante SUNAT, guías de remisión, notas de crédito, informes gerenciales, integración API sunat y sistemas ERP, demo gratis por 15 días.",
-  alternates: {
-    canonical: "/facturador",
-  },
-  keywords: [
-    "facturación electrónica",
-    "boletas electrónicas",
-    "facturas electrónicas",
-    "SUNAT",
-    "PSE",
-    "firma digital",
-    "VisualFACT",
-  ],
-  openGraph: {
-    type: "website",
-    url: "/facturador",
-    title: "Software de Facturación Electrónica sunat | VisualFACT",
-    description:
-      "Facturación electrónica 100% web y válida ante SUNAT. Reportes, Excel, importaciones masivas y firma digital.",
-    images: [
-      {
-        url: "/images/banner/visualBanner.jpg",
-        alt: "VisualFACT",
-      },
-    ],
-    siteName: "Visual ERP",
-    locale: "es_PE",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Software de Facturación Electrónica sunat | VisualFACT",
-    description:
-      "Emisión electrónica homologada con SUNAT, reportes avanzados y Excel. Pruébalo 15 días gratis.",
-    images: [
-      "/images/banner/visualBanner.jpg",
-    ],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    "max-image-preview": "large",
-    "max-snippet": -1,
-  },
-};
+export async function generateMetadata() {
+  const keywords = await getPageKeywords('facturador');
+  
+  return {
+    title: "Software de Facturación Electrónica VisualFACT | SUNAT",
+    description: "Con nuestro facturador electrónico, emite facturas y boletas electrónicas válidas ante SUNAT, guías de remisión, notas de crédito, informes gerenciales, integración API sunat y sistemas ERP, demo gratis por 15 días.",
+    alternates: {
+      canonical: "/facturador",
+    },
+    keywords: formatKeywordsForMetadata(keywords),
+    openGraph: {
+      type: "website",
+      url: "/facturador",
+      title: "Software de Facturación Electrónica sunat | VisualFACT",
+      description:
+        "Facturación electrónica 100% web y válida ante SUNAT. Reportes, Excel, importaciones masivas y firma digital.",
+      images: [
+        {
+          url: "/images/banner/visualBanner.jpg",
+          alt: "VisualFACT",
+        },
+      ],
+      siteName: "Visual ERP",
+      locale: "es_PE",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Software de Facturación Electrónica sunat | VisualFACT",
+      description:
+        "Emisión electrónica homologada con SUNAT, reportes avanzados y Excel. Pruébalo 15 días gratis.",
+      images: [
+        "/images/banner/visualBanner.jpg",
+      ],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  };
+}
 
 const services = [
   {
@@ -247,7 +243,9 @@ const demoData = {
     "https://api.whatsapp.com/send/?phone=51956703375&text=Hola%2C%20quiero%20informaci%C3%B3n%20del%20Software%20de%20Facturaci%C3%B3n.%0D%0A%C2%BFC%C3%B3mo%20manejan%20facturas%20electr%C3%B3nicas%2C%20boletas%2C%20notas%20y%20conexi%C3%B3n%20con%20SUNAT%3F%20%C2%BFPuedo%20probar%20una%20demo%20de%2015%20d%C3%ADas%20y%20ver%20precios%3F%0D%0AGracias.&type=phone_number&app_absent=0",
 };
 
-export default function SistemaFacturador() {
+export default async function SistemaFacturador() {
+  const keywords = await getPageKeywords('facturador');
+  
   return (
     <>
       <Navbar />

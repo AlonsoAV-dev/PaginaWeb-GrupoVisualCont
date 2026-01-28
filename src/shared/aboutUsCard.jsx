@@ -39,9 +39,10 @@ function AboutUsCard({ aboutData }) {
                     {image && (
                         <Image
                             src={image}
-                            alt={title}
+                            alt={`${title} - Grupo Visual Cont`}
                             fill
                             className="object-cover"
+                            title={title}
                         />
                     )}
                 </div>

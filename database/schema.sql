@@ -111,6 +111,18 @@ CREATE TABLE noticia_keyword (
 );
 
 /* =========================================================
+   PAGE KEYWORDS (Keywords para landing pages)
+   Páginas soportadas: home, contable, erp, facturador, 
+   planilla, nosotros
+========================================================= */
+CREATE TABLE page_keywords (
+    page_name VARCHAR(50) NOT NULL,
+    id_keyword INT NOT NULL,
+    PRIMARY KEY (page_name, id_keyword),
+    FOREIGN KEY (id_keyword) REFERENCES keywords(id_keyword)
+);
+
+/* =========================================================
    COMENTARIOS
    Estados:
    1 = Aprobado

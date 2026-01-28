@@ -18,10 +18,11 @@ function TestimonialsCardCarousel({ id, rating, content, avatar, name, role }) {
         <div className="flex items-center gap-4 ">
           <Image
             src={avatar || "/images/placeholder.jpg"}
-            alt={name}
+            alt={`Foto de ${name} - ${role}`}
             width={200}
             height={50}
             className="w-12 h-12 rounded-full object-cover"
+            title={`${name} - Cliente de Visual ERP`}
             priority
           />
           <div>

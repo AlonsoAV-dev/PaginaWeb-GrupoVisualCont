@@ -21,18 +21,7 @@ export const metadata = {
     "Software Contable ERP Visual: administra contabilidad, facturación electrónica, sistema de planillas, tesorería e informes SUNAT. Automatiza y escala tu empresa.",
   applicationName: "Visual",
   generator: "Next.js",
-  keywords: [
-    "ERP Perú",
-    "software contable",
-    "sistema contable",
-    "grupovisualcont",
-    "facturación electrónica",
-    "planillas",
-    "SUNAT",
-    "tesorería",
-    "VisualERP",
-  ],
-  authors: [{ name: "Visual" }],
+  authors: [{ name: "Visual", url: "https://grupovisualcont.com" }],
   creator: "Visual",
   publisher: "Visual",
   alternates: {
@@ -48,20 +37,21 @@ export const metadata = {
   },
   openGraph: {
     type: "website",
-    url: "/",
-    siteName: "VisualERP",
-    title: "Visual - Sistema",
+    url: "https://grupovisualcont.com/",
+    siteName: "Visual ERP - Software Contable",
+    title: "Visual - Software Contable y ERP para Empresas en Perú",
     description:
-      "ERP con módulos de contabilidad, facturación, planillas y tesorería. Cumple con SUNAT y automatiza todos tus procesos.",
+      "ERP con módulos de contabilidad, facturación electrónica SUNAT, planillas y tesorería. Cumple con normativas peruanas y automatiza todos tus procesos empresariales.",
     images: [
       {
-        url: "/images/banner/visualBanner.jpg",
+        url: "https://grupovisualcont.com/images/banner/visualBanner.jpg",
         width: 1200,
         height: 630,
-        alt: "Visual ERP",
+        alt: "Visual ERP - Software Contable para Empresas Peruanas",
       },
     ],
     locale: "es_PE",
+    countryName: "Perú",
   },
   twitter: {
     card: "summary_large_image",
@@ -132,6 +122,67 @@ export default function RootLayout({ children }) {
             style={{ display: "none", visibility: "hidden" }}
           />
         </noscript>
+
+        {/* Schema Organization - SEO */}
+        <Script
+          id="schema-organization"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "Grupo Visual Cont",
+              "alternateName": "Visual ERP",
+              "url": "https://grupovisualcont.com",
+              "logo": "https://grupovisualcont.com/images/logos/visual-logo.png",
+              "description": "Empresa peruana líder en desarrollo de software contable, ERP, facturación electrónica y sistemas de gestión empresarial.",
+              "address": {
+                "@type": "PostalAddress",
+                "addressCountry": "PE",
+                "addressLocality": "Lima",
+                "addressRegion": "Lima"
+              },
+              "contactPoint": {
+                "@type": "ContactPoint",
+                "telephone": "+51-956-703-375",
+                "contactType": "sales",
+                "areaServed": "PE",
+                "availableLanguage": ["Spanish"]
+              },
+              "sameAs": [
+                "https://www.facebook.com/grupovisualcont",
+                "https://www.linkedin.com/company/grupovisualcont"
+              ],
+              "founder": {
+                "@type": "Organization",
+                "name": "Grupo Visual Cont"
+              }
+            })
+          }}
+        />
+
+        {/* Schema WebSite - SEO */}
+        <Script
+          id="schema-website"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "Visual ERP",
+              "url": "https://grupovisualcont.com",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": {
+                  "@type": "EntryPoint",
+                  "urlTemplate": "https://grupovisualcont.com/noticias?search={search_term_string}"
+                },
+                "query-input": "required name=search_term_string"
+              }
+            })
+          }}
+        />
+
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

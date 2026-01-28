@@ -38,6 +38,10 @@ export async function generateMetadata({ params }) {
     };
   }
 
+  // Extraer keywords como array de strings
+  const keywordsList = noticia.keywords?.map(k => k.nombre) || [];
+  const keywordsString = keywordsList.join(", ");
+
   return {
     title: `${noticia.titulo} | Visual Noticias`,
     description: noticia.descripcion_corta || noticia.titulo,
@@ -47,23 +51,45 @@ export async function generateMetadata({ params }) {
     openGraph: {
       title: `${noticia.titulo} | Visual Noticias`,
       description: noticia.descripcion_corta || noticia.titulo,
-      url: `/noticias/${noticia.slug}`,
+      url: `https://grupovisualcont.com/noticias/${noticia.slug}`,
       type: "article",
       siteName: "Visual ERP",
       locale: "es_PE",
       authors: [noticia.autor_nombre || "Visual ERP"],
-      images: noticia.imagen_principal ? [noticia.imagen_principal] : [],
+      publishedTime: noticia.fecha_publicacion || noticia.creado_en,
+      modifiedTime: noticia.fecha_publicacion || noticia.creado_en,
+      section: noticia.categoria_nombre || "Noticias",
+      tags: keywordsList,
+      images: noticia.imagen_principal
+        ? [
+            {
+              url: `https://grupovisualcont.com${noticia.imagen_principal}`,
+              width: 1200,
+              height: 630,
+              alt: noticia.titulo,
+            },
+          ]
+        : [],
     },
 
     twitter: {
       card: "summary_large_image",
       title: `${noticia.titulo}`,
       description: noticia.descripcion_corta || noticia.titulo,
-      images: noticia.imagen_principal ? [noticia.imagen_principal] : [],
+      images: noticia.imagen_principal
+        ? [`https://grupovisualcont.com${noticia.imagen_principal}`]
+        : [],
     },
     robots: {
       index: true,
       follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+    other: {
+      "article:published_time": noticia.fecha_publicacion || noticia.creado_en,
+      "article:author": noticia.autor_nombre || "Visual ERP",
+      "article:section": noticia.categoria_nombre || "Noticias",
     },
   };
 }
@@ -79,6 +105,9 @@ export default async function Detail({ params }) {
   const abs = (p) =>
     p?.startsWith("http") ? p : `https://www.grupovisualcont.com${p || ""}`;
 
+  // Extraer keywords para Schema
+  const keywordsList = noticia.keywords?.map(k => k.nombre) || [];
+
   return (
     <>
       <NoticeDetail selectedNotice={noticia} />
@@ -93,7 +122,13 @@ export default async function Detail({ params }) {
             mainEntityOfPage: abs(`/noticias/${noticia.slug}`),
             headline: noticia.titulo,
             description: noticia.descripcion_corta || noticia.titulo,
-            author: { "@type": "Person", name: noticia.autor_nombre || "Visual ERP" },
+            image: noticia.imagen_principal ? abs(noticia.imagen_principal) : undefined,
+            datePublished: noticia.fecha_publicacion || noticia.creado_en,
+            dateModified: noticia.fecha_publicacion || noticia.creado_en,
+            author: {
+              "@type": "Person",
+              name: noticia.autor_nombre || "Visual ERP",
+            },
             publisher: {
               "@type": "Organization",
               name: "Visual ERP",
@@ -102,8 +137,13 @@ export default async function Detail({ params }) {
                 url: abs("/images/Logos/LogVBlancoRelleno.svg"),
               },
             },
-            datePublished: noticia.fecha_publicacion || noticia.creado_en,
-            dateModified: noticia.creado_en,
+            keywords: keywordsList.join(", "),
+            articleSection: noticia.categoria_nombre || "Noticias",
+            inLanguage: "es-PE",
+            about: keywordsList.map(keyword => ({
+              "@type": "Thing",
+              name: keyword
+            })),
           }),
         }}
       />

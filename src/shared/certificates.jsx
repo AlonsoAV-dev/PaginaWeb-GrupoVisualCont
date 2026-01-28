@@ -5,27 +5,27 @@ const certificates = [
   {
     name: "AWS",
     logo: "/images/home/cert-logo-aws.webp",
-    alt: "AWS Certificado",
+    alt: "Certificación AWS Partner - Visual ERP alojado en Amazon Web Services",
   },
   {
     name: "Colegio Contadores",
     logo: "/images/home/cert-logo-colegio.webp",
-    alt: "Colegio Contadores Certificado",
+    alt: "Certificación Colegio de Contadores Públicos del Perú - Software contable homologado",
   },
   {
     name: "Indecopi",
     logo: "/images/home/cert-logo-indecopi.webp",
-    alt: "Indecopi Certificado",
+    alt: "Registro INDECOPI - Propiedad intelectual del software Visual ERP",
   },
   {
     name: "ISO 27001",
     logo: "/images/home/cert-logo-iso.webp",
-    alt: "ISO 27001 Certificado",
+    alt: "Certificación ISO 27001 - Seguridad de la información garantizada",
   },
   {
     name: "SUNAT",
     logo: "/images/home/cert-logo-sunat.webp",
-    alt: "SUNAT Certificado",
+    alt: "Certificado PSE SUNAT - Proveedor de Servicios Electrónicos autorizado para facturación electrónica",
     routeFile: "/docs/certificado-sunat.pdf",
   },
 ];
@@ -72,6 +72,7 @@ export default function Certificates({ className }) {
                     href={cert.routeFile}
                     target="_blank"
                     rel="noopener noreferrer"
+                    title={`Ver certificado de ${cert.name}`}
                   >
                     <Image
                       src={cert.logo || "/placeholder.svg"}
@@ -79,6 +80,7 @@ export default function Certificates({ className }) {
                       width={200}
                       height={50}
                       className="w-15 h-15 object-contain"
+                      title={cert.name}
                       priority
                     />
                   </Link>
@@ -89,6 +91,7 @@ export default function Certificates({ className }) {
                     width={200}
                     height={50}
                     className="w-15 h-15 object-contain"
+                    title={cert.name}
                     priority
                   />
                 )}

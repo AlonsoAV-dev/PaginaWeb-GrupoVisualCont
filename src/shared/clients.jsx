@@ -186,10 +186,11 @@ export default function ClientsCarousel() {
               <div className="bg-white dark:bg-gray-800 rounded-lg p-4 sm:p-6 shadow-sm border border-gray-200 dark:border-gray-700 flex items-center justify-center h-20 sm:h-24 hover:border-[#1F4C8F] dark:hover:border-white">
                 <Image
                   src={getLogoSrc(client) || "/placeholder.svg"}
-                  alt={client.name}
+                  alt={`Logo de ${client.name} - Cliente de Visual ERP`}
                   width={200}
                   height={50}
                   className="max-h-8 sm:max-h-12 max-w-full object-contain opacity-70 hover:opacity-100 transition-opacity"
+                  title={`${client.name} - Cliente satisfecho de Visual ERP`}
                   priority
                 />
               </div>

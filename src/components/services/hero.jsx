@@ -48,10 +48,11 @@ function Hero({
           {/* Logo Image */}
           <Image
             src={getLogoSrc()}
-            alt={serviceName}
+            alt={`Logo ${serviceName} - Módulo de Visual ERP`}
             width={200}
             height={100}
             className="mb-4 md:mb-6 -ms-2"
+            title={`${serviceName} - Software especializado`}
           />
 
           {/* Title */}

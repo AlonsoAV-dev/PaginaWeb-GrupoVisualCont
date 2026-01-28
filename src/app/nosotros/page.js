@@ -8,55 +8,50 @@ import IconsGroup from "@/shared/iconsGroup";
 import Certificates from "@/shared/certificates";
 import TimeLine from "@/components/aboutUs/timeLine";
 import Script from "next/script";
+import { getPageKeywords, formatKeywordsForMetadata } from '@/lib/pageKeywords';
 
-export const metadata = {
-  title: "Nosotros | Visual ERP",
-  description:
-    "Conoce al equipo detrás de Visual ERP: nuestra historia, misión y compromiso con la innovación para pymes en Perú y LATAM.",
-  alternates: {
-    canonical: "/nosotros",
-  },
-  keywords: [
-    "Visual ERP",
-    "equipo",
-    "historia",
-    "nosotros",
-    "mision",
-    "vision",
-    "Perú",
-    "LATAM",
-  ],
-  openGraph: {
-    type: "website",
-    url: "/nosotros",
+export async function generateMetadata() {
+  const keywords = await getPageKeywords('nosotros');
+  
+  return {
     title: "Nosotros | Visual ERP",
-    description:
-      "Somos un equipo apasionado por la tecnología que impulsa la eficiencia de las pymes.",
-    images: [
-      {
-        url: "/images/banner/visualBanner.jpg",
-        alt: "Visual ERP",
-      },
-    ],
-    siteName: "Visual ERP",
-    locale: "es_PE",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Nosotros | Visual ERP",
-    description:
-      "Conoce quiénes somos y cómo ayudamos a pymes a crecer con tecnología.",
-    images: [
-      "/images/banner/visualBanner.jpg",
-    ],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    "max-image-preview": "large",
-    "max-snippet": -1,
-  },
-};
+    description: "Conoce al equipo detrás de Visual ERP: nuestra historia, misión y compromiso con la innovación para pymes en Perú y LATAM.",
+    alternates: {
+      canonical: "/nosotros",
+    },
+    keywords: formatKeywordsForMetadata(keywords),
+    openGraph: {
+      type: "website",
+      url: "/nosotros",
+      title: "Nosotros | Visual ERP",
+      description:
+        "Somos un equipo apasionado por la tecnología que impulsa la eficiencia de las pymes.",
+      images: [
+        {
+          url: "/images/banner/visualBanner.jpg",
+          alt: "Visual ERP",
+        },
+      ],
+      siteName: "Visual ERP",
+      locale: "es_PE",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: "Nosotros | Visual ERP",
+      description:
+        "Conoce quiénes somos y cómo ayudamos a pymes a crecer con tecnología.",
+      images: [
+        "/images/banner/visualBanner.jpg",
+      ],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  };
+}
 
 const demoData = {
   title: "¡Ya nos conoces! Ahora ",
@@ -99,7 +94,9 @@ const dataLine = [
   },
 ];
 
-export default function Nosotros() {
+export default async function Nosotros() {
+  const keywords = await getPageKeywords('nosotros');
+  
   return (
     <>
       <Navbar />
@@ -238,3 +235,5 @@ export default function Nosotros() {
     </>
   );
 }
+
+
