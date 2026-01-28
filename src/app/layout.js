@@ -203,6 +203,7 @@ export default function RootLayout({ children }) {
           intent="WELCOME"
           chat-title="VisualCont - Asesor en Linea"
           chat-icon="https://img.icons8.com/?size=100&id=g3YMw7LYW7Kp&format=png&color=FFFFFF"
+          chat-icon-alt="Asistente Virtual VisualCont - Chat de ayuda"
           agent-id="2d3697f6-823e-4846-8861-fd845a558fb4"
           language-code="es"
         ></df-messenger>
