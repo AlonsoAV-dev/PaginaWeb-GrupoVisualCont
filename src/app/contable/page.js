@@ -6,6 +6,7 @@ import Capabilities from "@/components/services/capabilities";
 import Pricing from "@/components/services/pricing";
 import Demo from "@/shared/demo";
 import IconsGroup from "@/shared/iconsGroup";
+import KeywordTags from "@/shared/keywordTags";
 import {
   FolderInput,
   HandCoins,
@@ -296,6 +297,9 @@ export default async function SistemaContable() {
         />
         <Pricing plans={plans} hasMonthly={true} hasAnnual={false} />
         <Demo data={demoData} />
+        {/* Visualizar las keywords en la página (software contable) 
+        <KeywordTags keywords={keywords} />
+        */}
       </div>
       <Footer />
 

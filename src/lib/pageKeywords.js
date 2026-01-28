@@ -1,9 +1,9 @@
 import { getConnection } from './db';
 
 /**
- * Get keywords assigned to a specific page
- * @param {string} pageName - The page identifier (e.g., 'home', 'contable', 'erp')
- * @returns {Promise<Array>} Array of keyword objects with id_keyword and keyword properties
+ * Obtiene las keywords asignadas a una página específica
+ * @param {string} pageName - Identificador de la página (ej: 'home', 'contable', 'erp')
+ * @returns {Promise<Array>} Array de objetos keyword con propiedades id_keyword y keyword
  */
 export async function getPageKeywords(pageName) {
   try {
@@ -25,9 +25,9 @@ export async function getPageKeywords(pageName) {
 }
 
 /**
- * Format keywords for Next.js metadata keywords array
- * @param {Array} keywords - Array of keyword objects from getPageKeywords()
- * @returns {Array<string>} Array of keyword strings
+ * Formatea keywords para el array de metadata de Next.js
+ * @param {Array} keywords - Array de objetos keyword de getPageKeywords()
+ * @returns {Array<string>} Array de strings de keywords
  */
 export function formatKeywordsForMetadata(keywords) {
   if (!keywords || keywords.length === 0) {
@@ -37,9 +37,9 @@ export function formatKeywordsForMetadata(keywords) {
 }
 
 /**
- * Format keywords for Schema.org "keywords" property (comma-separated string)
- * @param {Array} keywords - Array of keyword objects from getPageKeywords()
- * @returns {string} Comma-separated keywords string
+ * Formatea keywords para la propiedad "keywords" de Schema.org (string separado por comas)
+ * @param {Array} keywords - Array de objetos keyword de getPageKeywords()
+ * @returns {string} String de keywords separadas por comas
  */
 export function formatKeywordsForSchema(keywords) {
   if (!keywords || keywords.length === 0) {
@@ -49,9 +49,9 @@ export function formatKeywordsForSchema(keywords) {
 }
 
 /**
- * Format keywords as Schema.org Thing objects for "about" property
- * @param {Array} keywords - Array of keyword objects from getPageKeywords()
- * @returns {Array<Object>} Array of Schema Thing objects
+ * Formatea keywords como objetos Thing de Schema.org para la propiedad "about"
+ * @param {Array} keywords - Array de objetos keyword de getPageKeywords()
+ * @returns {Array<Object>} Array de objetos Thing de Schema
  */
 export function formatKeywordsAsThings(keywords) {
   if (!keywords || keywords.length === 0) {
