@@ -9,7 +9,7 @@ export const revalidate = 0;
 export async function GET() {
   try {
     const categorias = await query(
-      'SELECT id_categoria, nombre, slug, descripcion, estado FROM categorias WHERE estado = 1 ORDER BY nombre ASC'
+      'SELECT id_categoria, nombre, slug, descripcion, estado FROM categorias WHERE estado = 1 ORDER BY id_categoria ASC'
     );
 
     return NextResponse.json({ success: true, categorias }, {

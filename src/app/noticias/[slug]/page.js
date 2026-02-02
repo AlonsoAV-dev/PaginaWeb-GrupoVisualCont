@@ -2,6 +2,29 @@ import NoticeDetail from "@/shared/noticeDetail";
 import { notFound } from "next/navigation";
 import Script from "next/script";
 
+// Función helper para decodificar entidades HTML
+function decodeHTMLEntities(text) {
+  if (!text) return text;
+  
+  const entidades = {
+    '&nbsp;': ' ', '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+    '&#39;': "'", '&apos;': "'",
+    '&aacute;': 'á', '&eacute;': 'é', '&iacute;': 'í', '&oacute;': 'ó', '&uacute;': 'ú',
+    '&Aacute;': 'Á', '&Eacute;': 'É', '&Iacute;': 'Í', '&Oacute;': 'Ó', '&Uacute;': 'Ú',
+    '&ntilde;': 'ñ', '&Ntilde;': 'Ñ',
+    '&uuml;': 'ü', '&Uuml;': 'Ü',
+    '&iexcl;': '¡', '&iquest;': '¿',
+    '&deg;': '°', '&copy;': '©', '&reg;': '®', '&euro;': '€',
+  };
+  
+  let decoded = text;
+  decoded = decoded.replace(/&[a-zA-Z]+;/g, (match) => entidades[match] || match);
+  decoded = decoded.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
+  decoded = decoded.replace(/&#x([0-9A-Fa-f]+);/g, (match, hex) => String.fromCharCode(parseInt(hex, 16)));
+  
+  return decoded;
+}
+
 async function getNoticia(slug) {
   try {
     const res = await fetch(
@@ -41,16 +64,17 @@ export async function generateMetadata({ params }) {
   // Extraer keywords como array de strings
   const keywordsList = noticia.keywords?.map(k => k.nombre) || [];
   const keywordsString = keywordsList.join(", ");
+  const descripcionDecodificada = decodeHTMLEntities(noticia.descripcion_corta || noticia.titulo);
 
   return {
     title: `${noticia.titulo} | Visual Noticias`,
-    description: noticia.descripcion_corta || noticia.titulo,
+    description: descripcionDecodificada,
     alternates: {
       canonical: `/noticias/${noticia.slug}`,
     },
     openGraph: {
       title: `${noticia.titulo} | Visual Noticias`,
-      description: noticia.descripcion_corta || noticia.titulo,
+      description: descripcionDecodificada,
       url: `https://grupovisualcont.com/noticias/${noticia.slug}`,
       type: "article",
       siteName: "Visual ERP",
@@ -75,7 +99,7 @@ export async function generateMetadata({ params }) {
     twitter: {
       card: "summary_large_image",
       title: `${noticia.titulo}`,
-      description: noticia.descripcion_corta || noticia.titulo,
+      description: descripcionDecodificada,
       images: noticia.imagen_principal
         ? [`https://grupovisualcont.com${noticia.imagen_principal}`]
         : [],
@@ -107,6 +131,7 @@ export default async function Detail({ params }) {
 
   // Extraer keywords para Schema
   const keywordsList = noticia.keywords?.map(k => k.nombre) || [];
+  const descripcionDecodificada = decodeHTMLEntities(noticia.descripcion_corta || noticia.titulo);
 
   return (
     <>
@@ -121,7 +146,7 @@ export default async function Detail({ params }) {
             "@type": "NewsArticle",
             mainEntityOfPage: abs(`/noticias/${noticia.slug}`),
             headline: noticia.titulo,
-            description: noticia.descripcion_corta || noticia.titulo,
+            description: descripcionDecodificada,
             image: noticia.imagen_principal ? abs(noticia.imagen_principal) : undefined,
             datePublished: noticia.fecha_publicacion || noticia.creado_en,
             dateModified: noticia.fecha_publicacion || noticia.creado_en,

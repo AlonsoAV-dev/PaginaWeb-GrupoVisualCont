@@ -107,7 +107,7 @@ export default function NoticiasAdmin() {
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/3">
                 Título
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
@@ -127,8 +127,8 @@ export default function NoticiasAdmin() {
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             {noticias.map((noticia) => (
               <tr key={noticia.id_noticia}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900 dark:text-white">
+                <td className="px-6 py-4 w-1/3">
+                  <div className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2">
                     {noticia.titulo}
                   </div>
                   <div className="text-sm text-gray-500 dark:text-gray-400">

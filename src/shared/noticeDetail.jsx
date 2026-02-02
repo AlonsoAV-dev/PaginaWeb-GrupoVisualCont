@@ -10,6 +10,31 @@ import CommentList from "@/components/notices/CommentList";
 import CommentForm from "@/components/notices/CommentForm";
 import QuickLogin from "@/components/notices/quickLogin";
 
+// Función helper para decodificar entidades HTML
+function decodeHTMLEntities(text) {
+  if (!text) return text;
+  
+  const entidades = {
+    '&nbsp;': ' ', '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+    '&#39;': "'", '&apos;': "'",
+    '&aacute;': 'á', '&eacute;': 'é', '&iacute;': 'í', '&oacute;': 'ó', '&uacute;': 'ú',
+    '&Aacute;': 'Á', '&Eacute;': 'É', '&Iacute;': 'Í', '&Oacute;': 'Ó', '&Uacute;': 'Ú',
+    '&ntilde;': 'ñ', '&Ntilde;': 'Ñ',
+    '&uuml;': 'ü', '&Uuml;': 'Ü',
+    '&iexcl;': '¡', '&iquest;': '¿',
+    '&deg;': '°', '&copy;': '©', '&reg;': '®', '&euro;': '€',
+  };
+  
+  let decoded = text;
+  // Reemplazar entidades nombradas
+  decoded = decoded.replace(/&[a-zA-Z]+;/g, (match) => entidades[match] || match);
+  // Reemplazar entidades numéricas
+  decoded = decoded.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
+  decoded = decoded.replace(/&#x([0-9A-Fa-f]+);/g, (match, hex) => String.fromCharCode(parseInt(hex, 16)));
+  
+  return decoded;
+}
+
 function NoticeDetail({ selectedNotice }) {
   const formatFecha = (fecha) => {
     if (!fecha) return '';
@@ -78,7 +103,7 @@ function NoticeDetail({ selectedNotice }) {
                     {selectedNotice.titulo}
                   </h1>
                   <p className="text-gray-700 dark:text-gray-300">
-                    {selectedNotice.descripcion_corta}
+                    {decodeHTMLEntities(selectedNotice.descripcion_corta)}
                   </p>
                 </div>
               </div>

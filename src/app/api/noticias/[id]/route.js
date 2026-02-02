@@ -6,6 +6,56 @@ import { requireAuth } from '@/lib/auth';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+// Función helper para generar descripción corta desde contenido HTML
+function generarDescripcionCorta(contenidoHTML, maxCaracteres = 160) {
+  // Eliminar etiquetas HTML
+  let textoPlano = contenidoHTML.replace(/<[^>]*>/g, ' ');
+  
+  // Decodificar entidades HTML (mapa completo de entidades comunes)
+  const entidades = {
+    '&nbsp;': ' ', '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+    '&#39;': "'", '&apos;': "'",
+    // Acentos y caracteres especiales en español
+    '&aacute;': 'á', '&eacute;': 'é', '&iacute;': 'í', '&oacute;': 'ó', '&uacute;': 'ú',
+    '&Aacute;': 'Á', '&Eacute;': 'É', '&Iacute;': 'Í', '&Oacute;': 'Ó', '&Uacute;': 'Ú',
+    '&ntilde;': 'ñ', '&Ntilde;': 'Ñ',
+    '&uuml;': 'ü', '&Uuml;': 'Ü',
+    '&iexcl;': '¡', '&iquest;': '¿',
+    // Otros caracteres comunes
+    '&deg;': '°', '&copy;': '©', '&reg;': '®', '&euro;': '€',
+    '&pound;': '£', '&yen;': '¥', '&cent;': '¢',
+    '&sect;': '§', '&para;': '¶', '&middot;': '·',
+    '&laquo;': '«', '&raquo;': '»', '&ldquo;': '"', '&rdquo;': '"',
+    '&lsquo;': "'", '&rsquo;': "'", '&ndash;': '–', '&mdash;': '—'
+  };
+  
+  // Reemplazar entidades nombradas
+  textoPlano = textoPlano.replace(/&[a-zA-Z]+;/g, (match) => entidades[match] || match);
+  
+  // Decodificar entidades numéricas (&#160; &#xA0;)
+  textoPlano = textoPlano.replace(/&#(\d+);/g, (match, dec) => String.fromCharCode(dec));
+  textoPlano = textoPlano.replace(/&#x([0-9A-Fa-f]+);/g, (match, hex) => String.fromCharCode(parseInt(hex, 16)));
+  
+  // Limpiar espacios múltiples y saltos de línea
+  textoPlano = textoPlano.replace(/\s+/g, ' ').trim();
+  
+  // Si el texto es más corto que el máximo, devolverlo completo
+  if (textoPlano.length <= maxCaracteres) {
+    return textoPlano;
+  }
+  
+  // Cortar en el límite de caracteres
+  let descripcion = textoPlano.substring(0, maxCaracteres);
+  
+  // Buscar el último espacio para no cortar palabras
+  const ultimoEspacio = descripcion.lastIndexOf(' ');
+  if (ultimoEspacio > maxCaracteres * 0.8) { // Solo si está cerca del límite
+    descripcion = descripcion.substring(0, ultimoEspacio);
+  }
+  
+  return descripcion.trim() + '...';
+}
+
 // GET - Obtener una noticia con sus keywords
 export async function GET(request, { params }) {
   try {
@@ -58,7 +108,6 @@ export async function PUT(request, { params }) {
     const { 
       titulo, 
       contenido,
-      descripcion_corta,
       imagen_principal,
       id_categoria,
       nombre_autor,
@@ -73,6 +122,9 @@ export async function PUT(request, { params }) {
         { status: 400 }
       );
     }
+
+    // Generar descripción corta automáticamente desde el contenido
+    const descripcion_corta = generarDescripcionCorta(contenido);
 
     // Generar slug desde el título si cambió
     const generarSlug = (texto) => {
@@ -122,7 +174,7 @@ export async function PUT(request, { params }) {
         titulo,
         slug,
         contenido,
-        descripcion_corta || null,
+        descripcion_corta,
         imagen_principal || null,
         id_categoria || null,
         nombre_autor,
