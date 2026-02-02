@@ -10,7 +10,7 @@ export const revalidate = 0;
 export async function GET() {
   try {
     const keywords = await query(
-      'SELECT id_keyword, nombre FROM keywords ORDER BY nombre ASC'
+      'SELECT id_keyword, nombre FROM keywords ORDER BY id_keyword DESC'
     );
 
     return NextResponse.json({ success: true, keywords }, {

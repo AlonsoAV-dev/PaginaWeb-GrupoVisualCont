@@ -232,7 +232,38 @@ export async function POST(request) {
 
     // Insertar keywords si se proporcionan
     if (keywords && Array.isArray(keywords) && keywords.length > 0) {
-      for (const id_keyword of keywords) {
+      for (const keyword of keywords) {
+        let id_keyword;
+        
+        // Si es un número, es un ID existente
+        if (typeof keyword === 'number' && keyword > 0) {
+          id_keyword = keyword;
+        } 
+        // Si es un string, es el nombre de una keyword nueva
+        else if (typeof keyword === 'string') {
+          // Buscar si ya existe
+          const existing = await query(
+            'SELECT id_keyword FROM keywords WHERE nombre = ?',
+            [keyword]
+          );
+          
+          if (existing.length > 0) {
+            id_keyword = existing[0].id_keyword;
+          } else {
+            // Crear la keyword nueva
+            const keywordResult = await query(
+              'INSERT INTO keywords (nombre) VALUES (?)',
+              [keyword]
+            );
+            id_keyword = keywordResult.insertId;
+          }
+        }
+        // Ignorar IDs temporales negativos
+        else {
+          continue;
+        }
+        
+        // Insertar relación noticia-keyword
         await query(
           'INSERT INTO noticia_keyword (id_noticia, id_keyword) VALUES (?, ?)',
           [id_noticia, id_keyword]

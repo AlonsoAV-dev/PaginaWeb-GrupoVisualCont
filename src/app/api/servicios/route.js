@@ -6,7 +6,7 @@ import { requireAuth } from '@/lib/auth';
 export async function GET() {
   try {
     const servicios = await query(
-      'SELECT * FROM servicios WHERE estado = 1 ORDER BY nombre ASC'
+      'SELECT * FROM servicios WHERE estado = 1 ORDER BY id_servicio DESC'
     );
 
     return NextResponse.json({ success: true, servicios });

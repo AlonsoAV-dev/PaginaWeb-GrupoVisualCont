@@ -113,10 +113,24 @@ export default function NoticiaEditor() {
       const url = isEditing ? `/api/noticias/${params.id}` : '/api/noticias';
       const method = isEditing ? 'PUT' : 'POST';
 
+      // Convertir keywords: IDs positivos se mantienen, IDs negativos se convierten a nombres
+      const keywordsToSend = formData.keywords.map(kId => {
+        if (kId > 0) {
+          return kId; // ID existente
+        } else {
+          // ID temporal negativo, buscar el nombre
+          const tempKeyword = keywords.find(k => k.id_keyword === kId);
+          return tempKeyword ? tempKeyword.nombre : null;
+        }
+      }).filter(k => k !== null); // Filtrar nulls
+
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          keywords: keywordsToSend,
+        }),
       });
 
       const data = await res.json();
@@ -253,44 +267,39 @@ export default function NoticiaEditor() {
     }
   };
 
-  // Agregar keyword sugerida
+  // Agregar keyword sugerida (solo al formulario, se creará al guardar la noticia)
   const agregarKeywordSugerida = async (sugerencia) => {
-    // Buscar si ya existe
+    // Buscar si ya existe en la lista de keywords
     let existingKeyword = keywords.find(
       k => k.nombre.toLowerCase() === sugerencia.toLowerCase()
     );
 
-    // Si no existe, crearla
-    if (!existingKeyword) {
-      try {
-        const res = await fetch('/api/keywords', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre: sugerencia }),
-        });
-
-        const data = await res.json();
-        if (res.ok) {
-          existingKeyword = data.keyword;
-          setKeywords(prev => [...prev, existingKeyword]);
-        } else {
-          alert(data.error || 'Error al crear keyword');
-          return;
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        alert('Error de conexión al crear keyword');
-        return;
+    // Si existe, agregar su ID al formData
+    if (existingKeyword) {
+      if (!formData.keywords.includes(existingKeyword.id_keyword)) {
+        setFormData(prev => ({
+          ...prev,
+          keywords: [...prev.keywords, existingKeyword.id_keyword],
+        }));
       }
+      return;
     }
 
-    // Agregar al formData si no está ya seleccionada
-    if (!formData.keywords.includes(existingKeyword.id_keyword)) {
-      setFormData(prev => ({
-        ...prev,
-        keywords: [...prev.keywords, existingKeyword.id_keyword],
-      }));
-    }
+    // Si no existe, crear un objeto temporal con ID negativo
+    // La keyword se creará en la DB cuando se guarde la noticia
+    const tempKeyword = {
+      id_keyword: -(keywords.length + 1), // ID temporal negativo
+      nombre: sugerencia,
+    };
+
+    // Agregar la keyword temporal a la lista local
+    setKeywords(prev => [...prev, tempKeyword]);
+
+    // Agregar al formData
+    setFormData(prev => ({
+      ...prev,
+      keywords: [...prev.keywords, tempKeyword.id_keyword],
+    }));
   };
 
   return (

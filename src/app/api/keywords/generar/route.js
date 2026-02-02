@@ -11,47 +11,52 @@ export async function POST(request) {
       );
     }
 
-        if (!titulo && !contenido) {
-            return NextResponse.json(
-                { error: 'Se requiere título o contenido' },
-                { status: 400 }
-            );
-        }
+    const { titulo, contenido } = await request.json();
 
-        // Limpiar HTML del contenido
-        const contenidoLimpio = contenido
-            .replace(/<[^>]*>/g, ' ')
-            .replace(/\s+/g, ' ')
-            .trim()
-            .substring(0, 2000);
+    if (!titulo && !contenido) {
+      return NextResponse.json(
+        { error: 'Se requiere título o contenido' },
+        { status: 400 }
+      );
+    }
 
-        const prompt = `
-        Eres un especialista senior en SEO para una empresa de software contable y laboral en Perú.
+    // Limpiar HTML y decodificar entidades
+    let contenidoLimpio = contenido
+      .replace(/<[^>]*>/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
 
-        Analiza el siguiente artículo y genera entre 5 y 8 keywords o frases clave optimizadas para SEO (intención de búsqueda en Google).
+    // Decodificar entidades HTML comunes
+    const entidades = {
+      '&nbsp;': ' ', '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"',
+      '&aacute;': 'á', '&eacute;': 'é', '&iacute;': 'í', '&oacute;': 'ó', '&uacute;': 'ú',
+      '&Aacute;': 'Á', '&Eacute;': 'É', '&Iacute;': 'Í', '&Oacute;': 'Ó', '&Uacute;': 'Ú',
+      '&ntilde;': 'ñ', '&Ntilde;': 'Ñ',
+      '&uuml;': 'ü', '&Uuml;': 'Ü',
+      '&iexcl;': '¡', '&iquest;': '¿',
+    };
 
-        CONTEXTO:
-        - Público objetivo: responsables de RR.HH., contadores, payroll y abogados laboralistas.
-        - Objetivo: atraer tráfico orgánico calificado para artículos legales y laborales.
+    contenidoLimpio = contenidoLimpio.replace(/&[a-zA-Z]+;/g, (match) => entidades[match] || match);
+    contenidoLimpio = contenidoLimpio.substring(0, 2000);
 
-        Título: ${titulo}
-        Contenido: ${contenidoLimpio}
+    const prompt = `Analiza este artículo y genera 5-8 keywords/frases clave relevantes para SEO.
 
-        REGLAS OBLIGATORIAS:
-        1. Prioriza keywords con intención clara de búsqueda (problemas, soluciones, criterios legales).
-        2. Usa preferentemente frases de 2 a 4 palabras (long-tail SEO).
-        3. Incluye términos técnicos peruanos (SUNAT, PLAME, AFP, planilla electrónica, Código Civil, Casación Laboral, Corte Suprema, etc.) SOLO si aparecen en el contenido.
-        4. Si se menciona una norma, sentencia o casación específica, inclúyela de forma precisa.
-        5. Evita términos excesivamente genéricos o ambiguos.
-        6. No inventes conceptos que no estén explícita o claramente implícitos en el texto.
-        7. Prioriza términos aplicables como etiquetas SEO o metadatos.
+**Título:** ${titulo}
 
-        FORMATO DE RESPUESTA:
-        Devuelve ÚNICAMENTE las keywords separadas por comas, sin numeración, sin comillas, sin explicaciones y sin punto final.
+**Contenido:** ${contenidoLimpio}
 
-        Ejemplo de salida correcta:
-        sobrepago a trabajadores, recuperar sobrepagos laborales, planilla electrónica, código civil pagos por error, casación laboral peruana
-        `;
+**REGLAS:**
+1. Extrae keywords ÚNICAMENTE basándote en el contenido proporcionado
+2. Usa frases de 2-4 palabras cuando sea apropiado
+3. Prioriza términos que un usuario buscaría en Google
+4. Si aparecen términos técnicos específicos (siglas, leyes, organizaciones), inclúyelos
+5. No inventes términos que no estén en el texto
+6. Evita palabras muy genéricas como "empresa", "proceso", "sistema", etc.
+
+**FORMATO DE RESPUESTA:**
+Devuelve SOLO las keywords separadas por comas, sin numeración ni explicaciones.
+
+Ejemplo: facturación electrónica, SUNAT, comprobantes de pago, sistema tributario`;
 
         console.log('Llamando a Groq API (Llama 3.3 70B)...');
 
