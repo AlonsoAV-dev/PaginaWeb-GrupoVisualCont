@@ -426,9 +426,14 @@ export default function NoticiaEditor() {
 
             <div className="md:col-span-2 mb-24">
               <div className="flex justify-between items-center mb-2">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Keywords (SEO)
-                </label>
+                <div className="flex flex-col">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Keywords (SEO) ✨ Generar con IA
+                  </label>
+                  <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Recomendado: 5-8 keywords por noticia
+                  </span>
+                </div>
                 <button
                   type="button"
                   onClick={generarKeywordsConIA}
@@ -442,7 +447,7 @@ export default function NoticiaEditor() {
                     </>
                   ) : (
                     <>
-                      ✨ Generar con IA
+                      ✨ Generar
                     </>
                   )}
                 </button>
