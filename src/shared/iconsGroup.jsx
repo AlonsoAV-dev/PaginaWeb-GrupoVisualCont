@@ -18,7 +18,7 @@ export default function IconsGroup() {
     
       <ChatBotBar  />
        <WhatsAppFab /> 
-      {/* Botón flotante de WhatsApp */}
+      {/* Boton flotante de WhatsApp */}
       {/* <WhatsAppFab className="!static !bottom-auto !right-auto" /> */}
       
     </div>
