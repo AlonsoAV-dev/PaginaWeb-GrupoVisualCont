@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Pagination from '@/components/admin/Pagination';
 
 export default function UsuariosAdmin() {
   const router = useRouter();
@@ -8,6 +9,8 @@ export default function UsuariosAdmin() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
   const [formData, setFormData] = useState({
     nombre: '',
     email: '',
@@ -164,6 +167,12 @@ export default function UsuariosAdmin() {
     setFormData({ nombre: '', email: '', password: '', rol: 'editor' });
   };
 
+  // Cálculo de paginación
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = usuarios.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(usuarios.length / itemsPerPage);
+
   if (loading) {
     return <div className="text-center py-8">Cargando...</div>;
   }
@@ -207,7 +216,14 @@ export default function UsuariosAdmin() {
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            {usuarios.map((usuario) => (
+            {currentItems.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                  No hay usuarios para mostrar
+                </td>
+              </tr>
+            ) : (
+              currentItems.map((usuario) => (
               <tr key={usuario.id_usuario}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                   {usuario.nombre}
@@ -263,9 +279,20 @@ export default function UsuariosAdmin() {
                   </button>
                 </td>
               </tr>
-            ))}
+              ))
+            )}
           </tbody>
         </table>
+        
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            itemsPerPage={itemsPerPage}
+            totalItems={usuarios.length}
+          />
+        )}
       </div>
 
       {/* Modal para crear/editar usuario */}

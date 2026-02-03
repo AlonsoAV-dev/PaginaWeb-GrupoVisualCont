@@ -6,14 +6,33 @@ import { requireAuth } from '@/lib/auth';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-// GET - Obtener todas las keywords con caché
-export async function GET() {
+// GET - Obtener todas las keywords con paginación
+export async function GET(request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get('page')) || 1;
+    const limit = parseInt(searchParams.get('limit')) || 15;
+    const offset = (page - 1) * limit;
+
+    // Contar total
+    const [{ total }] = await query('SELECT COUNT(*) as total FROM keywords');
+
+    // Obtener keywords con paginación
     const keywords = await query(
-      'SELECT id_keyword, nombre FROM keywords ORDER BY id_keyword DESC'
+      'SELECT id_keyword, nombre FROM keywords ORDER BY id_keyword DESC LIMIT ? OFFSET ?',
+      [limit, offset]
     );
 
-    return NextResponse.json({ success: true, keywords }, {
+    return NextResponse.json({ 
+      success: true, 
+      keywords,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages: Math.ceil(total / limit)
+      }
+    }, {
       headers: {
         'Cache-Control': 'no-store, no-cache, must-revalidate',
         'Pragma': 'no-cache',

@@ -74,10 +74,41 @@ export async function POST(request) {
 
     // Insertar nuevas keywords una por una
     if (keywords.length > 0) {
-      for (const keywordId of keywords) {
+      for (const keyword of keywords) {
+        let id_keyword;
+        
+        // Si es un número positivo, es un ID existente
+        if (typeof keyword === 'number' && keyword > 0) {
+          id_keyword = keyword;
+        } 
+        // Si es un string o ID negativo (temporal), buscar/crear keyword
+        else if (typeof keyword === 'string') {
+          // Buscar si ya existe
+          const existing = await query(
+            'SELECT id_keyword FROM keywords WHERE nombre = ?',
+            [keyword]
+          );
+          
+          if (existing.length > 0) {
+            id_keyword = existing[0].id_keyword;
+          } else {
+            // Crear la keyword nueva
+            const keywordResult = await query(
+              'INSERT INTO keywords (nombre) VALUES (?)',
+              [keyword]
+            );
+            id_keyword = keywordResult.insertId;
+          }
+        }
+        // Ignorar IDs temporales negativos (buscar nombre en allKeywords)
+        else {
+          continue;
+        }
+        
+        // Insertar relación página-keyword
         await query(
           'INSERT INTO page_keywords (page_name, id_keyword) VALUES (?, ?)',
-          [page, keywordId]
+          [page, id_keyword]
         );
       }
     }

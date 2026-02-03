@@ -2,25 +2,31 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Pagination from '@/components/admin/Pagination';
 
 export default function NoticiasAdmin() {
   const router = useRouter();
   const [noticias, setNoticias] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [itemsPerPage] = useState(10);
 
   useEffect(() => {
     loadNoticias();
-  }, []);
+  }, [currentPage]);
 
   const loadNoticias = async () => {
     try {
       // Agregar timestamp para evitar cache del navegador
       const timestamp = new Date().getTime();
-      const res = await fetch(`/api/noticias?_t=${timestamp}`, {
-        cache: 'no-store'
-      });
+      const res = await fetch(
+        `/api/noticias?page=${currentPage}&limit=${itemsPerPage}&orderBy=creado_en&_t=${timestamp}`,
+        { cache: 'no-store' }
+      );
       const data = await res.json();
       setNoticias(data.noticias || []);
+      setTotalPages(data.pagination?.totalPages || 1);
     } catch (error) {
       console.error('Error:', error);
     } finally {
@@ -42,15 +48,7 @@ export default function NoticiasAdmin() {
       });
 
       if (res.ok) {
-        // Actualizar estado inmediatamente
-        setNoticias(prev =>
-          prev.map(noticia =>
-            noticia.id_noticia === id
-              ? { ...noticia, estado: nuevoEstado }
-              : noticia
-          )
-        );
-        // Recargar lista completa para asegurar sincronización
+        // Recargar lista completa para mantener el orden correcto
         await loadNoticias();
       }
     } catch (error) {
@@ -67,9 +65,7 @@ export default function NoticiasAdmin() {
       });
 
       if (res.ok) {
-        // Actualizar estado inmediatamente eliminando la noticia
-        setNoticias(prev => prev.filter(noticia => noticia.id_noticia !== id));
-        // Recargar lista completa para asegurar sincronización
+        // Recargar lista completa para mantener el orden correcto
         await loadNoticias();
       }
     } catch (error) {
@@ -84,6 +80,9 @@ export default function NoticiasAdmin() {
     };
     return colors[estado] || 'bg-gray-100 text-gray-800';
   };
+
+  // Calcular índices para mostrar numeración
+  const indexOfFirstItem = (currentPage - 1) * itemsPerPage;
 
   if (loading) {
     return <div className="text-center py-8">Cargando...</div>;
@@ -107,6 +106,9 @@ export default function NoticiasAdmin() {
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-700">
             <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-16">
+                ID
+              </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider w-1/3">
                 Título
               </th>
@@ -125,14 +127,21 @@ export default function NoticiasAdmin() {
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            {noticias.map((noticia) => (
+            {noticias.length === 0 ? (
+              <tr>
+                <td colSpan="6" className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                  No hay noticias para mostrar
+                </td>
+              </tr>
+            ) : (
+              noticias.map((noticia, index) => (
               <tr key={noticia.id_noticia}>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                  {noticia.id_noticia}
+                </td>
                 <td className="px-6 py-4 w-1/3">
                   <div className="text-sm font-medium text-gray-900 dark:text-white line-clamp-2">
                     {noticia.titulo}
-                  </div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    {noticia.cod_unico}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
@@ -167,9 +176,18 @@ export default function NoticiasAdmin() {
                   </button>
                 </td>
               </tr>
-            ))}
+              ))
+            )}
           </tbody>
         </table>
+        
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        )}
       </div>
     </div>
   );

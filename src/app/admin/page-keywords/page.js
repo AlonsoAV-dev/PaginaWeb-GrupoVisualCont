@@ -20,6 +20,18 @@ export default function PageKeywordsAdmin() {
   const [showKeywordModal, setShowKeywordModal] = useState(false);
   const [newKeywordName, setNewKeywordName] = useState('');
   const [creatingKeyword, setCreatingKeyword] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [keywordsSugeridas, setKeywordsSugeridas] = useState([]);
+  const [generandoKeywords, setGenerandoKeywords] = useState(false);
+
+  // Filtrar sugerencias basadas en búsqueda (excluir las ya seleccionadas)
+  const filteredSuggestions = allKeywords
+    .filter(k => 
+      k.nombre.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      !selectedKeywordIds.includes(k.id_keyword)
+    )
+    .slice(0, 10); // Máximo 10 sugerencias
 
   useEffect(() => {
     loadAllKeywords();
@@ -64,21 +76,134 @@ export default function PageKeywordsAdmin() {
     );
   };
 
+  const addKeyword = (keywordId) => {
+    if (!selectedKeywordIds.includes(keywordId)) {
+      setSelectedKeywordIds(prev => [...prev, keywordId]);
+    }
+    setSearchTerm('');
+    setShowSuggestions(false);
+  };
+
+  const removeKeyword = (keywordId) => {
+    setSelectedKeywordIds(prev => prev.filter(id => id !== keywordId));
+  };
+
+  // Generar keywords con IA
+  const generarKeywordsConIA = async () => {
+    const currentPage = PAGES.find(p => p.id === selectedPage);
+    if (!currentPage) return;
+
+    // Prompts personalizados por página
+    const pagePrompts = {
+      home: {
+        titulo: 'Visual - Software ERP Contable, Facturación y Planilla Electrónica Perú',
+        contenido: 'ITS Business S.A.C., empresa peruana con más de 20 años en el mercado. Software ERP todo en uno que automatiza procesos empresariales. Soluciones principales: Sistema de Contabilidad con libros electrónicos PLE y SIRE SUNAT, integración API oficial SUNAT para facturación electrónica y SIRE 2025, Sistema de Facturación Electrónica (VisualFACT) con validación de comprobantes, Software de Planillas (VISUALPLAN) con cumplimiento SUNAFIL y firma electrónica, ERP Integrado (VisualInt) multiempresa. Certificaciones: PSE SUNAT, ISO 27001, AWS, Indecopi, Colegio de Contadores. Más de 8,000 clientes en Perú. Características: conexión API SUNAT, libros contables automáticos, exportación Excel, consulta RUC/DNI, software multiempresa, trabajo desde cualquier dispositivo. Sistema integrado para PYMES, manufactura, retail, restaurantes (VisualFOOD), distribuidoras. 15 días gratis de prueba.'
+      },
+      contable: {
+        titulo: 'Software de Contabilidad - Sistema Contable Perú',
+        contenido: 'Software contable completo para empresas en Perú. Libros electrónicos PLE y SIRE SUNAT, registro de compras y ventas, estados financieros, balance general, conciliación bancaria, asientos contables automatizados, integración con SUNAT.'
+      },
+      erp: {
+        titulo: 'ERP Integrado - Sistema de Gestión Empresarial Perú',
+        contenido: 'Sistema ERP todo en uno para empresas peruanas. Integra contabilidad, facturación, planillas, inventarios, compras, ventas, CRM. Gestión empresarial completa con reportes en tiempo real y dashboards ejecutivos.'
+      },
+      facturador: {
+        titulo: 'Facturador Electrónico - Comprobantes Electrónicos SUNAT',
+        contenido: 'Sistema de facturación electrónica homologado por SUNAT. Emite facturas, boletas, notas de crédito y débito electrónicas. PSE certificado, envío automático a SUNAT, firma digital, integración con sistemas contables.'
+      },
+      planilla: {
+        titulo: 'Software de Planilla Electrónica - Gestión de RR.HH. Perú',
+        contenido: 'Sistema de planilla electrónica completo. Cálculo de remuneraciones, AFP, ONP, CTS, gratificaciones, vacaciones. Generación de PDT PLAME, T-Registro, boletas de pago. Control de asistencia biométrico. Cumplimiento laboral tributario peruano.'
+      },
+      nosotros: {
+        titulo: 'Nosotros - Grupo Visual CONT',
+        contenido: 'Empresa peruana de desarrollo de software ERP contable con más de 15 años de experiencia. Especialistas en soluciones tecnológicas para contadores, empresas PYMES. Certificados por SUNAT como PSE. Soporte técnico especializado.'
+      }
+    };
+
+    const pageData = pagePrompts[selectedPage] || {
+      titulo: currentPage.name,
+      contenido: `Página sobre ${currentPage.name}. Software contable en Perú.`
+    };
+
+    setGenerandoKeywords(true);
+    setKeywordsSugeridas([]);
+    
+    try {
+      const res = await fetch('/api/keywords/generar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(pageData),
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.keywords) {
+        setKeywordsSugeridas(data.keywords);
+      } else {
+        alert(data.error || 'Error al generar keywords');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error de conexión al generar keywords');
+    } finally {
+      setGenerandoKeywords(false);
+    }
+  };
+
+  // Agregar keyword sugerida
+  const agregarKeywordSugerida = (sugerencia) => {
+    // Buscar si ya existe
+    let existingKeyword = allKeywords.find(
+      k => k.nombre.toLowerCase() === sugerencia.toLowerCase()
+    );
+
+    if (existingKeyword) {
+      addKeyword(existingKeyword.id_keyword);
+      // Remover de sugerencias
+      setKeywordsSugeridas(prev => prev.filter(s => s !== sugerencia));
+      return;
+    }
+
+    // Si no existe, crear temporal (se creará en DB al guardar)
+    const tempKeyword = {
+      id_keyword: -(allKeywords.length + Math.random() * 1000),
+      nombre: sugerencia,
+    };
+
+    setAllKeywords(prev => [...prev, tempKeyword]);
+    setSelectedKeywordIds(prev => [...prev, tempKeyword.id_keyword]);
+    setKeywordsSugeridas(prev => prev.filter(s => s !== sugerencia));
+  };
+
   const handleSave = async () => {
     setSaving(true);
     try {
+      // Convertir keywords: IDs positivos se mantienen, IDs negativos se convierten a nombres
+      const keywordsToSend = selectedKeywordIds.map(kId => {
+        if (kId > 0) {
+          return kId; // ID existente
+        } else {
+          // ID temporal negativo, buscar el nombre
+          const tempKeyword = allKeywords.find(k => k.id_keyword === kId);
+          return tempKeyword ? tempKeyword.nombre : null;
+        }
+      }).filter(k => k !== null); // Filtrar nulls
+
       const res = await fetch('/api/pages/keywords', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           page: selectedPage,
-          keywords: selectedKeywordIds,
+          keywords: keywordsToSend,
         }),
       });
 
       if (res.ok) {
         alert('Keywords actualizadas correctamente');
-        loadPageKeywords(selectedPage);
+        await loadAllKeywords(); // Recargar todas las keywords
+        await loadPageKeywords(selectedPage);
+        setKeywordsSugeridas([]); // Limpiar sugerencias
       } else {
         const data = await res.json();
         alert(data.error || 'Error al guardar');
@@ -182,10 +307,11 @@ export default function PageKeywordsAdmin() {
           </h2>
           <div className="flex space-x-2">
             <button
-              onClick={() => setShowKeywordModal(true)}
-              className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+              onClick={generarKeywordsConIA}
+              disabled={generandoKeywords}
+              className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-md hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
             >
-              + Nueva Keyword
+              {generandoKeywords ? '⏳ Generando...' : '✨ Generar con IA'}
             </button>
             <button
               onClick={handleSave}
@@ -197,54 +323,106 @@ export default function PageKeywordsAdmin() {
           </div>
         </div>
 
-        {allKeywords.length === 0 ? (
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-            No hay keywords disponibles. Crea algunas en la sección de Keywords.
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {allKeywords.map((keyword) => (
-              <label
-                key={keyword.id_keyword}
-                className={`flex items-center space-x-2 p-3 border-2 rounded-md cursor-pointer transition-all ${
-                  selectedKeywordIds.includes(keyword.id_keyword)
-                    ? 'border-[#257CD0] bg-blue-50 dark:bg-blue-900/20'
-                    : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedKeywordIds.includes(keyword.id_keyword)}
-                  onChange={() => handleKeywordToggle(keyword.id_keyword)}
-                  className="text-[#257CD0] focus:ring-[#257CD0] w-5 h-5"
-                />
-                <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">
-                  {keyword.nombre}
-                </span>
-              </label>
-            ))}
+        {/* Sugerencias de IA */}
+        {keywordsSugeridas.length > 0 && (
+          <div className="mb-4 p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
+            <h3 className="text-sm font-semibold text-purple-900 dark:text-purple-200 mb-2">
+              💡 Sugerencias de IA ({keywordsSugeridas.length}):
+            </h3>
+            <div className="flex flex-wrap gap-2">
+              {keywordsSugeridas.map((sugerencia, index) => (
+                <button
+                  key={index}
+                  onClick={() => agregarKeywordSugerida(sugerencia)}
+                  className="px-3 py-1 bg-white dark:bg-gray-700 border border-purple-300 dark:border-purple-600 text-purple-900 dark:text-purple-200 rounded-full hover:bg-purple-100 dark:hover:bg-purple-800 transition-colors text-sm"
+                >
+                  + {sugerencia}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
-        {selectedKeywordIds.length > 0 && (
-          <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-              Keywords seleccionadas ({selectedKeywordIds.length}):
-            </h3>
+        {/* Keywords seleccionadas */}
+        <div className="mb-6">
+          <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+            Keywords seleccionadas ({selectedKeywordIds.length}):
+          </h3>
+          {selectedKeywordIds.length === 0 ? (
+            <p className="text-gray-500 dark:text-gray-400 text-sm italic">
+              No hay keywords seleccionadas. Usa el buscador para agregar.
+            </p>
+          ) : (
             <div className="flex flex-wrap gap-2">
               {allKeywords
                 .filter(k => selectedKeywordIds.includes(k.id_keyword))
                 .map(keyword => (
-                  <span
+                  <div
                     key={keyword.id_keyword}
-                    className="px-3 py-1 bg-[#257CD0] text-white text-sm rounded-full"
+                    className="flex items-center space-x-2 px-3 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full"
                   >
-                    {keyword.nombre}
-                  </span>
+                    <span className="text-sm font-medium">{keyword.nombre}</span>
+                    <button
+                      onClick={() => removeKeyword(keyword.id_keyword)}
+                      className="text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100"
+                    >
+                      ×
+                    </button>
+                  </div>
                 ))}
             </div>
-          </div>
-        )}
+          )}
+        </div>
+
+        {/* Buscador para agregar keywords */}
+        <div className="relative">
+          <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+            Agregar keywords:
+          </label>
+          <input
+            type="text"
+            placeholder="Buscar keyword para agregar..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setShowSuggestions(e.target.value.length > 0);
+            }}
+            onFocus={() => setShowSuggestions(searchTerm.length > 0)}
+            onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#257CD0]"
+          />
+
+          {/* Dropdown de sugerencias */}
+          {showSuggestions && filteredSuggestions.length > 0 && (
+            <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-y-auto">
+              {filteredSuggestions.map(keyword => (
+                <button
+                  key={keyword.id_keyword}
+                  onClick={() => addKeyword(keyword.id_keyword)}
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white"
+                >
+                  {keyword.nombre}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Opción para crear nueva */}
+          {searchTerm && filteredSuggestions.length === 0 && (
+            <div className="mt-2">
+              <button
+                onClick={() => setShowKeywordModal(true)}
+                className="text-sm text-[#257CD0] hover:underline"
+              >
+                + Crear nueva keyword "{searchTerm}"
+              </button>
+            </div>
+          )}
+        </div>
+
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-3">
+          Total de keywords disponibles: {allKeywords.length}
+        </p>
       </div>
 
       {/* Info box */}

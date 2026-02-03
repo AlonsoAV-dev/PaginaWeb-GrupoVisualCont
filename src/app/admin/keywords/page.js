@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Pagination from '@/components/admin/Pagination';
 
 export default function KeywordsAdmin() {
   const router = useRouter();
@@ -8,16 +9,20 @@ export default function KeywordsAdmin() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [newKeyword, setNewKeyword] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [itemsPerPage] = useState(10);
 
   useEffect(() => {
     loadKeywords();
-  }, []);
+  }, [currentPage]);
 
   const loadKeywords = async () => {
     try {
-      const res = await fetch('/api/keywords');
+      const res = await fetch(`/api/keywords?page=${currentPage}&limit=${itemsPerPage}`);
       const data = await res.json();
       setKeywords(data.keywords || []);
+      setTotalPages(data.pagination?.totalPages || 1);
     } catch (error) {
       console.error('Error:', error);
     } finally {
@@ -36,8 +41,8 @@ export default function KeywordsAdmin() {
 
       if (res.ok) {
        const data = await res.json();
-        // Actualizar estado inmediatamente con la nueva keyword
-        setKeywords(prev => [...prev, data.keyword]);
+        // Recargar lista completa desde el backend
+        await loadKeywords();
         setNewKeyword('');
         setShowModal(false);
       } else {
@@ -60,8 +65,8 @@ export default function KeywordsAdmin() {
       const data = await res.json();
 
       if (res.ok) {
-        // Actualizar estado inmediatamente eliminando la keyword
-        setKeywords(prev => prev.filter(kw => kw.id_keyword !== id));
+        // Recargar lista completa desde el backend
+        await loadKeywords();
         alert(data.message || 'Keyword eliminada correctamente');
       } else {
         // Mostrar error detallado
@@ -107,7 +112,14 @@ export default function KeywordsAdmin() {
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            {keywords.map((keyword) => (
+            {keywords.length === 0 ? (
+              <tr>
+                <td colSpan="3" className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                  No hay keywords para mostrar
+                </td>
+              </tr>
+            ) : (
+              keywords.map((keyword) => (
               <tr key={keyword.id_keyword}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                   {keyword.id_keyword}
@@ -124,9 +136,18 @@ export default function KeywordsAdmin() {
                   </button>
                 </td>
               </tr>
-            ))}
+              ))
+            )}
           </tbody>
         </table>
+        
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        )}
       </div>
 
       {/* Modal para crear keyword */}

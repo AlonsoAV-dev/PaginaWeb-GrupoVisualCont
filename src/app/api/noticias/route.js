@@ -63,6 +63,7 @@ export async function GET(request) {
     const estado = searchParams.get('estado');
     const servicio = searchParams.get('servicio');
     const categoria = searchParams.get('categoria');
+    const orderBy = searchParams.get('orderBy') || 'fecha_publicacion'; // 'fecha_publicacion' o 'creado_en'
     const page = parseInt(searchParams.get('page')) || 1;
     const limit = parseInt(searchParams.get('limit')) || 20;
     const offset = (page - 1) * limit;
@@ -117,7 +118,12 @@ export async function GET(request) {
     const countParams = params.slice();
     const [{ total }] = await query(countSql, countParams);
 
-    sql += ' ORDER BY n.fecha_publicacion DESC, n.creado_en DESC';
+    // Ordenar según parámetro orderBy
+    if (orderBy === 'creado_en') {
+      sql += ' ORDER BY n.creado_en DESC';
+    } else {
+      sql += ' ORDER BY n.fecha_publicacion DESC, n.creado_en DESC';
+    }
     sql += ' LIMIT ? OFFSET ?';
     params.push(limit, offset);
 

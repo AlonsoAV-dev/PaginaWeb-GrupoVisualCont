@@ -1,12 +1,15 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Pagination from '@/components/admin/Pagination';
 
 export default function ComentariosAdmin() {
   const router = useRouter();
   const [comentarios, setComentarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filtro, setFiltro] = useState(''); // '' = Todos
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
 
   useEffect(() => {
     loadComentarios();
@@ -85,6 +88,12 @@ export default function ComentariosAdmin() {
     return colors[estado] || 'bg-gray-100 text-gray-800';
   };
 
+  // Cálculo de paginación
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = comentarios.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(comentarios.length / itemsPerPage);
+
   if (loading) {
     return <div className="text-center py-8">Cargando...</div>;
   }
@@ -129,7 +138,14 @@ export default function ComentariosAdmin() {
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            {comentarios.map((comentario) => (
+            {currentItems.length === 0 ? (
+              <tr>
+                <td colSpan="5" className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                  No hay comentarios para mostrar
+                </td>
+              </tr>
+            ) : (
+              currentItems.map((comentario) => (
               <tr key={comentario.id_comentario}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <div className="text-sm font-medium text-gray-900 dark:text-white">
@@ -185,9 +201,20 @@ export default function ComentariosAdmin() {
                   </button>
                 </td>
               </tr>
-            ))}
+              ))
+            )}
           </tbody>
         </table>
+        
+        {totalPages > 1 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            itemsPerPage={itemsPerPage}
+            totalItems={comentarios.length}
+          />
+        )}
       </div>
     </div>
   );
