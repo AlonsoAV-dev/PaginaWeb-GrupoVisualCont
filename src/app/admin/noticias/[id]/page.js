@@ -33,6 +33,8 @@ export default function NoticiaEditor() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [keywordsSugeridas, setKeywordsSugeridas] = useState([]);
   const [generandoKeywords, setGenerandoKeywords] = useState(false);
+  const [searchResults, setSearchResults] = useState([]); // Resultados de búsqueda
+  const [searching, setSearching] = useState(false); // Estado de carga búsqueda
 
   useEffect(() => {
     loadData();
@@ -151,7 +153,41 @@ export default function NoticiaEditor() {
   const handleKeywordInput = async (e) => {
     const value = e.target.value;
     setKeywordInput(value);
-    setShowSuggestions(value.length > 0);
+    
+    // Cancelar búsqueda anterior si existe
+    if (window.keywordSearchTimeout) {
+      clearTimeout(window.keywordSearchTimeout);
+    }
+
+    // Si el input está vacío, limpiar resultados
+    if (value.trim().length === 0) {
+      setSearchResults([]);
+      setSearching(false);
+      setShowSuggestions(false);
+      return;
+    }
+
+    setShowSuggestions(true);
+    setSearching(true);
+
+    // Esperar 300ms después de que deje de escribir
+    window.keywordSearchTimeout = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/keywords?search=${encodeURIComponent(value.trim())}`);
+        const data = await res.json();
+        
+        if (res.ok) {
+          setSearchResults(data.keywords || []);
+        } else {
+          setSearchResults([]);
+        }
+      } catch (error) {
+        console.error('Error en búsqueda:', error);
+        setSearchResults([]);
+      } finally {
+        setSearching(false);
+      }
+    }, 300);
   };
 
   const handleKeywordKeyDown = async (e) => {
@@ -165,46 +201,54 @@ export default function NoticiaEditor() {
     const keywordName = keywordInput.trim().replace(/,$/g, '');
     if (!keywordName) return;
 
-    // Buscar si ya existe
-    let existingKeyword = keywords.find(
-      k => k.nombre.toLowerCase() === keywordName.toLowerCase()
-    );
-
-    // Si no existe, crearla
-    if (!existingKeyword) {
-      try {
-        const res = await fetch('/api/keywords', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nombre: keywordName }),
-        });
-
-        const data = await res.json();
-        if (res.ok) {
-          existingKeyword = data.keyword;
-          setKeywords(prev => [...prev, existingKeyword]);
-        } else {
-          alert(data.error || 'Error al crear keyword');
-          return;
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        alert('Error de conexión al crear keyword');
-        return;
+    // SIEMPRE buscar en la BD primero para asegurar que existe o no
+    let existingKeyword = null;
+    
+    try {
+      const searchRes = await fetch(`/api/keywords?search=${encodeURIComponent(keywordName)}`);
+      const searchData = await searchRes.json();
+      
+      if (searchRes.ok && searchData.keywords && searchData.keywords.length > 0) {
+        // Buscar coincidencia exacta (insensible a mayúsculas/minúsculas)
+        existingKeyword = searchData.keywords.find(
+          k => k.nombre.toLowerCase() === keywordName.toLowerCase()
+        );
       }
+    } catch (error) {
+      console.error('Error al buscar keyword:', error);
+    }
+
+    // Si no existe, crear una keyword TEMPORAL (se creará en BD al guardar la noticia)
+    if (!existingKeyword) {
+      // Crear objeto temporal con ID negativo
+      const tempId = -(Date.now()); // ID temporal único negativo
+      existingKeyword = {
+        id_keyword: tempId,
+        nombre: keywordName,
+      };
+      
+      // Agregar a la lista local
+      setKeywords(prev => [...prev, existingKeyword]);
     }
 
     // Agregar al formData si no está ya seleccionada
-    if (!formData.keywords.includes(existingKeyword.id_keyword)) {
+    if (existingKeyword && !formData.keywords.includes(existingKeyword.id_keyword)) {
       setFormData(prev => ({
         ...prev,
         keywords: [...prev.keywords, existingKeyword.id_keyword],
       }));
+      
+      // Asegurarse de que la keyword esté en la lista local para poder visualizarla
+      const existsInLocal = keywords.find(k => k.id_keyword === existingKeyword.id_keyword);
+      if (!existsInLocal) {
+        setKeywords(prev => [...prev, existingKeyword]);
+      }
     }
 
-    // Limpiar input
+    // Limpiar input y resultados
     setKeywordInput('');
     setShowSuggestions(false);
+    setSearchResults([]);
   };
 
   const handleSuggestionClick = async (keyword) => {
@@ -214,11 +258,18 @@ export default function NoticiaEditor() {
         ...prev,
         keywords: [...prev.keywords, keyword.id_keyword],
       }));
+      
+      // Asegurarse de que la keyword esté en la lista local para poder visualizarla
+      const existsInLocal = keywords.find(k => k.id_keyword === keyword.id_keyword);
+      if (!existsInLocal) {
+        setKeywords(prev => [...prev, keyword]);
+      }
     }
 
-    // Limpiar input
+    // Limpiar input y resultados
     setKeywordInput('');
     setShowSuggestions(false);
+    setSearchResults([]);
   };
 
   const removeKeyword = (keywordId) => {
@@ -228,11 +279,10 @@ export default function NoticiaEditor() {
     }));
   };
 
-  // Filtrar sugerencias basadas en el input
-  const filteredSuggestions = keywords.filter(
-    k => k.nombre.toLowerCase().includes(keywordInput.toLowerCase()) &&
-         !formData.keywords.includes(k.id_keyword)
-  ).slice(0, 5); // Máximo 5 sugerencias
+  // Usar searchResults cuando hay input de búsqueda
+  const displayedSuggestions = keywordInput.trim().length > 0
+    ? searchResults.filter(k => !formData.keywords.includes(k.id_keyword))
+    : [];
 
   // Generar keywords con IA (Gemini)
   const generarKeywordsConIA = async () => {
@@ -453,7 +503,7 @@ export default function NoticiaEditor() {
                 </button>
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400 mb-2">
-                Escribe y presiona Enter o coma para agregar. Se crearán automáticamente si no existen.
+                Escribe y presiona Enter o coma para agregar. Las keywords nuevas se crearán al guardar la noticia.
               </p>
 
               {/* Keywords sugeridas por IA */}
@@ -492,16 +542,22 @@ export default function NoticiaEditor() {
                   {formData.keywords.map((keywordId) => {
                     const keyword = keywords.find(k => k.id_keyword === keywordId);
                     if (!keyword) return null;
+                    const isTemporary = keywordId < 0; // IDs negativos son temporales
                     return (
                       <span
                         key={keywordId}
-                        className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm"
+                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm ${
+                          isTemporary 
+                            ? 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 border border-green-300 dark:border-green-700' 
+                            : 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200'
+                        }`}
                       >
                         {keyword.nombre}
+                        {isTemporary && <span className="text-xs opacity-75">(nueva)</span>}
                         <button
                           type="button"
                           onClick={() => removeKeyword(keywordId)}
-                          className="hover:text-blue-600 dark:hover:text-blue-400 ml-1"
+                          className={isTemporary ? "hover:text-green-600 dark:hover:text-green-400 ml-1" : "hover:text-blue-600 dark:hover:text-blue-400 ml-1"}
                         >
                           ×
                         </button>
@@ -525,9 +581,15 @@ export default function NoticiaEditor() {
                 />
                 
                 {/* Sugerencias de autocompletado */}
-                {showSuggestions && filteredSuggestions.length > 0 && (
+                {showSuggestions && (
                   <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-48 overflow-y-auto">
-                    {filteredSuggestions.map((keyword) => (
+                    {searching && (
+                      <div className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 text-center">
+                        Buscando...
+                      </div>
+                    )}
+                    
+                    {!searching && displayedSuggestions.length > 0 && displayedSuggestions.map((keyword) => (
                       <button
                         key={keyword.id_keyword}
                         type="button"
@@ -537,6 +599,12 @@ export default function NoticiaEditor() {
                         {keyword.nombre}
                       </button>
                     ))}
+                    
+                    {!searching && displayedSuggestions.length === 0 && keywordInput.trim().length > 0 && (
+                      <div className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
+                        No se encontró "{keywordInput}". Presiona <kbd className="px-1.5 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-xs">Enter</kbd> para agregarla (se creará al guardar la noticia).
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

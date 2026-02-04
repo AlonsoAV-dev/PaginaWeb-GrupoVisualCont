@@ -24,14 +24,13 @@ export default function PageKeywordsAdmin() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [keywordsSugeridas, setKeywordsSugeridas] = useState([]);
   const [generandoKeywords, setGenerandoKeywords] = useState(false);
+  const [searchResults, setSearchResults] = useState([]); // Resultados de búsqueda en tiempo real
+  const [searching, setSearching] = useState(false); // Estado de carga búsqueda
 
-  // Filtrar sugerencias basadas en búsqueda (excluir las ya seleccionadas)
-  const filteredSuggestions = allKeywords
-    .filter(k => 
-      k.nombre.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      !selectedKeywordIds.includes(k.id_keyword)
-    )
-    .slice(0, 10); // Máximo 10 sugerencias
+  // Usar searchResults cuando hay búsqueda activa
+  const filteredSuggestions = searchTerm.trim().length > 0
+    ? searchResults.filter(k => !selectedKeywordIds.includes(k.id_keyword))
+    : [];
 
   useEffect(() => {
     loadAllKeywords();
@@ -59,8 +58,26 @@ export default function PageKeywordsAdmin() {
     try {
       const res = await fetch(`/api/pages/keywords?page=${page}`);
       const data = await res.json();
-      setPageKeywords(data.keywords || []);
-      setSelectedKeywordIds(data.keywords?.map(k => k.id_keyword) || []);
+      const loadedKeywords = data.keywords || [];
+      
+      // Normalizar: el API regresa "keyword" pero necesitamos "nombre"
+      const normalizedKeywords = loadedKeywords.map(k => ({
+        id_keyword: k.id_keyword,
+        nombre: k.keyword || k.nombre // Soportar ambos formatos
+      }));
+      
+      setPageKeywords(normalizedKeywords);
+      setSelectedKeywordIds(normalizedKeywords.map(k => k.id_keyword) || []);
+      
+      // IMPORTANTE: Agregar las keywords de la página a allKeywords si no están
+      // Esto asegura que se puedan visualizar aunque no estén en las primeras 15
+      if (normalizedKeywords.length > 0) {
+        setAllKeywords(prev => {
+          const existingIds = prev.map(k => k.id_keyword);
+          const newKeywords = normalizedKeywords.filter(k => !existingIds.includes(k.id_keyword));
+          return [...prev, ...newKeywords];
+        });
+      }
     } catch (error) {
       console.error('Error:', error);
       setPageKeywords([]);
@@ -250,6 +267,122 @@ export default function PageKeywordsAdmin() {
     }
   };
 
+  // Búsqueda en tiempo real de keywords
+  const handleSearchInput = (value) => {
+    setSearchTerm(value);
+    
+    // Cancelar búsqueda anterior si existe
+    if (window.pageKeywordSearchTimeout) {
+      clearTimeout(window.pageKeywordSearchTimeout);
+    }
+
+    // Si el input está vacío, limpiar resultados
+    if (value.trim().length === 0) {
+      setSearchResults([]);
+      setSearching(false);
+      setShowSuggestions(false);
+      return;
+    }
+
+    setShowSuggestions(true);
+    setSearching(true);
+
+    // Esperar 300ms después de que deje de escribir
+    window.pageKeywordSearchTimeout = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/keywords?search=${encodeURIComponent(value.trim())}`);
+        const data = await res.json();
+        
+        if (res.ok) {
+          setSearchResults(data.keywords || []);
+        } else {
+          setSearchResults([]);
+        }
+      } catch (error) {
+        console.error('Error en búsqueda:', error);
+        setSearchResults([]);
+      } finally {
+        setSearching(false);
+      }
+    }, 300);
+  };
+
+  // Agregar keyword desde búsqueda
+  const addKeywordFromSearch = (keyword) => {
+    if (!selectedKeywordIds.includes(keyword.id_keyword)) {
+      setSelectedKeywordIds(prev => [...prev, keyword.id_keyword]);
+      
+      // Asegurarse de que la keyword esté en la lista local para visualizarla
+      const existsInLocal = allKeywords.find(k => k.id_keyword === keyword.id_keyword);
+      if (!existsInLocal) {
+        setAllKeywords(prev => [...prev, keyword]);
+      }
+    }
+    setSearchTerm('');
+    setShowSuggestions(false);
+    setSearchResults([]);
+  };
+
+  // Agregar keyword al presionar Enter (crear temporal si no existe)
+  const handleKeywordKeyDown = async (e) => {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      await addKeywordFromInput();
+    }
+  };
+
+  const addKeywordFromInput = async () => {
+    const keywordName = searchTerm.trim().replace(/,$/g, '');
+    if (!keywordName) return;
+
+    // SIEMPRE buscar en la BD primero para asegurar que existe o no
+    let existingKeyword = null;
+    
+    try {
+      const searchRes = await fetch(`/api/keywords?search=${encodeURIComponent(keywordName)}`);
+      const searchData = await searchRes.json();
+      
+      if (searchRes.ok && searchData.keywords && searchData.keywords.length > 0) {
+        // Buscar coincidencia exacta (insensible a mayúsculas/minúsculas)
+        existingKeyword = searchData.keywords.find(
+          k => k.nombre.toLowerCase() === keywordName.toLowerCase()
+        );
+      }
+    } catch (error) {
+      console.error('Error al buscar keyword:', error);
+    }
+
+    // Si no existe, crear una keyword TEMPORAL (se creará en BD al guardar)
+    if (!existingKeyword) {
+      // Crear objeto temporal con ID negativo
+      const tempId = -(Date.now());
+      existingKeyword = {
+        id_keyword: tempId,
+        nombre: keywordName,
+      };
+      
+      // Agregar a las listas locales
+      setAllKeywords(prev => [...prev, existingKeyword]);
+      setPageKeywords(prev => [...prev, existingKeyword]);
+    }
+
+    // Agregar al formData si no está ya seleccionada
+    if (existingKeyword && !selectedKeywordIds.includes(existingKeyword.id_keyword)) {
+      setSelectedKeywordIds(prev => [...prev, existingKeyword.id_keyword]);
+      
+      // Asegurarse de que la keyword esté en la lista local para poder visualizarla
+      const existsInLocal = allKeywords.find(k => k.id_keyword === existingKeyword.id_keyword);
+      if (!existsInLocal) {
+        setAllKeywords(prev => [...prev, existingKeyword]);
+      }
+    }
+
+    // Limpiar input y resultados
+    setSearchTerm('');
+    setShowSuggestions(false);
+    setSearchResults([]);
+  };
+
   if (loading) {
     return <div className="text-center py-8">Cargando...</div>;
   }
@@ -354,22 +487,38 @@ export default function PageKeywordsAdmin() {
             </p>
           ) : (
             <div className="flex flex-wrap gap-2">
-              {allKeywords
-                .filter(k => selectedKeywordIds.includes(k.id_keyword))
-                .map(keyword => (
+              {selectedKeywordIds.map(keywordId => {
+                // Buscar primero en allKeywords, sino en pageKeywords
+                const keyword = allKeywords.find(k => k.id_keyword === keywordId) || 
+                                pageKeywords.find(k => k.id_keyword === keywordId);
+                
+                if (!keyword) return null; // No mostrar si no se encuentra
+                
+                const isTemporary = keywordId < 0; // IDs negativos son temporales
+                
+                return (
                   <div
                     key={keyword.id_keyword}
-                    className="flex items-center space-x-2 px-3 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200 rounded-full"
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-full ${
+                      isTemporary 
+                        ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 border border-green-300 dark:border-green-700' 
+                        : 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-200'
+                    }`}
                   >
                     <span className="text-sm font-medium">{keyword.nombre}</span>
+                    {isTemporary && <span className="text-xs opacity-75">(nueva)</span>}
                     <button
                       onClick={() => removeKeyword(keyword.id_keyword)}
-                      className="text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100"
+                      className={isTemporary 
+                        ? "text-green-600 dark:text-green-300 hover:text-green-800 dark:hover:text-green-100"
+                        : "text-blue-600 dark:text-blue-300 hover:text-blue-800 dark:hover:text-blue-100"
+                      }
                     >
                       ×
                     </button>
                   </div>
-                ))}
+                );
+              })}
             </div>
           )}
         </div>
@@ -381,47 +530,45 @@ export default function PageKeywordsAdmin() {
           </label>
           <input
             type="text"
-            placeholder="Buscar keyword para agregar..."
+            placeholder="Buscar o crear keyword (presiona Enter)..."
             value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setShowSuggestions(e.target.value.length > 0);
-            }}
+            onChange={(e) => handleSearchInput(e.target.value)}
+            onKeyDown={handleKeywordKeyDown}
             onFocus={() => setShowSuggestions(searchTerm.length > 0)}
             onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
             className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#257CD0]"
           />
 
           {/* Dropdown de sugerencias */}
-          {showSuggestions && filteredSuggestions.length > 0 && (
+          {showSuggestions && (
             <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg max-h-60 overflow-y-auto">
-              {filteredSuggestions.map(keyword => (
+              {searching && (
+                <div className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 text-center">
+                  Buscando en todas las keywords...
+                </div>
+              )}
+              
+              {!searching && filteredSuggestions.length > 0 && filteredSuggestions.map(keyword => (
                 <button
                   key={keyword.id_keyword}
-                  onClick={() => addKeyword(keyword.id_keyword)}
+                  onClick={() => addKeywordFromSearch(keyword)}
                   className="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-white"
                 >
                   {keyword.nombre}
                 </button>
               ))}
-            </div>
-          )}
-
-          {/* Opción para crear nueva */}
-          {searchTerm && filteredSuggestions.length === 0 && (
-            <div className="mt-2">
-              <button
-                onClick={() => setShowKeywordModal(true)}
-                className="text-sm text-[#257CD0] hover:underline"
-              >
-                + Crear nueva keyword "{searchTerm}"
-              </button>
+              
+              {!searching && filteredSuggestions.length === 0 && searchTerm.trim().length > 0 && (
+                <div className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 text-center">
+                  No se encontró "{searchTerm}". Presiona <kbd className="px-1.5 py-0.5 bg-gray-200 dark:bg-gray-700 rounded text-xs">Enter</kbd> para agregarla (se creará al guardar).
+                </div>
+              )}
             </div>
           )}
         </div>
 
         <p className="text-sm text-gray-500 dark:text-gray-400 mt-3">
-          Total de keywords disponibles: {allKeywords.length}
+          Escribe y presiona Enter para agregar. Las keywords nuevas se crearán al guardar los cambios.
         </p>
       </div>
 

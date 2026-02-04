@@ -189,8 +189,50 @@ export async function PUT(request, { params }) {
       // Eliminar keywords anteriores
       await query('DELETE FROM noticia_keyword WHERE id_noticia = ?', [id]);
 
-      // Insertar nuevas keywords
-      for (const id_keyword of keywords) {
+      // Insertar nuevas keywords (con la misma lógica robusta que POST)
+      for (const keyword of keywords) {
+        let id_keyword;
+        
+        // Si es un número, es un ID existente
+        if (typeof keyword === 'number' && keyword > 0) {
+          // Verificar que el keyword existe
+          const keywordExists = await query(
+            'SELECT id_keyword FROM keywords WHERE id_keyword = ?',
+            [keyword]
+          );
+          
+          if (keywordExists && keywordExists.length > 0) {
+            id_keyword = keyword;
+          } else {
+            console.warn(`⚠️ Keyword con ID ${keyword} no existe, se omitió`);
+            continue;
+          }
+        } 
+        // Si es un string, es el nombre de una keyword (buscar o crear)
+        else if (typeof keyword === 'string') {
+          // Buscar si ya existe
+          const existing = await query(
+            'SELECT id_keyword FROM keywords WHERE nombre = ?',
+            [keyword]
+          );
+          
+          if (existing.length > 0) {
+            id_keyword = existing[0].id_keyword;
+          } else {
+            // Crear la keyword nueva
+            const keywordResult = await query(
+              'INSERT INTO keywords (nombre) VALUES (?)',
+              [keyword]
+            );
+            id_keyword = keywordResult.insertId;
+          }
+        }
+        // Ignorar IDs temporales negativos u otros valores inválidos
+        else {
+          continue;
+        }
+        
+        // Insertar relación noticia-keyword
         await query(
           'INSERT INTO noticia_keyword (id_noticia, id_keyword) VALUES (?, ?)',
           [id, id_keyword]
