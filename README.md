@@ -15,7 +15,7 @@ npm install
 # Configurar variables de entorno
 cp .env.example .env.local
 
-# Iniciar servidor de desarrollo
+# Inicia servidor de desarrollo
 npm run dev
 ```
 
